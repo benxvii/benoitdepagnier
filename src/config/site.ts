@@ -29,6 +29,20 @@ const flousUrbainsImages = [
   "/portfolio/flous-de-mouvements/flous-urbains/L1000870.jpg",
 ];
 
+const flouMuseeElyseeImages = [
+  "L1000346.jpg",
+  "L1000350.jpg",
+  "L1000351.jpg",
+  "L1000353.jpg",
+  "L1090291.jpg",
+  "L1120687.jpg",
+  "L1120688.jpg",
+  "L1140591.jpg",
+  "L1140596.jpg",
+].map(
+  (file) => `/portfolio/flous-de-mouvements/flou-musee-elysee/${file}`,
+);
+
 const streetPhotographyImages = [
   "L1000824.jpg",
   "L1000830.jpg",
@@ -121,6 +135,14 @@ export const portfolio = {
           intro: "Hermance, Genève (4 novembre 2025).",
           coverImage: flousUrbainsImages[0],
           images: flousUrbainsImages,
+        },
+        {
+          slug: "flou-musee-elysee",
+          path: "/portfolio/flous-de-mouvements/flou-musee-elysee",
+          title: "Flou Musée Elysée",
+          intro: "Musée Elysée (8 avril 2023).",
+          coverImage: flouMuseeElyseeImages[0],
+          images: flouMuseeElyseeImages,
         },
       ],
     },
