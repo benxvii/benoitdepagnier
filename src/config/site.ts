@@ -1,0 +1,250 @@
+const placeholderImage =
+  "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
+
+export const site = {
+  name: "Benoît d'Epagnier",
+  shortName: "Benoît d'Epagnier",
+  tagline: "Photo · Musique · Développement",
+  email: "bdepagnier@bluewin.ch",
+  instagram: "https://www.instagram.com/benxvii/",
+  facebook: "https://www.facebook.com/bdepagnier",
+  linkedin: "https://www.linkedin.com/in/bdepagnier/",
+  logoSrc: "/logo.png",
+  copyrightYear: new Date().getFullYear(),
+} as const;
+
+export type Gallery = {
+  slug: string;
+  path: string;
+  title: string;
+  intro: string;
+  coverImage?: string;
+  images?: readonly string[];
+  subGalleries?: readonly Gallery[];
+};
+
+export const portfolio = {
+  indexPath: "/portfolio",
+  title: "Portfolio",
+  intro:
+    "Une bonne photographie doit se comprendre sans explications et transmettre une émotion.",
+  galleries: [
+    {
+      slug: "mes-appareils",
+      path: "/portfolio/mes-appareils",
+      title: "Mes appareils",
+      intro: "Les boîtiers et objectifs qui ont accompagné mon parcours photographique.",
+      coverImage: placeholderImage,
+      images: [placeholderImage, placeholderImage, placeholderImage],
+    },
+    {
+      slug: "flous-de-mouvements",
+      path: "/portfolio/flous-de-mouvements",
+      title: "Les flous de mouvements",
+      intro: "Explorations du mouvement et du temps long en photographie.",
+      coverImage: placeholderImage,
+      images: [placeholderImage, placeholderImage, placeholderImage],
+    },
+    {
+      slug: "monde-de-la-musique",
+      path: "/portfolio/monde-de-la-musique",
+      title: "Le monde de la musique",
+      intro: "Scènes, musiciens et ambiance autour de la musique.",
+      coverImage: placeholderImage,
+      subGalleries: [
+        {
+          slug: "ema-hommage-cannonball-adderley-soral",
+          path: "/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral",
+          title: "EMA Hommage Cannonball Adderley Soral",
+          intro: "Hommage à Cannonball Adderley — EMA Soral.",
+          coverImage: placeholderImage,
+          images: [placeholderImage, placeholderImage, placeholderImage],
+        },
+      ],
+    },
+    {
+      slug: "street-photography",
+      path: "/portfolio/street-photography",
+      title: "Street photography",
+      intro: "Regards sur la ville et ses passants.",
+      coverImage: placeholderImage,
+      images: [placeholderImage, placeholderImage, placeholderImage],
+    },
+  ] as readonly Gallery[],
+};
+
+export type ProjetDownload = {
+  label: string;
+  url: string;
+};
+
+export type Projet = {
+  slug: string;
+  path: string;
+  title: string;
+  description: string;
+  body: string;
+  image: string;
+  notice?: string;
+  downloads?: readonly ProjetDownload[];
+  downloadUrl?: string;
+  downloadLabel?: string;
+};
+
+export const projets = {
+  indexPath: "/projets",
+  title: "Projets informatiques",
+  intro: "Applications et outils que j'ai développés.",
+  items: [
+    {
+      slug: "imagecount",
+      path: "/projets/imagecount",
+      title: "ImageCount",
+      description:
+        "Compte les images d'un répertoire (extensions, tailles, arborescence) sans base de données ni IA.",
+      image: "/projets/imagecount.png",
+      body: `Application Flet standalone extraite du module Analyse d'ImageScribe.
+
+Sélectionnez un répertoire et obtenez des statistiques détaillées : nombre d'images par extension, répartition des tailles, exploration de l'arborescence avec filtres de profondeur. Idéal pour faire le point sur un disque ou un NAS avant un tri ou une importation.
+
+Disponible sur macOS et Windows.`,
+      downloads: [
+        { label: "macOS", url: "/downloads/ImageCount-mac.zip" },
+        { label: "Windows", url: "#" },
+      ],
+    },
+    {
+      slug: "imagesweep",
+      path: "/projets/imagesweep",
+      title: "ImageSweep",
+      description:
+        "Détecte les doublons exacts et les images visuellement similaires dans vos répertoires photo.",
+      image: "/projets/imagesweep.png",
+      body: `ImageSweep parcourt un répertoire et repère les images en double selon deux modes :
+
+• Doublons exacts — comparaison par empreinte SHA-256
+• Similaires visuels — détection par hash perceptuel (pHash)
+
+Les résultats sont regroupés avec vignettes et exportables en rapport HTML. Formats RAW, HEIC, JPEG et autres formats courants pris en charge.
+
+Disponible sur macOS et Windows.`,
+      downloads: [
+        { label: "macOS", url: "/downloads/ImageSweep-mac.zip" },
+        { label: "Windows", url: "#" },
+      ],
+    },
+    {
+      slug: "imagescribe",
+      path: "/projets/imagescribe",
+      title: "ImageScribe",
+      description:
+        "Catalogue vos images par IA : analyse, tags automatiques et recherche dans une base SQLite.",
+      image: "/projets/imagescribe.png",
+      body: `ImageScribe construit un catalogue d'images après identification d'objets sur les photos, pour retrouver facilement vos fichiers par la suite.
+
+Quatre vues principales :
+• Analyse répertoire — statistiques sur un dossier (extensions, tailles…)
+• Chargement d'images — ingestion et alimentation du catalogue SQLite
+• Gestion du catalogue — statistiques SQL et inventaire des tags
+• Recherche d'images — recherche par tags et texte libre dans le catalogue`,
+      notice:
+        "Bêta en cours — ImageScribe est téléchargeable mais encore en développement. L'import, les vignettes et la recherche EXIF fonctionnent. L'analyse IA (tags et légendes Gemini) arrive dans une prochaine version ; aucune clé API n'est requise pour l'instant.",
+      downloads: [{ label: "macOS", url: "/downloads/ImageScribe-mac.zip" }],
+    },
+    {
+      slug: "performance-de-portefeuille",
+      path: "/projets/performance-de-portefeuille",
+      title: "Performance de Portefeuille",
+      description: "Suivi et analyse de performance de portefeuille.",
+      image: placeholderImage,
+      body: "Contenu à compléter — description du projet Performance de Portefeuille.",
+    },
+  ] as readonly Projet[],
+};
+
+export type MusiquePage = {
+  slug: string;
+  path: string;
+  title: string;
+  intro?: string;
+  body: string;
+};
+
+export const musique = {
+  indexPath: "/musique",
+  title: "Musique",
+  intro:
+    "Après deux ans de piano vers 14 ans, j'ai commencé le saxophone alto à 19 ans. Aujourd'hui je joue alto et baryton.",
+  pages: [
+    {
+      slug: "instruments",
+      path: "/musique/instruments",
+      title: "Mes instruments de musique",
+      body: `J'ai débuté sur un saxophone alto Weltlang acheté d'occasion, puis j'ai joué le saxophone baryton du Big Band (dont j'ai oublié la marque) avant d'acquérir mon premier baryton, un Buescher Aristocrate. Par la suite, j'ai joué sur un Yanagisawa B901, avant de découvrir les saxophones Advences.
+
+J'ai eu la chance de découvrir la marque Advences par un de mes professeurs, et j'ai craqué pour un alto et un baryton en Bb, les deux provenant de leur collection Vintage. Pour répéter en silence, je joue aussi sur un Yamaha YDS-150.`,
+    },
+    {
+      slug: "compositions",
+      path: "/musique/compositions",
+      title: "Compositions personnelles & arrangements",
+      body: "Contenu à compléter — compositions et arrangements personnels.",
+    },
+    {
+      slug: "enregistrements",
+      path: "/musique/enregistrements",
+      title: "Enregistrements",
+      body: "Contenu à compléter — enregistrements audio et vidéo.",
+    },
+  ] as readonly MusiquePage[],
+};
+
+export const about = {
+  path: "/about",
+  title: "Qui suis-je ?",
+  portraitImage: "/about/portrait.jpg",
+  portraitCaption: "Salon Watches & Wonders 2025, Genève",
+  paragraphs: [
+    "Passionné depuis toujours de photographie, j'ai réalisé mes premières images grâce aux appareils de mon papa, puis à ceux que j'ai reçus, achetés ou qui m'ont gentiment été prêtés. Déjà enfant, j'avais souvent un appareil dans les mains pour aller faire des images autour de chez moi, ou que j'emmenais lors des sorties scolaires et autres événements.",
+    "À 12 ans, j'ai reçu mon premier appareil professionnel, un Nikon F2 Photomic, avec trois objectifs : 35mm, 55mm micro et 200mm (merci à mon papa qui a racheté le matériel d'un de ses fournisseurs photographe).",
+    "À 15 ans, je me suis dirigé vers une formation bancaire (qui m'occupera par la suite) tout en continuant la photographie. À 19 ans, j'ai rencontré un grand professionnel de la photo sportive et pu passer quelques mois à ses côtés. C'est ainsi que j'ai vu mes premières images de photo de presse sportive publiées dans les quotidiens. Quelle fierté de découvrir sa photo dans les pages sports du journal La Suisse en partant travailler le lundi matin. C'est aussi l'époque où j'ai commencé à jouer du saxophone.",
+    "À 20 ans, je suis rentré chez un Banquier Privé, mais ça c'est une autre histoire.",
+  ],
+} as const;
+
+export const homeIntro = {
+  quote:
+    "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications.",
+} as const;
+
+/** Image de couverture pour une galerie ou un hub */
+export function galleryCover(gallery: Gallery): string {
+  if (gallery.coverImage) return gallery.coverImage;
+  if (gallery.images?.[0]) return gallery.images[0];
+  if (gallery.subGalleries?.[0]) return galleryCover(gallery.subGalleries[0]);
+  return placeholderImage;
+}
+
+export function findPortfolioGallery(
+  slug: string,
+  parentSlug?: string,
+): Gallery | undefined {
+  if (parentSlug) {
+    const parent = portfolio.galleries.find((g) => g.slug === parentSlug);
+    return parent?.subGalleries?.find((g) => g.slug === slug);
+  }
+  return portfolio.galleries.find((g) => g.slug === slug);
+}
+
+export function allPortfolioPaths(): { path: string; label: string }[] {
+  const paths: { path: string; label: string }[] = [];
+  for (const gallery of portfolio.galleries) {
+    paths.push({ path: gallery.path, label: gallery.title });
+    if (gallery.subGalleries) {
+      for (const sub of gallery.subGalleries) {
+        paths.push({ path: sub.path, label: sub.title });
+      }
+    }
+  }
+  return paths;
+}

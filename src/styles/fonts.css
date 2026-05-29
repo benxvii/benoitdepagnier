@@ -1,0 +1,17 @@
+.site-name {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0em;
+}
+
+.site-tagline {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
