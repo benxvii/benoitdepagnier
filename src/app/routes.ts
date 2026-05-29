@@ -8,6 +8,8 @@ import ProjetsIndex from "./components/ProjetsIndex";
 import ProjetDetail from "./components/ProjetDetail";
 import MusiqueIndex from "./components/MusiqueIndex";
 import MusiquePageRoute from "./components/MusiquePage";
+import MusiqueEnregistrements from "./components/MusiqueEnregistrements";
+import MusiqueRecordingDetail from "./components/MusiqueRecordingDetail";
 import NotFound from "./components/NotFound";
 
 export const router = createBrowserRouter([
@@ -23,6 +25,11 @@ export const router = createBrowserRouter([
       { path: "projets", Component: ProjetsIndex },
       { path: "projets/:slug", Component: ProjetDetail },
       { path: "musique", Component: MusiqueIndex },
+      {
+        path: "musique/enregistrements/:recordingSlug",
+        Component: MusiqueRecordingDetail,
+      },
+      { path: "musique/enregistrements", Component: MusiqueEnregistrements },
       { path: "musique/:slug", Component: MusiquePageRoute },
       { path: "contact", loader: () => redirect("/") },
       { path: "*", Component: NotFound },

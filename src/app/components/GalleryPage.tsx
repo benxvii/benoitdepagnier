@@ -12,7 +12,7 @@ export default function GalleryPage({ title, intro, images }: GalleryPageProps) 
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl mb-6">{title}</h1>
-          <p className="text-xl text-gray-700">{intro}</p>
+          {intro ? <p className="text-xl text-gray-700">{intro}</p> : null}
         </div>
       </section>
 

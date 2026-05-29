@@ -42,6 +42,25 @@ function collectSubLinkPaths(links: readonly NavSubLink[]): string[] {
   });
 }
 
+function musiqueNavLinks(): NavSubLink[] {
+  return musique.pages.map((page) => {
+    if (page.slug === "enregistrements" && musique.recordings.length > 0) {
+      return {
+        label: page.title,
+        path: page.path,
+        subLinks: [
+          { path: page.path, label: "Tous les enregistrements" },
+          ...musique.recordings.map((recording) => ({
+            path: recording.path,
+            label: recording.title,
+          })),
+        ],
+      };
+    }
+    return { path: page.path, label: page.title };
+  });
+}
+
 export const mainNavigation: NavItem[] = [
   {
     label: portfolio.title,
@@ -67,10 +86,7 @@ export const mainNavigation: NavItem[] = [
     path: musique.indexPath,
     subLinks: [
       { path: musique.indexPath, label: "Présentation" },
-      ...musique.pages.map((p) => ({
-        path: p.path,
-        label: p.title,
-      })),
+      ...musiqueNavLinks(),
     ],
   },
   { path: "/about", label: "Qui suis-je ?" },

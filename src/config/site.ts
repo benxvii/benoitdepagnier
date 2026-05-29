@@ -26,10 +26,7 @@ const emaHommageCannonballAdderleyImages = [
 );
 
 const flousUrbainsImages = [
-  "/portfolio/flous-de-mouvements/flous-urbains/L1000870.jpg",
-];
-
-const flouMuseeElyseeImages = [
+  "L1000870.jpg",
   "L1000346.jpg",
   "L1000350.jpg",
   "L1000351.jpg",
@@ -39,9 +36,17 @@ const flouMuseeElyseeImages = [
   "L1120688.jpg",
   "L1140591.jpg",
   "L1140596.jpg",
-].map(
-  (file) => `/portfolio/flous-de-mouvements/flou-musee-elysee/${file}`,
-);
+  "Chine-132.jpg",
+  "Chine-133.jpg",
+  "Chine-002.jpg",
+  "Chine-031.jpg",
+  "Chine-032.jpg",
+  "Chine-048.jpg",
+  "Chine-051.jpg",
+  "Chine-065.jpg",
+  "Chine-136.jpg",
+  "Chine-137.jpg",
+].map((file) => `/portfolio/flous-de-mouvements/flous-urbains/${file}`);
 
 const streetPhotographyImages = [
   "L1000824.jpg",
@@ -132,17 +137,9 @@ export const portfolio = {
           slug: "flous-urbains",
           path: "/portfolio/flous-de-mouvements/flous-urbains",
           title: "Flous urbains",
-          intro: "Hermance, Genève (4 novembre 2025).",
+          intro: "",
           coverImage: flousUrbainsImages[0],
           images: flousUrbainsImages,
-        },
-        {
-          slug: "flou-musee-elysee",
-          path: "/portfolio/flous-de-mouvements/flou-musee-elysee",
-          title: "Flou Musée Elysée",
-          intro: "Musée Elysée (8 avril 2023).",
-          coverImage: flouMuseeElyseeImages[0],
-          images: flouMuseeElyseeImages,
         },
       ],
     },
@@ -271,6 +268,24 @@ Quatre vues principales :
   ] as readonly Projet[],
 };
 
+export type MusiqueRecording = {
+  slug: string;
+  path: string;
+  title: string;
+  subtitle: string;
+  coverImage: string;
+  discogsUrl: string;
+  artists: string;
+  label: string;
+  country: string;
+  format: string;
+  recordedAt: string;
+  genres: readonly string[];
+  role: string;
+  body: string;
+  tracks: readonly { title: string; duration: string; writer?: string }[];
+};
+
 export type MusiquePage = {
   slug: string;
   path: string;
@@ -281,9 +296,42 @@ export type MusiquePage = {
 
 export const musique = {
   indexPath: "/musique",
+  enregistrementsPath: "/musique/enregistrements",
   title: "Musique",
   intro:
     "Après deux ans de piano vers 14 ans, j'ai commencé le saxophone alto à 19 ans. Aujourd'hui je joue alto et baryton.",
+  recordings: [
+    {
+      slug: "agua-viva-y-ardiente",
+      path: "/musique/enregistrements/agua-viva-y-ardiente",
+      title: "Agua Viva Y Ardiente",
+      subtitle: "Un hommage à Tito Puente",
+      coverImage: "/musique/agua-viva-y-ardiente-cover.jpg",
+      discogsUrl:
+        "https://www.discogs.com/release/18151513-Hev-Big-Band-Daniele-Verdesca-Agua-Viva-Y-Ardiente-Un-Hommage-%C3%80-Tito-Puente",
+      artists: "HEV Big Band · Daniel Verdesca",
+      label: "Harmonie des Eaux-Vives",
+      country: "Suisse",
+      format: "CD",
+      recordedAt: "Taurus Studio",
+      genres: ["Jazz", "Latin Jazz"],
+      role: "Saxophone baryton",
+      body: `Album de la HEV Big Band (Harmonie des Eaux-Vives), hommage au percussionniste et compositeur Tito Puente. Daniel Verdesca en est le chef d'orchestre et le cornet leader.
+
+J'ai le plaisir d'avoir joué au baryton dans la section des saxophones. Le disque mêle standards de Tito Puente (Piccadillo, Mambo Gozon, Oye Como Va, Para Los Rumberos…) et des compositions originales signées Daniel Verdesca ou Andy Schepper.`,
+      tracks: [
+        { title: "Piccadillo", duration: "4:53", writer: "Tito Puente" },
+        { title: "Statue In Bilico", duration: "5:58", writer: "Daniel Verdesca" },
+        { title: "Mambo Gozon", duration: "5:13", writer: "Tito Puente" },
+        { title: "Floreando", duration: "5:48", writer: "Paul Lopez" },
+        { title: "Oye Como Va", duration: "6:20", writer: "Tito Puente" },
+        { title: "Tierra Magica", duration: "9:15", writer: "Andy Schepper" },
+        { title: "Ulisse", duration: "7:30", writer: "Daniel Verdesca" },
+        { title: "Soft Landing", duration: "4:54", writer: "Daniel Verdesca" },
+        { title: "Para Los Rumberos", duration: "5:07", writer: "Tito Puente" },
+      ],
+    },
+  ] as readonly MusiqueRecording[],
   pages: [
     {
       slug: "instruments",
@@ -303,10 +351,15 @@ J'ai eu la chance de découvrir la marque Advences par un de mes professeurs, et
       slug: "enregistrements",
       path: "/musique/enregistrements",
       title: "Enregistrements",
-      body: "Contenu à compléter — enregistrements audio et vidéo.",
+      intro: "Participations sur disques et enregistrements audio.",
+      body: "",
     },
   ] as readonly MusiquePage[],
 };
+
+export function findMusiqueRecording(slug: string): MusiqueRecording | undefined {
+  return musique.recordings.find((r) => r.slug === slug);
+}
 
 export const about = {
   path: "/about",
