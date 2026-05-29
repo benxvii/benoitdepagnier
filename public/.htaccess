@@ -2,7 +2,8 @@
   RewriteEngine On
   RewriteBase /
   RewriteRule ^index\.html$ - [L]
+  # Ne réécrire que les vrais fichiers (images, assets). Les dossiers
+  # physiques (ex. galerie photo) doivent aussi retomber sur index.html.
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
 </IfModule>
