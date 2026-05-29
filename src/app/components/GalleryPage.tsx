@@ -33,13 +33,13 @@ function GalleryGrid({
   return (
     <div className="flex flex-col gap-12">
       {images.map((src, index) => (
-        <figure key={`${title}-${index}`} className="w-full">
+        <figure key={`${title}-${index}`} className="flex w-full justify-center">
           <ImageWithFallback
             src={src}
             alt={`${title} ${index + 1}`}
             loading="lazy"
             decoding="async"
-            className="block w-full h-auto max-w-full"
+            className="block h-auto w-auto max-h-[85vh] max-w-full"
           />
         </figure>
       ))}

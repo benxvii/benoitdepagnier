@@ -7,21 +7,19 @@ import {
   musique,
   portfolio,
   projets,
-  randomGalleryCover,
   site,
 } from "../../config/site";
+import { useRandomGalleryHubItems } from "./useRandomGalleryCovers";
 
 const heroImage =
   "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=1920&h=1080&fit=crop";
 
 export default function Home() {
+  const portfolioSections = useRandomGalleryHubItems(portfolio.galleries);
+
   const homeSections = useMemo(
     () => [
-      ...portfolio.galleries.map((g) => ({
-        path: g.path,
-        title: g.title,
-        image: randomGalleryCover(g),
-      })),
+      ...portfolioSections,
       {
         path: projets.indexPath,
         title: projets.title,
@@ -33,7 +31,7 @@ export default function Home() {
         image: heroImage,
       },
     ],
-    [],
+    [portfolioSections],
   );
 
   return (

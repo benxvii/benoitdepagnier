@@ -2,7 +2,8 @@ import { Link, Navigate, useParams } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import GalleryPage from "./GalleryPage";
 import SectionHub from "./SectionHub";
-import { findPortfolioGallery, galleryCover, portfolio } from "../../config/site";
+import { findPortfolioGallery, portfolio } from "../../config/site";
+import { useRandomGalleryHubItems } from "./useRandomGalleryCovers";
 
 export default function PortfolioGallery() {
   const { slug, parentSlug } = useParams<{
@@ -10,6 +11,7 @@ export default function PortfolioGallery() {
     parentSlug?: string;
   }>();
   const gallery = slug ? findPortfolioGallery(slug, parentSlug) : undefined;
+  const subItems = useRandomGalleryHubItems(gallery?.subGalleries ?? []);
 
   if (!gallery) {
     return <Navigate to={portfolio.indexPath} replace />;
@@ -32,12 +34,7 @@ export default function PortfolioGallery() {
         <SectionHub
           title={gallery.title}
           intro={gallery.intro}
-          items={gallery.subGalleries.map((g) => ({
-            path: g.path,
-            title: g.title,
-            description: g.intro,
-            image: galleryCover(g),
-          }))}
+          items={subItems}
         />
       </div>
     );

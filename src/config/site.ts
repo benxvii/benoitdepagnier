@@ -25,6 +25,53 @@ const emaHommageCannonballAdderleyImages = [
     `/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral/${file}`,
 );
 
+const flousUrbainsImages = [
+  "/portfolio/flous-de-mouvements/flous-urbains/L1000870.jpg",
+];
+
+const streetPhotographyImages = [
+  "L1000824.jpg",
+  "L1000830.jpg",
+  "L1000857.jpg",
+  "L1000864.jpg",
+  "L1000864-1.jpg",
+  "L1000867.jpg",
+].map((file) => `/portfolio/street-photography/${file}`);
+
+const louisBilletteNuitImages = [
+  "L1070573.jpg",
+  "L1070577.jpg",
+  "L1070579.jpg",
+  "L1070580.jpg",
+  "L1070581.jpg",
+  "L1070584.jpg",
+  "L1070585.jpg",
+  "L1070586.jpg",
+  "L1070588.jpg",
+  "L1070589.jpg",
+  "L1070594.jpg",
+  "L1070597.jpg",
+  "L1070602.jpg",
+  "L1070603.jpg",
+  "L1070604.jpg",
+  "L1070605.jpg",
+  "L1070607.jpg",
+  "L1070609.jpg",
+  "L1070613.jpg",
+  "L1070621.jpg",
+  "L1070623.jpg",
+  "L1070624.jpg",
+  "L1070626.jpg",
+  "L1070629.jpg",
+  "L1070630.jpg",
+  "L1070631.jpg",
+  "L1070641.jpg",
+  "L1070650.jpg",
+].map(
+  (file) =>
+    `/portfolio/monde-de-la-musique/louis-billette-nuit/${file}`,
+);
+
 export const site = {
   name: "Benoît d'Epagnier",
   shortName: "Benoît d'Epagnier",
@@ -66,8 +113,16 @@ export const portfolio = {
       path: "/portfolio/flous-de-mouvements",
       title: "Les flous de mouvements",
       intro: "Explorations du mouvement et du temps long en photographie.",
-      coverImage: placeholderImage,
-      images: [placeholderImage, placeholderImage, placeholderImage],
+      subGalleries: [
+        {
+          slug: "flous-urbains",
+          path: "/portfolio/flous-de-mouvements/flous-urbains",
+          title: "Flous urbains",
+          intro: "Hermance, Genève (4 novembre 2025).",
+          coverImage: flousUrbainsImages[0],
+          images: flousUrbainsImages,
+        },
+      ],
     },
     {
       slug: "monde-de-la-musique",
@@ -78,10 +133,19 @@ export const portfolio = {
         {
           slug: "ema-hommage-cannonball-adderley-soral",
           path: "/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral",
-          title: "EMA Hommage Cannonball Adderley Soral",
-          intro: "Hommage à Cannonball Adderley — EMA Soral.",
+          title: "EMA Hommage Cannonball Adderley",
+          intro:
+            "Hommage à Cannonball Adderley par les professeurs de l'EMA, Soral (22 août 2025)",
           coverImage: emaHommageCannonballAdderleyImages[0],
           images: emaHommageCannonballAdderleyImages,
+        },
+        {
+          slug: "louis-billette-nuit",
+          path: "/portfolio/monde-de-la-musique/louis-billette-nuit",
+          title: "Louis Billette - NUiT",
+          intro: "Louis Billette — NUiT. Concert à la cave de l'AMR (22 septembre 2025).",
+          coverImage: louisBilletteNuitImages[0],
+          images: louisBilletteNuitImages,
         },
       ],
     },
@@ -90,8 +154,8 @@ export const portfolio = {
       path: "/portfolio/street-photography",
       title: "Street photography",
       intro: "Regards sur la ville et ses passants.",
-      coverImage: placeholderImage,
-      images: [placeholderImage, placeholderImage, placeholderImage],
+      coverImage: streetPhotographyImages[0],
+      images: streetPhotographyImages,
     },
   ] as readonly Gallery[],
 };
@@ -253,7 +317,12 @@ function pickRandomSubGalleryImage(gallery: Gallery): string | null {
   return images[Math.floor(Math.random() * images.length)];
 }
 
-/** Image de couverture stable (vignettes, hubs internes). */
+function pickRandomOwnImage(gallery: Gallery): string | null {
+  if (!gallery.images?.length) return null;
+  return gallery.images[Math.floor(Math.random() * gallery.images.length)];
+}
+
+/** Image de couverture stable (fallback). */
 export function galleryCover(gallery: Gallery): string {
   if (gallery.coverImage) return gallery.coverImage;
   if (gallery.images?.[0]) return gallery.images[0];
@@ -261,9 +330,13 @@ export function galleryCover(gallery: Gallery): string {
   return placeholderImage;
 }
 
-/** Image de couverture aléatoire (page Portfolio, accueil). */
+/** Image de couverture aléatoire (tous les niveaux du portfolio). */
 export function randomGalleryCover(gallery: Gallery): string {
-  return pickRandomSubGalleryImage(gallery) ?? galleryCover(gallery);
+  return (
+    pickRandomSubGalleryImage(gallery) ??
+    pickRandomOwnImage(gallery) ??
+    galleryCover(gallery)
+  );
 }
 
 export function findPortfolioGallery(
