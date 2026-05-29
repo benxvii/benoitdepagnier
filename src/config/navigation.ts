@@ -1,6 +1,6 @@
 import { musique, portfolio, projets } from "./site";
 
-export type NavItem =
+export type NavSubLink =
   | { path: string; label: string }
   | {
       label: string;
@@ -8,24 +8,47 @@ export type NavItem =
       subLinks: { path: string; label: string }[];
     };
 
+export type NavItem =
+  | { path: string; label: string }
+  | {
+      label: string;
+      path?: string;
+      subLinks: NavSubLink[];
+    };
+
+function galleryNavLinks(): NavSubLink[] {
+  return portfolio.galleries.map((g) => {
+    if (g.subGalleries?.length) {
+      return {
+        label: g.title,
+        path: g.path,
+        subLinks: g.subGalleries.map((s) => ({
+          path: s.path,
+          label: s.title,
+        })),
+      };
+    }
+    return { path: g.path, label: g.title };
+  });
+}
+
+function collectSubLinkPaths(links: readonly NavSubLink[]): string[] {
+  return links.flatMap((link) => {
+    if ("subLinks" in link) {
+      const paths = link.path ? [link.path] : [];
+      return [...paths, ...collectSubLinkPaths(link.subLinks)];
+    }
+    return [link.path];
+  });
+}
+
 export const mainNavigation: NavItem[] = [
   {
     label: portfolio.title,
     path: portfolio.indexPath,
     subLinks: [
       { path: portfolio.indexPath, label: "Toutes les galeries" },
-      ...portfolio.galleries.flatMap((g) => {
-        const links = [{ path: g.path, label: g.title }];
-        if (g.subGalleries) {
-          links.push(
-            ...g.subGalleries.map((s) => ({
-              path: s.path,
-              label: s.title,
-            })),
-          );
-        }
-        return links;
-      }),
+      ...galleryNavLinks(),
     ],
   },
   {
@@ -63,5 +86,7 @@ export function isNavSectionActive(
   item: Extract<NavItem, { subLinks: unknown }>,
 ): boolean {
   if (item.path && isNavActive(pathname, item.path)) return true;
-  return item.subLinks.some((s) => isNavActive(pathname, s.path));
+  return collectSubLinkPaths(item.subLinks).some((path) =>
+    isNavActive(pathname, path),
+  );
 }

@@ -16,7 +16,7 @@ export default function GalleryPage({ title, intro, images }: GalleryPageProps) 
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <GalleryGrid images={images} title={title} />
       </section>
     </div>
@@ -31,18 +31,17 @@ function GalleryGrid({
   title: string;
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="flex flex-col gap-12">
       {images.map((src, index) => (
-        <div
-          key={`${title}-${index}`}
-          className="group relative aspect-[4/5] overflow-hidden cursor-pointer"
-        >
+        <figure key={`${title}-${index}`} className="w-full">
           <ImageWithFallback
             src={src}
             alt={`${title} ${index + 1}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            decoding="async"
+            className="block w-full h-auto max-w-full"
           />
-        </div>
+        </figure>
       ))}
     </div>
   );

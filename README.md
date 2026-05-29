@@ -22,6 +22,32 @@ Tout le contenu éditable est dans `src/config/site.ts` :
 | Musique | `musique.pages` | `/musique`, `/musique/:slug` |
 | À propos | `about` | `/about` |
 
+## Déploiement automatique (Infomaniak)
+
+Chaque push sur `main` build le site et l’envoie sur Infomaniak via FTP.
+
+### Configuration unique sur GitHub
+
+Repo **Settings → Secrets and variables → Actions → New repository secret** :
+
+| Secret | Exemple | Où le trouver |
+|--------|---------|---------------|
+| `FTP_HOST` | `xxx.ftp.infomaniak.com` ou `ftp.benoitdepagnier.ch` | Manager Infomaniak → Hébergement Web → FTP / SSH |
+| `FTP_USER` | identifiant FTP | même écran |
+| `FTP_PASSWORD` | mot de passe FTP | même écran |
+
+Le déploiement cible le dossier `sites/benoitdepagnier.ch/` (comme le Web FTP). Si ton chemin diffère, modifie `server-dir` dans `.github/workflows/deploy.yml`.
+
+### Usage
+
+```bash
+git add .
+git commit -m "Ma modification"
+git push
+```
+
+GitHub Actions build puis upload `dist/`. Compte 2 à 5 minutes. Suivi : onglet **Actions** du repo GitHub.
+
 ## Images
 
 1. Copiez `.env.example` vers `.env` et renseignez `VITE_CLOUDINARY_CLOUD_NAME`.

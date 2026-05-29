@@ -1,37 +1,41 @@
+import { useMemo } from "react";
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import {
-  galleryCover,
   homeIntro,
   musique,
   portfolio,
   projets,
+  randomGalleryCover,
   site,
 } from "../../config/site";
 
 const heroImage =
   "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=1920&h=1080&fit=crop";
 
-const homeSections = [
-  ...portfolio.galleries.map((g) => ({
-    path: g.path,
-    title: g.title,
-    image: galleryCover(g),
-  })),
-  {
-    path: projets.indexPath,
-    title: projets.title,
-    image: projets.items[0]?.image ?? heroImage,
-  },
-  {
-    path: musique.indexPath,
-    title: musique.title,
-    image: heroImage,
-  },
-];
-
 export default function Home() {
+  const homeSections = useMemo(
+    () => [
+      ...portfolio.galleries.map((g) => ({
+        path: g.path,
+        title: g.title,
+        image: randomGalleryCover(g),
+      })),
+      {
+        path: projets.indexPath,
+        title: projets.title,
+        image: projets.items[0]?.image ?? heroImage,
+      },
+      {
+        path: musique.indexPath,
+        title: musique.title,
+        image: heroImage,
+      },
+    ],
+    [],
+  );
+
   return (
     <div>
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gray-50">

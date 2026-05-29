@@ -1,6 +1,30 @@
 const placeholderImage =
   "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
 
+const emaHommageCannonballAdderleyImages = [
+  "L1070155.jpg",
+  "L1070156.jpg",
+  "L1070159.jpg",
+  "L1070161.jpg",
+  "L1070162.jpg",
+  "L1070163.jpg",
+  "L1070164.jpg",
+  "L1070167.jpg",
+  "L1070168.jpg",
+  "L1070169.jpg",
+  "L1070170.jpg",
+  "L1070172.jpg",
+  "L1070173.jpg",
+  "L1070175.jpg",
+  "L1070176.jpg",
+  "L1070178.jpg",
+  "L1070179.jpg",
+  "L1070186.jpg",
+].map(
+  (file) =>
+    `/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral/${file}`,
+);
+
 export const site = {
   name: "Benoît d'Epagnier",
   shortName: "Benoît d'Epagnier",
@@ -50,15 +74,14 @@ export const portfolio = {
       path: "/portfolio/monde-de-la-musique",
       title: "Le monde de la musique",
       intro: "Scènes, musiciens et ambiance autour de la musique.",
-      coverImage: placeholderImage,
       subGalleries: [
         {
           slug: "ema-hommage-cannonball-adderley-soral",
           path: "/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral",
           title: "EMA Hommage Cannonball Adderley Soral",
           intro: "Hommage à Cannonball Adderley — EMA Soral.",
-          coverImage: placeholderImage,
-          images: [placeholderImage, placeholderImage, placeholderImage],
+          coverImage: emaHommageCannonballAdderleyImages[0],
+          images: emaHommageCannonballAdderleyImages,
         },
       ],
     },
@@ -217,12 +240,30 @@ export const homeIntro = {
     "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications.",
 } as const;
 
-/** Image de couverture pour une galerie ou un hub */
+function pickRandomSubGalleryImage(gallery: Gallery): string | null {
+  if (!gallery.subGalleries?.length) return null;
+
+  const subsWithImages = gallery.subGalleries.filter(
+    (sub) => sub.images && sub.images.length > 0,
+  );
+  if (subsWithImages.length === 0) return null;
+
+  const sub = subsWithImages[Math.floor(Math.random() * subsWithImages.length)];
+  const images = sub.images!;
+  return images[Math.floor(Math.random() * images.length)];
+}
+
+/** Image de couverture stable (vignettes, hubs internes). */
 export function galleryCover(gallery: Gallery): string {
   if (gallery.coverImage) return gallery.coverImage;
   if (gallery.images?.[0]) return gallery.images[0];
   if (gallery.subGalleries?.[0]) return galleryCover(gallery.subGalleries[0]);
   return placeholderImage;
+}
+
+/** Image de couverture aléatoire (page Portfolio, accueil). */
+export function randomGalleryCover(gallery: Gallery): string {
+  return pickRandomSubGalleryImage(gallery) ?? galleryCover(gallery);
 }
 
 export function findPortfolioGallery(
