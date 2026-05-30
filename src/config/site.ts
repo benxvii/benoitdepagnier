@@ -1,3 +1,5 @@
+import { assetUrl } from "./assetUrl";
+
 const placeholderImage =
   "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
 
@@ -20,9 +22,10 @@ const emaHommageCannonballAdderleyImages = [
   "L1070178.jpg",
   "L1070179.jpg",
   "L1070186.jpg",
-].map(
-  (file) =>
+].map((file) =>
+  assetUrl(
     `/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral/${file}`,
+  ),
 );
 
 const flousUrbainsImages = [
@@ -46,7 +49,9 @@ const flousUrbainsImages = [
   "Chine-065.jpg",
   "Chine-136.jpg",
   "Chine-137.jpg",
-].map((file) => `/portfolio/flous-de-mouvements/flous-urbains/${file}`);
+].map((file) =>
+  assetUrl(`/portfolio/flous-de-mouvements/flous-urbains/${file}`),
+);
 
 const streetPhotographyImages = [
   "L1000824.jpg",
@@ -55,7 +60,7 @@ const streetPhotographyImages = [
   "L1000864.jpg",
   "L1000864-1.jpg",
   "L1000867.jpg",
-].map((file) => `/portfolio/street-photography/${file}`);
+].map((file) => assetUrl(`/portfolio/street-photography/${file}`));
 
 const louisBilletteNuitImages = [
   "L1070573.jpg",
@@ -86,9 +91,8 @@ const louisBilletteNuitImages = [
   "L1070631.jpg",
   "L1070641.jpg",
   "L1070650.jpg",
-].map(
-  (file) =>
-    `/portfolio/monde-de-la-musique/louis-billette-nuit/${file}`,
+].map((file) =>
+  assetUrl(`/portfolio/monde-de-la-musique/louis-billette-nuit/${file}`),
 );
 
 export const site = {
@@ -99,7 +103,7 @@ export const site = {
   instagram: "https://www.instagram.com/benxvii/",
   facebook: "https://www.facebook.com/bdepagnier",
   linkedin: "https://www.linkedin.com/in/bdepagnier/",
-  logoSrc: "/logo.png",
+  logoSrc: assetUrl("/logo.png"),
   copyrightYear: new Date().getFullYear(),
 } as const;
 
@@ -208,14 +212,14 @@ export const projets = {
       title: "ImageCount",
       description:
         "Compte les images d'un répertoire (extensions, tailles, arborescence) sans base de données ni IA.",
-      image: "/projets/imagecount.png",
+      image: assetUrl("/projets/imagecount.png"),
       body: `Application Flet standalone extraite du module Analyse d'ImageScribe.
 
 Sélectionnez un répertoire et obtenez des statistiques détaillées : nombre d'images par extension, répartition des tailles, exploration de l'arborescence avec filtres de profondeur. Idéal pour faire le point sur un disque ou un NAS avant un tri ou une importation.
 
 Disponible sur macOS et Windows.`,
       downloads: [
-        { label: "macOS", url: "/downloads/ImageCount-mac.zip" },
+        { label: "macOS", url: assetUrl("/downloads/ImageCount-mac.zip") },
         { label: "Windows", url: "#" },
       ],
     },
@@ -225,7 +229,7 @@ Disponible sur macOS et Windows.`,
       title: "ImageSweep",
       description:
         "Détecte les doublons exacts et les images visuellement similaires dans vos répertoires photo.",
-      image: "/projets/imagesweep.png",
+      image: assetUrl("/projets/imagesweep.png"),
       body: `ImageSweep parcourt un répertoire et repère les images en double selon deux modes :
 
 • Doublons exacts — comparaison par empreinte SHA-256
@@ -235,7 +239,7 @@ Les résultats sont regroupés avec vignettes et exportables en rapport HTML. Fo
 
 Disponible sur macOS et Windows.`,
       downloads: [
-        { label: "macOS", url: "/downloads/ImageSweep-mac.zip" },
+        { label: "macOS", url: assetUrl("/downloads/ImageSweep-mac.zip") },
         { label: "Windows", url: "#" },
       ],
     },
@@ -245,7 +249,7 @@ Disponible sur macOS et Windows.`,
       title: "ImageScribe",
       description:
         "Catalogue vos images par IA : analyse, tags automatiques et recherche dans une base SQLite.",
-      image: "/projets/imagescribe.png",
+      image: assetUrl("/projets/imagescribe.png"),
       body: `ImageScribe construit un catalogue d'images après identification d'objets sur les photos, pour retrouver facilement vos fichiers par la suite.
 
 Quatre vues principales :
@@ -255,7 +259,9 @@ Quatre vues principales :
 • Recherche d'images — recherche par tags et texte libre dans le catalogue`,
       notice:
         "Bêta en cours — ImageScribe est téléchargeable mais encore en développement. L'import, les vignettes et la recherche EXIF fonctionnent. L'analyse IA (tags et légendes Gemini) arrive dans une prochaine version ; aucune clé API n'est requise pour l'instant.",
-      downloads: [{ label: "macOS", url: "/downloads/ImageScribe-mac.zip" }],
+      downloads: [
+        { label: "macOS", url: assetUrl("/downloads/ImageScribe-mac.zip") },
+      ],
     },
     {
       slug: "performance-de-portefeuille",
@@ -306,7 +312,7 @@ export const musique = {
       path: "/musique/enregistrements/agua-viva-y-ardiente",
       title: "Agua Viva Y Ardiente",
       subtitle: "Un hommage à Tito Puente",
-      coverImage: "/musique/agua-viva-y-ardiente-cover.jpg",
+      coverImage: assetUrl("/musique/agua-viva-y-ardiente-cover.jpg"),
       discogsUrl:
         "https://www.discogs.com/release/18151513-Hev-Big-Band-Daniele-Verdesca-Agua-Viva-Y-Ardiente-Un-Hommage-%C3%80-Tito-Puente",
       artists: "HEV Big Band · Daniel Verdesca",
@@ -364,7 +370,7 @@ export function findMusiqueRecording(slug: string): MusiqueRecording | undefined
 export const about = {
   path: "/about",
   title: "Qui suis-je ?",
-  portraitImage: "/about/portrait.jpg",
+  portraitImage: assetUrl("/about/portrait.jpg"),
   portraitCaption: "Salon Watches & Wonders 2025, Genève",
   paragraphs: [
     "Passionné depuis toujours de photographie, j'ai réalisé mes premières images grâce aux appareils de mon papa, puis à ceux que j'ai reçus, achetés ou qui m'ont gentiment été prêtés. Déjà enfant, j'avais souvent un appareil dans les mains pour aller faire des images autour de chez moi, ou que j'emmenais lors des sorties scolaires et autres événements.",

@@ -46,13 +46,9 @@ git commit -m "Ma modification"
 git push
 ```
 
-GitHub Actions build puis upload `dist/`. Compte 2 à 5 minutes. Suivi : onglet **Actions** du repo GitHub.
+GitHub Actions build puis upload `dist/` (HTML, JS, CSS, logo uniquement). Les photos et ZIP restent sur Infomaniak, hors Git. Compte ~1 minute en pratique. Suivi : onglet **Actions** du repo GitHub.
 
-## Images
-
-1. Copiez `.env.example` vers `.env` et renseignez `VITE_CLOUDINARY_CLOUD_NAME`.
-2. Uploadez vos photos sur Cloudinary et utilisez `resolveImageUrl()` dans `src/lib/cloudinary.ts`.
-3. En attendant, des placeholders Unsplash sont utilisés.
+Voir **[docs/MEDIA.md](docs/MEDIA.md)** pour gérer portfolio, téléchargements et dev local.
 
 ## Personnalisation
 
