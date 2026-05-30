@@ -13,9 +13,15 @@ type SectionHubProps = {
   title: string;
   intro: string;
   items: readonly HubItem[];
+  linkLabel?: string;
 };
 
-export default function SectionHub({ title, intro, items }: SectionHubProps) {
+export default function SectionHub({
+  title,
+  intro,
+  items,
+  linkLabel = "Voir le projet",
+}: SectionHubProps) {
   return (
     <div>
       <section className="py-20 bg-gray-50">
@@ -49,7 +55,7 @@ function HubGrid({ items }: { items: readonly HubItem[] }) {
           </h2>
           <p className="text-gray-600 mb-4">{item.description}</p>
           <span className="inline-flex items-center gap-2 text-sm text-[var(--brand)]">
-            Voir le projet
+            {linkLabel}
             <ArrowRight size={16} />
           </span>
         </Link>
