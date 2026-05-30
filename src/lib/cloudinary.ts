@@ -26,7 +26,10 @@ export function cloudinaryUrl(
   const transformSegment =
     transforms.length > 0 ? `${transforms.join(",")}/` : "";
   const folder = import.meta.env.VITE_CLOUDINARY_FOLDER;
-  const path = folder ? `${folder}/${publicId}` : publicId;
+  const path =
+    folder && !publicId.startsWith(`${folder}/`)
+      ? `${folder}/${publicId}`
+      : publicId;
 
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transformSegment}${path}`;
 }

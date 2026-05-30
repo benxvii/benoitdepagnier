@@ -36,7 +36,49 @@ VITE_MEDIA_BASE_URL=https://benoitdepagnier.ch
 2. Mettre à jour les chemins dans `src/config/site.ts` si besoin.
 3. Commit uniquement le code, pas les fichiers binaires.
 
-Ne pas réactiver `dangerous-clean-slate` sur le déploiement FTP : cela supprimerait les médias absents du `dist/` généré par CI.
+Ne pas réactiver `dangerous-clean-slate` sur le déploiement FTP.
+
+Le workflow exclut `portfolio/`, `downloads/`, etc. du sync FTP pour ne **pas les supprimer** sur le serveur quand ils ne sont plus dans `dist/`.
+
+### Photos cassées (icône / emoji) après un déploiement
+
+Si le navigateur affiche une icône à la place des photos : les JPG ne sont plus sur le serveur, et Apache renvoie `index.html` (SPA).
+
+### GitHub Secrets : pourquoi la commande locale ne « voit » pas tes valeurs
+
+Les secrets dans GitHub sont **utilisables uniquement dans Actions**. GitHub ne permet pas de les relire après création (pas de bouton « afficher le mot de passe »).  
+Donc `FTP_HOST='ton-host-ftp'` dans le terminal ne peut pas magiquement prendre les valeurs du repo : il faut soit les recopier depuis **Infomaniak Manager → FTP**, soit passer par le workflow ci-dessous.
+
+### Remise en ligne avec les secrets GitHub (sans les taper)
+
+Workflow **Sync media to Infomaniak** (`.github/workflows/sync-media.yml`) :
+
+1. **Une fois**, sur ton Mac (les fichiers sont déjà dans `public/`) :
+
+```bash
+git add -f public/portfolio public/downloads public/about public/musique public/projets
+git commit -m "chore: sync media vers Infomaniak"
+git push
+```
+
+2. GitHub → **Actions** → **Sync media to Infomaniak** → **Run workflow**.
+
+3. Attendre la fin (~10–20 min selon la connexion).
+
+4. Vérifier : `curl -sI https://benoitdepagnier.ch/portfolio/.../L1000870.jpg` → `image/jpeg`.
+
+5. **Optionnel** — retirer les binaires du suivi Git (ils restent sur Infomaniak) :
+
+```bash
+git rm -r --cached public/portfolio public/downloads public/about public/musique public/projets
+git commit -m "chore: médias hors Git (déjà sur le serveur)"
+git push
+```
+
+### Autres options
+
+- **FileZilla** — identifiants dans Infomaniak Manager (souvent les mêmes que ceux entrés dans GitHub Secrets), dossier `sites/benoitdepagnier.ch/`.
+- **Script local** — `scripts/sync-media-to-infomaniak.sh` avec identifiants Infomaniak en ligne de commande (pas les placeholders `ton-host-ftp`).
 
 ## Cloudinary (optionnel)
 

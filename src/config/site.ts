@@ -3,98 +3,6 @@ import { assetUrl } from "./assetUrl";
 const placeholderImage =
   "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
 
-const emaHommageCannonballAdderleyImages = [
-  "L1070155.jpg",
-  "L1070156.jpg",
-  "L1070159.jpg",
-  "L1070161.jpg",
-  "L1070162.jpg",
-  "L1070163.jpg",
-  "L1070164.jpg",
-  "L1070167.jpg",
-  "L1070168.jpg",
-  "L1070169.jpg",
-  "L1070170.jpg",
-  "L1070172.jpg",
-  "L1070173.jpg",
-  "L1070175.jpg",
-  "L1070176.jpg",
-  "L1070178.jpg",
-  "L1070179.jpg",
-  "L1070186.jpg",
-].map((file) =>
-  assetUrl(
-    `/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral/${file}`,
-  ),
-);
-
-const flousUrbainsImages = [
-  "L1000870.jpg",
-  "L1000346.jpg",
-  "L1000350.jpg",
-  "L1000351.jpg",
-  "L1000353.jpg",
-  "L1090291.jpg",
-  "L1120687.jpg",
-  "L1120688.jpg",
-  "L1140591.jpg",
-  "L1140596.jpg",
-  "Chine-132.jpg",
-  "Chine-133.jpg",
-  "Chine-002.jpg",
-  "Chine-031.jpg",
-  "Chine-032.jpg",
-  "Chine-048.jpg",
-  "Chine-051.jpg",
-  "Chine-065.jpg",
-  "Chine-136.jpg",
-  "Chine-137.jpg",
-].map((file) =>
-  assetUrl(`/portfolio/flous-de-mouvements/flous-urbains/${file}`),
-);
-
-const streetPhotographyImages = [
-  "L1000824.jpg",
-  "L1000830.jpg",
-  "L1000857.jpg",
-  "L1000864.jpg",
-  "L1000864-1.jpg",
-  "L1000867.jpg",
-].map((file) => assetUrl(`/portfolio/street-photography/${file}`));
-
-const louisBilletteNuitImages = [
-  "L1070573.jpg",
-  "L1070577.jpg",
-  "L1070579.jpg",
-  "L1070580.jpg",
-  "L1070581.jpg",
-  "L1070584.jpg",
-  "L1070585.jpg",
-  "L1070586.jpg",
-  "L1070588.jpg",
-  "L1070589.jpg",
-  "L1070594.jpg",
-  "L1070597.jpg",
-  "L1070602.jpg",
-  "L1070603.jpg",
-  "L1070604.jpg",
-  "L1070605.jpg",
-  "L1070607.jpg",
-  "L1070609.jpg",
-  "L1070613.jpg",
-  "L1070621.jpg",
-  "L1070623.jpg",
-  "L1070624.jpg",
-  "L1070626.jpg",
-  "L1070629.jpg",
-  "L1070630.jpg",
-  "L1070631.jpg",
-  "L1070641.jpg",
-  "L1070650.jpg",
-].map((file) =>
-  assetUrl(`/portfolio/monde-de-la-musique/louis-billette-nuit/${file}`),
-);
-
 export const site = {
   name: "Benoît d'Epagnier",
   shortName: "Benoît d'Epagnier",
@@ -112,8 +20,6 @@ export type Gallery = {
   path: string;
   title: string;
   intro: string;
-  coverImage?: string;
-  images?: readonly string[];
   subGalleries?: readonly Gallery[];
 };
 
@@ -128,8 +34,6 @@ export const portfolio = {
       path: "/portfolio/mes-appareils",
       title: "Mes appareils",
       intro: "Les boîtiers et objectifs qui ont accompagné mon parcours photographique.",
-      coverImage: placeholderImage,
-      images: [placeholderImage, placeholderImage, placeholderImage],
     },
     {
       slug: "flous-de-mouvements",
@@ -142,8 +46,6 @@ export const portfolio = {
           path: "/portfolio/flous-de-mouvements/flous-urbains",
           title: "Flous urbains",
           intro: "",
-          coverImage: flousUrbainsImages[0],
-          images: flousUrbainsImages,
         },
       ],
     },
@@ -159,16 +61,12 @@ export const portfolio = {
           title: "EMA Hommage Cannonball Adderley",
           intro:
             "Hommage à Cannonball Adderley par les professeurs de l'EMA, Soral (22 août 2025)",
-          coverImage: emaHommageCannonballAdderleyImages[0],
-          images: emaHommageCannonballAdderleyImages,
         },
         {
           slug: "louis-billette-nuit",
           path: "/portfolio/monde-de-la-musique/louis-billette-nuit",
           title: "Louis Billette - NUiT",
           intro: "Louis Billette — NUiT. Concert à la cave de l'AMR (22 septembre 2025).",
-          coverImage: louisBilletteNuitImages[0],
-          images: louisBilletteNuitImages,
         },
       ],
     },
@@ -177,8 +75,6 @@ export const portfolio = {
       path: "/portfolio/street-photography",
       title: "Street photography",
       intro: "Regards sur la ville et ses passants.",
-      coverImage: streetPhotographyImages[0],
-      images: streetPhotographyImages,
     },
   ] as readonly Gallery[],
 };
@@ -384,41 +280,6 @@ export const homeIntro = {
   quote:
     "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications.",
 } as const;
-
-function pickRandomSubGalleryImage(gallery: Gallery): string | null {
-  if (!gallery.subGalleries?.length) return null;
-
-  const subsWithImages = gallery.subGalleries.filter(
-    (sub) => sub.images && sub.images.length > 0,
-  );
-  if (subsWithImages.length === 0) return null;
-
-  const sub = subsWithImages[Math.floor(Math.random() * subsWithImages.length)];
-  const images = sub.images!;
-  return images[Math.floor(Math.random() * images.length)];
-}
-
-function pickRandomOwnImage(gallery: Gallery): string | null {
-  if (!gallery.images?.length) return null;
-  return gallery.images[Math.floor(Math.random() * gallery.images.length)];
-}
-
-/** Image de couverture stable (fallback). */
-export function galleryCover(gallery: Gallery): string {
-  if (gallery.coverImage) return gallery.coverImage;
-  if (gallery.images?.[0]) return gallery.images[0];
-  if (gallery.subGalleries?.[0]) return galleryCover(gallery.subGalleries[0]);
-  return placeholderImage;
-}
-
-/** Image de couverture aléatoire (tous les niveaux du portfolio). */
-export function randomGalleryCover(gallery: Gallery): string {
-  return (
-    pickRandomSubGalleryImage(gallery) ??
-    pickRandomOwnImage(gallery) ??
-    galleryCover(gallery)
-  );
-}
 
 export function findPortfolioGallery(
   slug: string,

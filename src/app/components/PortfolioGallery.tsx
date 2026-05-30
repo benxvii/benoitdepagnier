@@ -3,6 +3,11 @@ import { ArrowLeft } from "lucide-react";
 import GalleryPage from "./GalleryPage";
 import SectionHub from "./SectionHub";
 import { findPortfolioGallery, portfolio } from "../../config/site";
+import { useGalleries } from "../../hooks/useGalleries";
+import {
+  findManifestGallery,
+  galleryImageUrls,
+} from "../../lib/galleryImages";
 import { useRandomGalleryHubItems } from "./useRandomGalleryCovers";
 
 export default function PortfolioGallery() {
@@ -11,6 +16,7 @@ export default function PortfolioGallery() {
     parentSlug?: string;
   }>();
   const gallery = slug ? findPortfolioGallery(slug, parentSlug) : undefined;
+  const { galleries: manifestGalleries, loading, error } = useGalleries();
   const subItems = useRandomGalleryHubItems(gallery?.subGalleries ?? []);
 
   if (!gallery) {
@@ -42,9 +48,15 @@ export default function PortfolioGallery() {
   }
 
   const backPath = parentSlug
-    ? portfolio.galleries.find((g) => g.slug === parentSlug)?.path ??
-      portfolio.indexPath
+    ? (portfolio.galleries.find((g) => g.slug === parentSlug)?.path ??
+      portfolio.indexPath)
     : portfolio.indexPath;
+
+  const manifestEntry =
+    slug && findManifestGallery(manifestGalleries, slug, parentSlug);
+  const images = manifestEntry
+    ? galleryImageUrls(manifestEntry.images, 2000)
+    : [];
 
   return (
     <div>
@@ -62,7 +74,14 @@ export default function PortfolioGallery() {
       <GalleryPage
         title={gallery.title}
         intro={gallery.intro}
-        images={gallery.images ?? []}
+        images={images}
+        loading={loading}
+        error={error}
+        emptyMessage={
+          !loading && images.length === 0
+            ? "Aucune photo pour cette galerie. Upload sur Cloudinary puis lance le workflow « Sync galleries from Cloudinary »."
+            : undefined
+        }
       />
     </div>
   );

@@ -1,0 +1,72 @@
+name: Sync galleries from Cloudinary
+
+on:
+  schedule:
+    # Toutes les 6 heures (UTC)
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      cloudinary_folder:
+        description: "Dossier racine Cloudinary (ex. benoit, site2)"
+        required: false
+        type: string
+
+concurrency:
+  group: sync-galleries-${{ github.event.inputs.cloudinary_folder || secrets.CLOUDINARY_FOLDER || 'default' }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Vérifier les secrets Cloudinary
+        env:
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          CLOUDINARY_FOLDER: ${{ github.event.inputs.cloudinary_folder || secrets.CLOUDINARY_FOLDER }}
+        run: |
+          missing=0
+          for var in CLOUDINARY_CLOUD_NAME CLOUDINARY_API_KEY CLOUDINARY_API_SECRET CLOUDINARY_FOLDER; do
+            if [ -z "${!var}" ]; then
+              echo "::error::Secret ou input manquant : $var"
+              missing=1
+            fi
+          done
+          if [ "$missing" = 1 ]; then
+            echo ""
+            echo "Ajoute dans GitHub → Settings → Secrets → Actions :"
+            echo "  CLOUDINARY_CLOUD_NAME"
+            echo "  CLOUDINARY_API_KEY"
+            echo "  CLOUDINARY_API_SECRET"
+            echo "  CLOUDINARY_FOLDER  (ex. benoit)"
+            exit 1
+          fi
+
+      - name: Générer et uploader _galleries.json
+        env:
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          CLOUDINARY_FOLDER: ${{ github.event.inputs.cloudinary_folder || secrets.CLOUDINARY_FOLDER }}
+        run: node scripts/sync-galleries.mjs
+
+      - name: Rappel vérification
+        env:
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_FOLDER: ${{ github.event.inputs.cloudinary_folder || secrets.CLOUDINARY_FOLDER }}
+        run: |
+          echo "Vérifie le manifest :"
+          echo "  curl -s https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/raw/upload/${CLOUDINARY_FOLDER}/_galleries.json | head"
+          echo ""
+          echo "Après upload de nouvelles photos sur Cloudinary, relance ce workflow ou attends le cron (6 h)."

@@ -1,0 +1,57 @@
+name: Sync media to Infomaniak
+
+# Utilise les secrets GitHub (FTP_*) — pas besoin de les taper en local.
+# Les médias doivent être présents dans le dépôt pour ce run (voir docs/MEDIA.md).
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Vérifier la présence des médias
+        run: |
+          missing=0
+          for dir in portfolio downloads about musique projets; do
+            if [ ! -d "public/$dir" ] || [ -z "$(ls -A "public/$dir" 2>/dev/null)" ]; then
+              echo "::error::public/$dir est absent ou vide sur ce commit."
+              missing=1
+            fi
+          done
+          if [ "$missing" = 1 ]; then
+            echo ""
+            echo "Les dossiers sont gitignorés : GitHub ne les reçoit pas au push habituel."
+            echo "Une fois, sur ton Mac :"
+            echo "  git add -f public/portfolio public/downloads public/about public/musique public/projets"
+            echo "  git commit -m \"chore: sync media vers Infomaniak\""
+            echo "  git push"
+            echo "Puis relance ce workflow. Ensuite tu pourras les retirer du suivi Git (voir docs/MEDIA.md)."
+            exit 1
+          fi
+
+      - name: Upload médias via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public/
+          server-dir: ./sites/benoitdepagnier.ch/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            logo.png
+            .htaccess
+
+      - name: Rappel vérification
+        run: |
+          echo "Quand c'est fini, vérifie :"
+          echo "  curl -sI https://benoitdepagnier.ch/portfolio/flous-de-mouvements/flous-urbains/L1000870.jpg | grep -i content-type"
+          echo "  → doit afficher image/jpeg"
