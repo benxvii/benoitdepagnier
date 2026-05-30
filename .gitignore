@@ -5,10 +5,3 @@ dist
 .env.local
 .env.*.local
 *.log
-
-# Médias hébergés sur Infomaniak (voir docs/MEDIA.md)
-/public/portfolio/
-/public/downloads/
-/public/about/
-/public/musique/
-/public/projets/

@@ -37,4 +37,3 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: ./sites/benoitdepagnier.ch/
-          # Ne pas effacer le serveur : portfolio, downloads, etc. restent sur Infomaniak (hors Git).
