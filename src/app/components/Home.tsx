@@ -5,6 +5,7 @@ import {
   about,
   homeIntro,
   musique,
+  musiquePageImage,
   portfolio,
   visiblePortfolioGalleries,
   projets,
@@ -33,13 +34,10 @@ export default function Home() {
     image: p.image,
   }));
 
-  const recordingCover = musique.recordings[0]?.coverImage;
   const musiqueCards: HomeCard[] = musique.pages.map((page) => ({
     path: page.path,
     title: page.title,
-    image:
-      page.image ??
-      (page.slug === "enregistrements" ? recordingCover : undefined),
+    image: musiquePageImage(page),
   }));
 
   return (
@@ -102,8 +100,7 @@ export default function Home() {
             </div>
             <div className="lg:col-span-3 flex flex-col justify-center text-center lg:text-left">
               <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-                Passionné de photographie depuis l'enfance, saxophoniste et
-                développeur d'applications.
+                {about.paragraphs[0]}
               </p>
               <Link
                 to={about.path}

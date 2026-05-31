@@ -307,22 +307,32 @@ export function findMusiqueRecording(slug: string): MusiqueRecording | undefined
   return musique.recordings.find((r) => r.slug === slug);
 }
 
+export function musiquePageImage(page: MusiquePage): string | undefined {
+  if (page.image) return page.image;
+  if (page.slug === "enregistrements") {
+    return musique.recordings[0]?.coverImage;
+  }
+  return undefined;
+}
+
 export const about = {
   path: "/about",
   title: "Qui suis-je ?",
   portraitImage: assetUrl("/about/portrait.jpg"),
   portraitCaption: "Salon Watches & Wonders 2025, Genève",
   paragraphs: [
-    "Passionné depuis toujours de photographie, j'ai réalisé mes premières images grâce aux appareils de mon papa, puis à ceux que j'ai reçus, achetés ou qui m'ont gentiment été prêtés. Déjà enfant, j'avais souvent un appareil dans les mains pour aller faire des images autour de chez moi, ou que j'emmenais lors des sorties scolaires et autres événements.",
-    "À 12 ans, j'ai reçu mon premier appareil professionnel, un Nikon F2 Photomic, avec trois objectifs : 35mm, 55mm micro et 200mm (merci à mon papa qui a racheté le matériel d'un de ses fournisseurs photographe).",
-    "À 15 ans, je me suis dirigé vers une formation bancaire (qui m'occupera par la suite) tout en continuant la photographie. À 19 ans, j'ai rencontré un grand professionnel de la photo sportive et pu passer quelques mois à ses côtés. C'est ainsi que j'ai vu mes premières images de photo de presse sportive publiées dans les quotidiens. Quelle fierté de découvrir sa photo dans les pages sports du journal La Suisse en partant travailler le lundi matin. C'est aussi l'époque où j'ai commencé à jouer du saxophone.",
-    "À 20 ans, je suis rentré chez un Banquier Privé, mais ça c'est une autre histoire.",
+    "Passionné depuis toujours de photographie, j'ai réalisé mes premières images grâce aux appareils de mon père, puis à ceux que j'ai reçus, achetés ou qui m'ont gentiment été prêtés. Déjà enfant, j'avais toujours un appareil dans les mains. Autour de chez moi, lors des sorties scolaires, à chaque occasion.",
+    "À 12 ans, j'ai reçu mon premier appareil professionnel, un Nikon F2 Photomic, avec trois objectifs : 35mm, 55mm micro et 200mm. Merci à mon papa qui a racheté le matériel d'un de ses fournisseurs photographe.",
+    "À 15 ans, je me suis dirigé vers une formation bancaire tout en continuant la photographie.",
+    "À 19 ans, j'ai rencontré Eric Lafargue, grand professionnel de la photo sportive, et passé quelques mois à ses côtés. C'est ainsi que mes premières images ont été publiées dans les quotidiens. Quelle fierté de découvrir mes photos dans les pages sports du journal « La Suisse » en partant travailler le lundi matin. C'est aussi l'époque où j'ai commencé à jouer du saxophone.",
+    "À 20 ans, je suis entré chez un banquier privé. Une carrière entre le business et l'informatique, sur des outils d'informatique décisionnelle. Mais ça, c'est une autre histoire.",
+    "À 55 ans, mon poste a été supprimé après 35 ans dans la même maison. J'ai choisi d'en faire une opportunité et me suis tourné vers le développement d'applications.",
   ],
 } as const;
 
 export const homeIntro = {
   quote:
-    "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications (depuis mes 56 ans).",
+    "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications (depuis mes 55 ans).",
 } as const;
 
 export function isGalleryVisible(gallery: Gallery): boolean {

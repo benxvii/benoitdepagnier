@@ -14,8 +14,10 @@ type SectionHubProps = {
   intro: string;
   items: readonly HubItem[];
   linkLabel?: string;
-  /** `icon` : vignette carrée sans bandes latérales (projets). */
+  /** `icon` : vignette carrée (projets, musique). */
   imageLayout?: "cover" | "icon";
+  /** Avec `icon` : `contain` pour logos, `cover` pour photos. */
+  imageFit?: "cover" | "contain";
 };
 
 export default function SectionHub({
@@ -24,6 +26,7 @@ export default function SectionHub({
   items,
   linkLabel = "Voir le projet",
   imageLayout = "cover",
+  imageFit = "contain",
 }: SectionHubProps) {
   return (
     <div>
@@ -35,7 +38,12 @@ export default function SectionHub({
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <HubGrid items={items} linkLabel={linkLabel} imageLayout={imageLayout} />
+        <HubGrid
+          items={items}
+          linkLabel={linkLabel}
+          imageLayout={imageLayout}
+          imageFit={imageFit}
+        />
       </section>
     </div>
   );
@@ -45,12 +53,15 @@ function HubGrid({
   items,
   linkLabel,
   imageLayout,
+  imageFit,
 }: {
   items: readonly HubItem[];
   linkLabel: string;
   imageLayout: "cover" | "icon";
+  imageFit: "cover" | "contain";
 }) {
   const isIcon = imageLayout === "icon";
+  const isCover = imageFit === "cover";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -59,7 +70,7 @@ function HubGrid({
           <div
             className={
               isIcon
-                ? "relative aspect-square overflow-hidden mb-4"
+                ? "relative aspect-square overflow-hidden mb-4 bg-gray-50"
                 : "relative aspect-[4/3] overflow-hidden mb-4 bg-gray-100"
             }
           >
@@ -67,14 +78,20 @@ function HubGrid({
               <ImageWithFallback
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                className={
+                  isIcon && isCover
+                    ? "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    : "w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                }
               />
             ) : null}
           </div>
           <h2 className="text-2xl mb-2 group-hover:text-[var(--brand)] transition-colors">
             {item.title}
           </h2>
-          <p className="text-gray-600 mb-4">{item.description}</p>
+          {item.description ? (
+            <p className="text-gray-600 mb-4">{item.description}</p>
+          ) : null}
           <span className="inline-flex items-center gap-2 text-sm text-[var(--brand)]">
             {linkLabel}
             <ArrowRight size={16} />
