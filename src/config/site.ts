@@ -315,11 +315,28 @@ export function musiquePageImage(page: MusiquePage): string | undefined {
   return undefined;
 }
 
+export type AboutPortrait = {
+  image: string;
+  caption: string;
+};
+
 export const about = {
   path: "/about",
   title: "Qui suis-je ?",
-  portraitImage: assetUrl("/about/portrait.jpg"),
-  portraitCaption: "Salon Watches & Wonders 2025, Genève",
+  portraits: [
+    {
+      image: assetUrl("/about/portrait.jpg"),
+      caption: "Salon Watches & Wonders 2025, Genève",
+    },
+    {
+      image: assetUrl("/about/nomades-technologies-2025.jpg"),
+      caption: "Nomades Technologies 2025, Genève",
+    },
+    {
+      image: assetUrl("/about/ema-school-2022.jpg"),
+      caption: "EMA School 2022, Genève",
+    },
+  ] as readonly AboutPortrait[],
   paragraphs: [
     "Passionné depuis toujours de photographie, j'ai réalisé mes premières images grâce aux appareils de mon père, puis à ceux que j'ai reçus, achetés ou qui m'ont gentiment été prêtés. Déjà enfant, j'avais toujours un appareil dans les mains. Autour de chez moi, lors des sorties scolaires, à chaque occasion.",
     "À 12 ans, j'ai reçu mon premier appareil professionnel, un Nikon F2 Photomic, avec trois objectifs : 35mm, 55mm micro et 200mm. Merci à mon papa qui a racheté le matériel d'un de ses fournisseurs photographe.",

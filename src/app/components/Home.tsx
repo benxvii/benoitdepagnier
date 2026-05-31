@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
+import { AboutPortraits } from "./AboutPortraits";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import {
   about,
@@ -85,18 +86,7 @@ export default function Home() {
           <h2 className="text-4xl mb-12 text-center">{about.title}</h2>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             <div className="flex flex-col max-w-sm mx-auto lg:max-w-none w-full">
-              <div className="relative aspect-square overflow-hidden bg-gray-50 mb-3">
-                <ImageWithFallback
-                  src={about.portraitImage}
-                  alt={site.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {about.portraitCaption ? (
-                <p className="text-center text-sm text-gray-500 leading-snug min-h-[3.25rem]">
-                  {about.portraitCaption}
-                </p>
-              ) : null}
+              <AboutPortraits variant="home" />
             </div>
             <div className="lg:col-span-3 flex flex-col justify-center text-center lg:text-left">
               <p className="text-xl text-gray-700 mb-8 leading-relaxed">
