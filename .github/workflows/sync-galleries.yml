@@ -12,7 +12,7 @@ on:
         type: string
 
 concurrency:
-  group: sync-galleries-${{ github.event.inputs.cloudinary_folder || secrets.CLOUDINARY_FOLDER || 'default' }}
+  group: sync-galleries-${{ github.event.inputs.cloudinary_folder || 'default' }}
   cancel-in-progress: false
 
 jobs:
