@@ -1,7 +1,7 @@
 type CloudinaryTransform = {
   width?: number;
   height?: number;
-  crop?: "fill" | "fit" | "scale";
+  crop?: "fill" | "fit" | "scale" | "limit";
   quality?: "auto";
   format?: "auto";
 };

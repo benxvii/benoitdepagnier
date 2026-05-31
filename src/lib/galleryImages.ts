@@ -41,8 +41,29 @@ export type GalleryImageEntry = {
   height: number;
 };
 
+export const GALLERY_THUMB_MAX = 300;
+
 export function galleryGridThumbUrl(publicId: string): string | null {
-  return cloudinaryUrl(publicId, { width: 400, crop: "scale" });
+  return cloudinaryUrl(publicId, {
+    width: GALLERY_THUMB_MAX,
+    height: GALLERY_THUMB_MAX,
+    crop: "limit",
+  });
+}
+
+/** Taille d'affichage vignette : la plus grande dimension vaut maxPx. */
+export function galleryThumbDisplaySize(
+  width: number,
+  height: number,
+  maxPx = GALLERY_THUMB_MAX,
+): { width: number; height: number } {
+  if (width <= 0 || height <= 0) {
+    return { width: maxPx, height: Math.round(maxPx * (2 / 3)) };
+  }
+  if (width >= height) {
+    return { width: maxPx, height: Math.round((maxPx * height) / width) };
+  }
+  return { width: Math.round((maxPx * width) / height), height: maxPx };
 }
 
 export function galleryOriginalUrl(
