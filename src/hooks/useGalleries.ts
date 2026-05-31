@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
-import { getManifestUrl } from "../lib/galleryManifest";
+import { getManifestUrls } from "../lib/galleryManifest";
 import type { GalleriesManifest, ManifestGallery } from "../types/galleries";
 
 let memoryCache: GalleriesManifest | null = null;
 let inflight: Promise<GalleriesManifest> | null = null;
 
-function manifestUrl(): string | undefined {
-  return getManifestUrl();
+function manifestUrls(): string[] {
+  return getManifestUrls();
+}
+
+async function fetchManifestFromUrl(url: string): Promise<GalleriesManifest> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Manifest HTTP ${response.status} (${url})`);
+  }
+  const data = (await response.json()) as GalleriesManifest;
+  if (!Array.isArray(data.galleries)) {
+    throw new Error("Manifest invalide (galleries manquant)");
+  }
+  return data;
 }
 
 async function fetchManifest(): Promise<GalleriesManifest> {
-  const url = manifestUrl();
-  if (!url) {
+  const urls = manifestUrls();
+  if (urls.length === 0) {
     throw new Error(
       "Variables Cloudinary absentes (.env). Redémarre npm run dev après modification du .env.",
     );
@@ -22,17 +34,20 @@ async function fetchManifest(): Promise<GalleriesManifest> {
   }
 
   if (!inflight) {
-    inflight = fetch(url).then(async (response) => {
-      if (!response.ok) {
-        throw new Error(`Manifest HTTP ${response.status}`);
+    inflight = (async () => {
+      let lastError: Error | null = null;
+      for (const url of urls) {
+        try {
+          const data = await fetchManifestFromUrl(url);
+          memoryCache = data;
+          return data;
+        } catch (error) {
+          lastError =
+            error instanceof Error ? error : new Error("Erreur chargement manifest");
+        }
       }
-      const data = (await response.json()) as GalleriesManifest;
-      if (!Array.isArray(data.galleries)) {
-        throw new Error("Manifest invalide (galleries manquant)");
-      }
-      memoryCache = data;
-      return data;
-    });
+      throw lastError ?? new Error("Impossible de charger le manifest galeries");
+    })();
   }
 
   try {
@@ -51,16 +66,17 @@ export type UseGalleriesResult = {
 export function useGalleries(): UseGalleriesResult {
   const [state, setState] = useState<UseGalleriesResult>(() => ({
     galleries: memoryCache?.galleries ?? [],
-    loading: !memoryCache && Boolean(manifestUrl()),
+    loading: !memoryCache && manifestUrls().length > 0,
     error: null,
   }));
 
   useEffect(() => {
-    if (!manifestUrl()) {
+    if (manifestUrls().length === 0) {
       setState({
         galleries: [],
         loading: false,
-        error: "Variables Cloudinary absentes (.env). Ajoute VITE_CLOUDINARY_CLOUD_NAME ou VITE_MANIFEST_URL, puis redémarre npm run dev.",
+        error:
+          "Variables Cloudinary absentes (.env). Ajoute VITE_CLOUDINARY_CLOUD_NAME ou VITE_MANIFEST_URL, puis redémarre npm run dev.",
       });
       return;
     }

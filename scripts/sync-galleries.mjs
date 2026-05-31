@@ -105,7 +105,7 @@ function isGalleryImage(resource, rootFolder) {
   if (resource.resource_type !== "image") return false;
 
   const publicId = resource.public_id ?? "";
-  if (publicId.endsWith("/_galleries") || publicId.endsWith("_galleries")) {
+  if (publicId.endsWith("/_galleries") || publicId.endsWith("_galleries") || publicId.endsWith("_galleries.json")) {
     return false;
   }
 
@@ -164,12 +164,13 @@ function groupImagesByFolder(resources) {
 }
 
 async function uploadManifest(manifest) {
-  const publicId = `${cloudFolder}/_galleries`;
+  const publicId = `${cloudFolder}/_galleries.json`;
   const timestamp = Math.round(Date.now() / 1000);
   const uploadParams = {
     timestamp,
     public_id: publicId,
     overwrite: "true",
+    invalidate: "true",
   };
   const signature = signUploadParams(uploadParams, apiSecret);
   const json = JSON.stringify(manifest, null, 2);
@@ -184,6 +185,7 @@ async function uploadManifest(manifest) {
   form.append("timestamp", String(timestamp));
   form.append("public_id", publicId);
   form.append("overwrite", "true");
+  form.append("invalidate", "true");
   form.append("signature", signature);
 
   const response = await fetch(`${apiBase}/raw/upload`, {
@@ -197,6 +199,23 @@ async function uploadManifest(manifest) {
   }
 
   return response.json();
+}
+
+async function verifyManifestUrl(url) {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    const response = await fetch(url, { cache: "no-store" });
+    if (response.ok) return;
+    await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+  }
+
+  throw new Error(`Manifest inaccessible après upload : ${url}`);
+}
+
+function writeLocalManifest(manifest) {
+  const outputPath = path.join(__dirname, "..", "public", "_galleries.json");
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, JSON.stringify(manifest, null, 2));
+  console.log(`  local     : public/_galleries.json`);
 }
 
 async function main() {
@@ -237,10 +256,14 @@ async function main() {
   }
 
   const uploadResult = await uploadManifest(manifest);
+  writeLocalManifest(manifest);
+
+  const deliveryUrl = uploadResult.secure_url;
+  await verifyManifestUrl(deliveryUrl);
 
   console.log("Manifest uploadé :");
   console.log(`  public_id : ${uploadResult.public_id}`);
-  console.log(`  url       : ${uploadResult.secure_url}`);
+  console.log(`  url       : ${deliveryUrl}`);
   console.log(
     `  fetch     : https://res.cloudinary.com/${cloudName}/raw/upload/${cloudFolder}/_galleries.json`,
   );

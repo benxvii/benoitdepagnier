@@ -15,6 +15,9 @@ concurrency:
   group: sync-galleries-${{ github.event.inputs.cloudinary_folder || 'default' }}
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -60,6 +63,14 @@ jobs:
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
           CLOUDINARY_FOLDER: ${{ github.event.inputs.cloudinary_folder || secrets.CLOUDINARY_FOLDER }}
         run: node scripts/sync-galleries.mjs
+
+      - name: Commit manifest local (secours)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/_galleries.json
+          git diff --staged --quiet || git commit -m "chore: sync manifest galeries Cloudinary"
+          git push
 
       - name: Rappel vérification
         env:
