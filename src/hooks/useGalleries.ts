@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
+import { getManifestUrl } from "../lib/galleryManifest";
 import type { GalleriesManifest, ManifestGallery } from "../types/galleries";
 
 let memoryCache: GalleriesManifest | null = null;
 let inflight: Promise<GalleriesManifest> | null = null;
 
 function manifestUrl(): string | undefined {
-  const url = import.meta.env.VITE_MANIFEST_URL?.trim();
-  return url || undefined;
+  return getManifestUrl();
 }
 
 async function fetchManifest(): Promise<GalleriesManifest> {
   const url = manifestUrl();
   if (!url) {
-    throw new Error("VITE_MANIFEST_URL est absent (.env)");
+    throw new Error(
+      "Variables Cloudinary absentes (.env). Redémarre npm run dev après modification du .env.",
+    );
   }
 
   if (memoryCache) {
@@ -58,7 +60,7 @@ export function useGalleries(): UseGalleriesResult {
       setState({
         galleries: [],
         loading: false,
-        error: "VITE_MANIFEST_URL est absent (.env)",
+        error: "Variables Cloudinary absentes (.env). Ajoute VITE_CLOUDINARY_CLOUD_NAME ou VITE_MANIFEST_URL, puis redémarre npm run dev.",
       });
       return;
     }

@@ -34,6 +34,38 @@ export function galleryImageUrls(
     .filter((url): url is string => Boolean(url));
 }
 
+export type GalleryImageEntry = {
+  thumb: string;
+  full: string;
+};
+
+export function galleryGridThumbUrl(publicId: string): string | null {
+  return cloudinaryUrl(publicId, { width: 400, crop: "scale" });
+}
+
+export function galleryOriginalUrl(
+  publicId: string,
+  originalWidth?: number,
+): string | null {
+  if (originalWidth) {
+    return cloudinaryUrl(publicId, { width: originalWidth, crop: "scale" });
+  }
+  return cloudinaryUrl(publicId, {});
+}
+
+export function galleryImageEntries(
+  images: readonly { publicId: string; width?: number }[],
+): GalleryImageEntry[] {
+  return images
+    .map((image) => {
+      const thumb = galleryGridThumbUrl(image.publicId);
+      const full = galleryOriginalUrl(image.publicId, image.width);
+      if (!thumb || !full) return null;
+      return { thumb, full };
+    })
+    .filter((entry): entry is GalleryImageEntry => Boolean(entry));
+}
+
 export function galleryThumbUrl(publicId: string): string | null {
   return cloudinaryUrl(publicId, { width: 800, height: 600, crop: "fill" });
 }

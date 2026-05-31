@@ -6,7 +6,7 @@ import { findPortfolioGallery, portfolio } from "../../config/site";
 import { useGalleries } from "../../hooks/useGalleries";
 import {
   findManifestGallery,
-  galleryImageUrls,
+  galleryImageEntries,
 } from "../../lib/galleryImages";
 import { useRandomGalleryHubItems } from "./useRandomGalleryCovers";
 
@@ -55,7 +55,7 @@ export default function PortfolioGallery() {
   const manifestEntry =
     slug && findManifestGallery(manifestGalleries, slug, parentSlug);
   const images = manifestEntry
-    ? galleryImageUrls(manifestEntry.images, 2000)
+    ? galleryImageEntries(manifestEntry.images)
     : [];
 
   return (
