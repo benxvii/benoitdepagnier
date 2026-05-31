@@ -38,9 +38,8 @@ export default function Home() {
     path: page.path,
     title: page.title,
     image:
-      page.slug === "enregistrements"
-        ? recordingCover
-        : undefined,
+      page.image ??
+      (page.slug === "enregistrements" ? recordingCover : undefined),
   }));
 
   return (
