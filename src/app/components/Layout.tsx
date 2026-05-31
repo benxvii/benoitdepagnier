@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Facebook, Instagram, Linkedin, Mail, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import {
   isNavActive,
   isNavSectionActive,
@@ -88,6 +88,40 @@ export default function Layout() {
   );
 }
 
+function SiteLogo() {
+  const taglineRef = useRef<HTMLSpanElement>(null);
+  const [logoWidth, setLogoWidth] = useState<number>();
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (taglineRef.current) {
+        setLogoWidth(taglineRef.current.offsetWidth);
+      }
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  return (
+    <Link
+      to="/"
+      className="inline-flex flex-col items-stretch w-fit leading-tight hover:text-[var(--brand)] transition-colors"
+      style={logoWidth ? { width: logoWidth } : undefined}
+    >
+      <span className="site-name text-xl whitespace-nowrap">
+        {site.name.split("").map((char, index) => (
+          <span key={index}>{char === " " ? "\u00a0" : char}</span>
+        ))}
+      </span>
+      <span ref={taglineRef} className="site-tagline text-gray-600 whitespace-nowrap">
+        {site.tagline}
+      </span>
+    </Link>
+  );
+}
+
 function HeaderRow({
   mobileMenuOpen,
   setMobileMenuOpen,
@@ -99,13 +133,7 @@ function HeaderRow({
 }) {
   return (
     <div className="flex justify-between items-center h-20">
-      <Link
-        to="/"
-        className="inline-flex flex-col items-stretch w-fit leading-tight hover:text-[var(--brand)] transition-colors"
-      >
-        <span className="site-name text-xl whitespace-nowrap">{site.name}</span>
-        <span className="site-tagline text-gray-600 text-sm">{site.tagline}</span>
-      </Link>
+      <SiteLogo />
 
       <DesktopNav navLinks={mainNavigation} isActive={isActive} />
 
