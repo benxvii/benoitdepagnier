@@ -37,6 +37,8 @@ export function galleryImageUrls(
 export type GalleryImageEntry = {
   thumb: string;
   full: string;
+  width: number;
+  height: number;
 };
 
 export function galleryGridThumbUrl(publicId: string): string | null {
@@ -54,14 +56,19 @@ export function galleryOriginalUrl(
 }
 
 export function galleryImageEntries(
-  images: readonly { publicId: string; width?: number }[],
+  images: readonly { publicId: string; width?: number; height?: number }[],
 ): GalleryImageEntry[] {
   return images
     .map((image) => {
       const thumb = galleryGridThumbUrl(image.publicId);
       const full = galleryOriginalUrl(image.publicId, image.width);
       if (!thumb || !full) return null;
-      return { thumb, full };
+      return {
+        thumb,
+        full,
+        width: image.width ?? 3,
+        height: image.height ?? 2,
+      };
     })
     .filter((entry): entry is GalleryImageEntry => Boolean(entry));
 }

@@ -68,13 +68,16 @@ function GalleryGrid({
               className="relative block w-full min-w-0 overflow-hidden rounded-lg bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
               aria-label={`Agrandir ${title} ${index + 1}`}
             >
-              <div className="aspect-[4/3] w-full overflow-hidden">
+              <div
+                className="relative w-full overflow-hidden bg-gray-100"
+                style={{ aspectRatio: `${image.width} / ${image.height}` }}
+              >
                 <ImageWithFallback
                   src={image.thumb}
                   alt={`${title} ${index + 1}`}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="block h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                 />
               </div>
               <span className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/20">
