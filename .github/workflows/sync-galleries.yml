@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       cloudinary_folder:
-        description: "Dossier racine Cloudinary (ex. benoit, site2)"
+        description: "Dossier racine Cloudinary (ex. benoitdepagnier, site2)"
         required: false
         type: string
 
@@ -49,7 +49,7 @@ jobs:
             echo "  CLOUDINARY_CLOUD_NAME"
             echo "  CLOUDINARY_API_KEY"
             echo "  CLOUDINARY_API_SECRET"
-            echo "  CLOUDINARY_FOLDER  (ex. benoit)"
+            echo "  CLOUDINARY_FOLDER  (ex. benoitdepagnier)"
             exit 1
           fi
 

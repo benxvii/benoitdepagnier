@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Synchronise les galeries portfolio depuis Cloudinary vers benoit/_galleries.json.
+ * Synchronise les galeries portfolio depuis Cloudinary vers benoitdepagnier/_galleries.json.
  *
  * Usage local :
  *   CLOUDINARY_CLOUD_NAME=xxx \
  *   CLOUDINARY_API_KEY=xxx \
  *   CLOUDINARY_API_SECRET=xxx \
- *   CLOUDINARY_FOLDER=benoit \
+ *   CLOUDINARY_FOLDER=benoitdepagnier \
  *   node scripts/sync-galleries.mjs
  *
  * Titres des galeries : scripts/galleries-meta.json (slug relatif à portfolio/)
@@ -232,7 +232,7 @@ async function main() {
 
   if (galleries.length === 0) {
     console.warn(
-      "Aucune image trouvée. Vérifie la structure Cloudinary (ex. benoit/portfolio/street-photography/photo.jpg).",
+      "Aucune image trouvée. Vérifie la structure Cloudinary (ex. benoitdepagnier/portfolio/street-photography/photo.jpg).",
     );
   }
 
