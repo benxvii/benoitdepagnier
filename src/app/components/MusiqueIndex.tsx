@@ -8,7 +8,13 @@ export default function MusiqueIndex() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl mb-6">{musique.title}</h1>
-          <p className="text-xl text-gray-700">{musique.intro}</p>
+          <div className="space-y-2">
+            {musique.intro.map((line) => (
+              <p key={line} className="text-xl text-gray-700">
+                {line}
+              </p>
+            ))}
+          </div>
         </div>
       </section>
 

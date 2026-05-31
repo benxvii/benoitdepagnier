@@ -200,8 +200,10 @@ export const musique = {
   indexPath: "/musique",
   enregistrementsPath: "/musique/enregistrements",
   title: "Musique",
-  intro:
-    "Après deux ans de piano vers 14 ans, j'ai commencé le saxophone alto à 19 ans.\nAujourd'hui je joue tant du saxophone alto que baryton.",
+  intro: [
+    "Après deux ans de piano vers 14 ans, j'ai commencé le saxophone alto à 19 ans.",
+    "Aujourd'hui je joue tant du saxophone alto que baryton.",
+  ],
   recordings: [
     {
       slug: "agua-viva-y-ardiente",

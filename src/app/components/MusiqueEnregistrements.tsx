@@ -19,7 +19,7 @@ export default function MusiqueEnregistrements() {
           </Link>
           <h1 className="text-5xl mb-4">{page?.title ?? "Enregistrements"}</h1>
           {page?.intro && (
-            <p className="text-xl text-gray-700">{page.intro}</p>
+            <p className="text-xl text-gray-700 whitespace-pre-line">{page.intro}</p>
           )}
         </div>
       </section>
