@@ -43,27 +43,23 @@ export type GalleryImageEntry = {
 
 export const GALLERY_THUMB_MAX = 300;
 
-export function galleryGridThumbUrl(publicId: string): string | null {
-  return cloudinaryUrl(publicId, {
-    width: GALLERY_THUMB_MAX,
-    height: GALLERY_THUMB_MAX,
-    crop: "limit",
-  });
-}
-
-/** Taille d'affichage vignette : la plus grande dimension vaut maxPx. */
-export function galleryThumbDisplaySize(
+export function galleryGridThumbUrl(
+  publicId: string,
   width: number,
   height: number,
-  maxPx = GALLERY_THUMB_MAX,
-): { width: number; height: number } {
-  if (width <= 0 || height <= 0) {
-    return { width: maxPx, height: Math.round(maxPx * (2 / 3)) };
+): string | null {
+  if (height > width) {
+    return cloudinaryUrl(publicId, {
+      width: GALLERY_THUMB_MAX,
+      height: GALLERY_THUMB_MAX,
+      crop: "limit",
+    });
   }
-  if (width >= height) {
-    return { width: maxPx, height: Math.round((maxPx * height) / width) };
-  }
-  return { width: Math.round((maxPx * width) / height), height: maxPx };
+  return cloudinaryUrl(publicId, { width: 500, crop: "scale" });
+}
+
+export function isPortraitGalleryImage(width: number, height: number): boolean {
+  return height > width;
 }
 
 export function galleryOriginalUrl(
@@ -81,7 +77,11 @@ export function galleryImageEntries(
 ): GalleryImageEntry[] {
   return images
     .map((image) => {
-      const thumb = galleryGridThumbUrl(image.publicId);
+      const thumb = galleryGridThumbUrl(
+        image.publicId,
+        image.width ?? 3,
+        image.height ?? 2,
+      );
       const full = galleryOriginalUrl(image.publicId, image.width);
       if (!thumb || !full) return null;
       return {

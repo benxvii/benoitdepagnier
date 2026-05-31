@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import {
   type GalleryImageEntry,
   GALLERY_THUMB_MAX,
+  isPortraitGalleryImage,
 } from "../../lib/galleryImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
@@ -62,17 +63,21 @@ function GalleryGrid({
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 justify-items-center">
-        {images.map((image, index) => (
-          <figure key={`${title}-${index}`} className="group flex justify-center min-w-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-start gap-3 md:gap-4">
+        {images.map((image, index) => {
+          const portrait = isPortraitGalleryImage(image.width, image.height);
+
+          return (
+          <figure
+            key={`${title}-${index}`}
+            className={`group min-w-0 ${portrait ? "flex justify-center" : "w-full"}`}
+          >
             <button
               type="button"
               onClick={() => setLightboxIndex(index)}
-              className="relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2"
-              style={{
-                maxWidth: `${GALLERY_THUMB_MAX}px`,
-                maxHeight: `${GALLERY_THUMB_MAX}px`,
-              }}
+              className={`relative overflow-hidden rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 ${
+                portrait ? "inline-block" : "block w-full"
+              }`}
               aria-label={`Agrandir ${title} ${index + 1}`}
             >
               <ImageWithFallback
@@ -80,11 +85,16 @@ function GalleryGrid({
                 alt={`${title} ${index + 1}`}
                 loading="lazy"
                 decoding="async"
-                className="block h-auto w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-                style={{
-                  maxWidth: `${GALLERY_THUMB_MAX}px`,
-                  maxHeight: `${GALLERY_THUMB_MAX}px`,
-                }}
+                className={`block object-contain transition-transform duration-300 group-hover:scale-[1.02] ${
+                  portrait
+                    ? "h-auto w-auto max-h-[300px]"
+                    : "h-auto w-full"
+                }`}
+                style={
+                  portrait
+                    ? { maxHeight: `${GALLERY_THUMB_MAX}px` }
+                    : undefined
+                }
               />
               <span className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/20">
                 <ZoomIn
@@ -95,7 +105,8 @@ function GalleryGrid({
               </span>
             </button>
           </figure>
-        ))}
+          );
+        })}
       </div>
 
       {lightboxIndex !== null ? (
