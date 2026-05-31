@@ -1,5 +1,6 @@
 import { Link, Navigate, useParams } from "react-router";
 import { ArrowLeft } from "lucide-react";
+import EquipmentGalleryPage from "./EquipmentGalleryPage";
 import GalleryPage from "./GalleryPage";
 import SectionHub from "./SectionHub";
 import { findPortfolioGallery, portfolio } from "../../config/site";
@@ -7,6 +8,7 @@ import { useGalleries } from "../../hooks/useGalleries";
 import {
   findManifestGallery,
   galleryImageEntries,
+  resolveEquipmentImageUrl,
 } from "../../lib/galleryImages";
 import { useRandomGalleryHubItems } from "./useRandomGalleryCovers";
 
@@ -54,6 +56,36 @@ export default function PortfolioGallery() {
 
   const manifestEntry =
     slug && findManifestGallery(manifestGalleries, slug, parentSlug);
+
+  if (gallery.equipment?.length) {
+    const equipmentItems = gallery.equipment.map((item) => ({
+      ...item,
+      imageUrl: resolveEquipmentImageUrl(item, manifestEntry),
+    }));
+
+    return (
+      <div>
+        <section className="py-6 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              to={backPath}
+              className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] transition-colors"
+            >
+              <ArrowLeft size={18} />
+              Retour
+            </Link>
+          </div>
+        </section>
+        <EquipmentGalleryPage
+          title={gallery.title}
+          intro={gallery.intro}
+          items={equipmentItems}
+          footnote={gallery.equipmentFootnote}
+        />
+      </div>
+    );
+  }
+
   const images = manifestEntry
     ? galleryImageEntries(manifestEntry.images)
     : [];

@@ -1,4 +1,10 @@
-import { musique, portfolio, projets } from "./site";
+import {
+  isGalleryVisible,
+  musique,
+  portfolio,
+  projets,
+  visiblePortfolioGalleries,
+} from "./site";
 
 export type NavSubLink =
   | { path: string; label: string }
@@ -17,12 +23,13 @@ export type NavItem =
     };
 
 function galleryNavLinks(): NavSubLink[] {
-  return portfolio.galleries.map((g) => {
-    if (g.subGalleries?.length) {
+  return visiblePortfolioGalleries().map((g) => {
+    const subGalleries = g.subGalleries?.filter(isGalleryVisible);
+    if (subGalleries?.length) {
       return {
         label: g.title,
         path: g.path,
-        subLinks: g.subGalleries.map((s) => ({
+        subLinks: subGalleries.map((s) => ({
           path: s.path,
           label: s.title,
         })),

@@ -1,9 +1,9 @@
 import SectionHub from "./SectionHub";
-import { portfolio } from "../../config/site";
+import { portfolio, visiblePortfolioGalleries } from "../../config/site";
 import { useRandomGalleryHubItems } from "./useRandomGalleryCovers";
 
 export default function PortfolioIndex() {
-  const items = useRandomGalleryHubItems(portfolio.galleries);
+  const items = useRandomGalleryHubItems(visiblePortfolioGalleries());
 
   return (
     <SectionHub

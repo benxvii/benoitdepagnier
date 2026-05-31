@@ -15,11 +15,24 @@ export const site = {
   copyrightYear: new Date().getFullYear(),
 } as const;
 
+export type GalleryEquipmentItem = {
+  /** Identifiant pour l’image (ex. fichier Cloudinary `nikon-f.jpg`). */
+  id: string;
+  name: string;
+  /** Chemin statique (`/portfolio/mes-appareils/nikon-f.jpg`) ou URL absolue. */
+  image?: string;
+};
+
 export type Gallery = {
   slug: string;
   path: string;
   title: string;
   intro: string;
+  /** Masque la galerie (nav, hub, URL) sans retirer la config. */
+  hidden?: boolean;
+  /** Grille vignette + nom (ex. page Mes appareils). */
+  equipment?: readonly GalleryEquipmentItem[];
+  equipmentFootnote?: string;
   subGalleries?: readonly Gallery[];
 };
 
@@ -33,7 +46,33 @@ export const portfolio = {
       slug: "mes-appareils",
       path: "/portfolio/mes-appareils",
       title: "Mes appareils",
-      intro: "Les boîtiers et objectifs qui ont accompagné mon parcours photographique.",
+      intro:
+        "Voici les appareils que j'ai possédés ou eu l'occasion d'utiliser au fil de ma carrière photographique.",
+      equipmentFootnote:
+        "… et sans doute quelques autres que j'oublie au fil du temps.",
+      hidden: false,
+      equipment: [
+        { id: "nikon-f", name: "Nikon F" },
+        {
+          id: "nikon-f2-photomic",
+          name: "Nikon F2 Photomic avec moteur MD-2 et alimentation MB-1",
+        },
+        { id: "nikon-fa-md15", name: "Nikon FA avec moteur MD-15" },
+        { id: "nikon-f4s", name: "Nikon F4S" },
+        { id: "leica-m6", name: "Leica M6" },
+        { id: "leica-sl", name: "Leica SL" },
+        { id: "leica-sl2-s", name: "Leica SL2-S" },
+        { id: "leica-q3-43", name: "Leica Q3 43" },
+        { id: "leica-q2", name: "Leica Q2" },
+        { id: "leica-q2-monochrome", name: "Leica Q2 Monochrome" },
+        { id: "hasselblad-501cm", name: "Hasselblad 501CM" },
+        { id: "rollei-35", name: "Rollei 35" },
+        { id: "rolleiflex-6x6", name: "Rolleiflex 6×6" },
+        { id: "nikon-l35-aw-af", name: "Nikon L35 AW AF" },
+        { id: "kodak-126-instamatic", name: "Kodak 126 Instamatic" },
+        { id: "minolta-weathermatic-a", name: "Minolta Weathermatic-A" },
+        { id: "canon-g7", name: "Canon G7" },
+      ],
     },
     {
       slug: "flous-de-mouvements",
@@ -164,7 +203,7 @@ Quatre vues principales :
       path: "/projets/performance-de-portefeuille",
       title: "Performance de Portefeuille",
       description: "Suivi et analyse de performance de portefeuille.",
-      image: placeholderImage,
+      image: assetUrl("/projets/portfolioperf-logo.svg"),
       body: "Contenu à compléter — description du projet Performance de Portefeuille.",
     },
   ] as readonly Projet[],
@@ -279,8 +318,16 @@ export const about = {
 
 export const homeIntro = {
   quote:
-    "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications.",
+    "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications (depuis mes 56 ans).",
 } as const;
+
+export function isGalleryVisible(gallery: Gallery): boolean {
+  return !gallery.hidden;
+}
+
+export function visiblePortfolioGalleries(): readonly Gallery[] {
+  return portfolio.galleries.filter(isGalleryVisible);
+}
 
 export function findPortfolioGallery(
   slug: string,
@@ -288,14 +335,16 @@ export function findPortfolioGallery(
 ): Gallery | undefined {
   if (parentSlug) {
     const parent = portfolio.galleries.find((g) => g.slug === parentSlug);
-    return parent?.subGalleries?.find((g) => g.slug === slug);
+    const sub = parent?.subGalleries?.find((g) => g.slug === slug);
+    return sub && isGalleryVisible(sub) ? sub : undefined;
   }
-  return portfolio.galleries.find((g) => g.slug === slug);
+  const gallery = portfolio.galleries.find((g) => g.slug === slug);
+  return gallery && isGalleryVisible(gallery) ? gallery : undefined;
 }
 
 export function allPortfolioPaths(): { path: string; label: string }[] {
   const paths: { path: string; label: string }[] = [];
-  for (const gallery of portfolio.galleries) {
+  for (const gallery of visiblePortfolioGalleries()) {
     paths.push({ path: gallery.path, label: gallery.title });
     if (gallery.subGalleries) {
       for (const sub of gallery.subGalleries) {

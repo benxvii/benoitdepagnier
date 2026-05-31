@@ -63,7 +63,7 @@ function ProjetPage({ projet }: { projet: Projet }) {
             Retour aux projets
           </Link>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            <div className="overflow-hidden bg-white aspect-[4/3]">
+            <div className="overflow-hidden aspect-square max-w-sm">
               <ImageWithFallback
                 src={projet.image}
                 alt={projet.title}

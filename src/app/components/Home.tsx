@@ -5,17 +5,19 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import {
   homeIntro,
   musique,
-  portfolio,
+  visiblePortfolioGalleries,
   projets,
   site,
 } from "../../config/site";
-import { useRandomGalleryHubItems } from "./useRandomGalleryCovers";
-
-const heroImage =
-  "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=1920&h=1080&fit=crop";
+import {
+  useRandomGalleryHubItems,
+  useRandomHeroImage,
+} from "./useRandomGalleryCovers";
 
 export default function Home() {
-  const portfolioSections = useRandomGalleryHubItems(portfolio.galleries);
+  const heroImage = useRandomHeroImage();
+  const portfolioSections = useRandomGalleryHubItems(visiblePortfolioGalleries());
+  const portfolioCover = portfolioSections.find((s) => s.image)?.image;
 
   const homeSections = useMemo(
     () => [
@@ -23,41 +25,36 @@ export default function Home() {
       {
         path: projets.indexPath,
         title: projets.title,
-        image: projets.items[0]?.image ?? heroImage,
+        image: projets.items[0]?.image,
       },
       {
         path: musique.indexPath,
         title: musique.title,
-        image: heroImage,
+        image: musique.recordings[0]?.coverImage ?? portfolioCover,
       },
     ],
-    [portfolioSections],
+    [portfolioSections, portfolioCover],
   );
 
   return (
     <div>
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gray-50">
-        <div className="absolute inset-0 z-0">
-          <ImageWithFallback
-            src={heroImage}
-            alt={`${site.name} — photographie`}
-            className="w-full h-full object-cover opacity-40"
-          />
-        </div>
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-100 to-gray-50">
+        {heroImage ? (
+          <div className="absolute inset-0 z-0">
+            <ImageWithFallback
+              src={heroImage}
+              alt={`${site.name} — photographie`}
+              className="w-full h-full object-cover opacity-40"
+            />
+          </div>
+        ) : null}
         <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
           <h1 className="text-5xl md:text-7xl mb-6 tracking-tight">
             {site.name}
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-700 leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-700 leading-relaxed">
             {homeIntro.quote}
           </p>
-          <Link
-            to={portfolio.indexPath}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--brand)] text-white hover:opacity-90 transition-opacity"
-          >
-            Voir le portfolio
-            <ArrowRight size={20} />
-          </Link>
         </div>
       </section>
 
@@ -68,13 +65,15 @@ export default function Home() {
             <Link
               key={section.path}
               to={section.path}
-              className="group relative aspect-[4/3] overflow-hidden"
+              className="group relative aspect-[4/3] overflow-hidden bg-gray-200"
             >
-              <ImageWithFallback
-                src={section.image}
-                alt={section.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+              {section.image ? (
+                <ImageWithFallback
+                  src={section.image}
+                  alt={section.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              ) : null}
               <CardOverlay title={section.title} />
             </Link>
           ))}

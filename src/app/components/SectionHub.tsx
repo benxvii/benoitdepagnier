@@ -6,7 +6,7 @@ type HubItem = {
   path: string;
   title: string;
   description: string;
-  image: string;
+  image?: string;
 };
 
 type SectionHubProps = {
@@ -14,6 +14,8 @@ type SectionHubProps = {
   intro: string;
   items: readonly HubItem[];
   linkLabel?: string;
+  /** `icon` : vignette carrée sans bandes latérales (projets). */
+  imageLayout?: "cover" | "icon";
 };
 
 export default function SectionHub({
@@ -21,6 +23,7 @@ export default function SectionHub({
   intro,
   items,
   linkLabel = "Voir le projet",
+  imageLayout = "cover",
 }: SectionHubProps) {
   return (
     <div>
@@ -32,7 +35,7 @@ export default function SectionHub({
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <HubGrid items={items} linkLabel={linkLabel} />
+        <HubGrid items={items} linkLabel={linkLabel} imageLayout={imageLayout} />
       </section>
     </div>
   );
@@ -41,20 +44,32 @@ export default function SectionHub({
 function HubGrid({
   items,
   linkLabel,
+  imageLayout,
 }: {
   items: readonly HubItem[];
   linkLabel: string;
+  imageLayout: "cover" | "icon";
 }) {
+  const isIcon = imageLayout === "icon";
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
       {items.map((item) => (
         <Link key={item.path} to={item.path} className="group block">
-          <div className="relative aspect-[4/3] overflow-hidden mb-4 bg-white">
-            <ImageWithFallback
-              src={item.image}
-              alt={item.title}
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-            />
+          <div
+            className={
+              isIcon
+                ? "relative aspect-square overflow-hidden mb-4"
+                : "relative aspect-[4/3] overflow-hidden mb-4 bg-gray-100"
+            }
+          >
+            {item.image ? (
+              <ImageWithFallback
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              />
+            ) : null}
           </div>
           <h2 className="text-2xl mb-2 group-hover:text-[var(--brand)] transition-colors">
             {item.title}

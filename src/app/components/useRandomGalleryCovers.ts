@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router";
 import { type Gallery } from "../../config/site";
 import { useGalleries } from "../../hooks/useGalleries";
-import { randomGalleryCoverFromManifest } from "../../lib/galleryImages";
+import {
+  randomGalleryCoverFromManifest,
+  randomLandscapeHeroFromManifest,
+} from "../../lib/galleryImages";
 
 /** Incrémenté au retour depuis le cache navigateur (bfcache). */
 export function useRandomGalleryCoverSeed(): number {
@@ -20,6 +23,17 @@ export function useRandomGalleryCoverSeed(): number {
   return refreshSeed;
 }
 
+export function useRandomHeroImage(): string | null {
+  const location = useLocation();
+  const refreshSeed = useRandomGalleryCoverSeed();
+  const { galleries: manifestGalleries } = useGalleries();
+
+  return useMemo(
+    () => randomLandscapeHeroFromManifest(manifestGalleries),
+    [manifestGalleries, location.key, refreshSeed],
+  );
+}
+
 export function useRandomGalleryHubItems(galleries: readonly Gallery[]) {
   const location = useLocation();
   const refreshSeed = useRandomGalleryCoverSeed();
@@ -31,7 +45,7 @@ export function useRandomGalleryHubItems(galleries: readonly Gallery[]) {
         path: g.path,
         title: g.title,
         description: g.intro,
-        image: randomGalleryCoverFromManifest(g, manifestGalleries),
+        image: randomGalleryCoverFromManifest(g, manifestGalleries) ?? undefined,
       })),
     [galleries, manifestGalleries, location.key, refreshSeed],
   );
