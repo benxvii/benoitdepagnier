@@ -50,7 +50,7 @@ export const portfolio = {
         "Voici les appareils que j'ai possédés ou eu l'occasion d'utiliser au fil de ma carrière photographique.",
       equipmentFootnote:
         "… et sans doute quelques autres que j'oublie au fil du temps.",
-      hidden: false,
+      hidden: true,
       equipment: [
         { id: "nikon-f", name: "Nikon F" },
         {
