@@ -201,8 +201,7 @@ export const musique = {
   enregistrementsPath: "/musique/enregistrements",
   title: "Musique",
   intro: [
-    "Après deux ans de piano vers 14 ans, j'ai commencé le saxophone alto à 19 ans.",
-    "Aujourd'hui je joue tant du saxophone alto que baryton.",
+    "Après deux ans de piano vers 14 ans, je me suis mis au saxophone à 19 ans - alto d'abord, puis baryton. 29 ans en big band avant de me tourner vers de plus petites formations.",
   ],
   recordings: [
     {
