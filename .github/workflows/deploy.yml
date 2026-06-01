@@ -43,8 +43,8 @@ jobs:
           server-dir: ./sites/benoitdepagnier.ch/
           # Ne pas supprimer les médias uploadés à la main (hors dist/)
           exclude: |
-            **/downloads/**
-            **/portfolio/**
-            **/about/**
-            **/musique/**
-            **/projets/**
+            downloads/**
+            portfolio/**
+            about/**
+            musique/**
+            projets/**

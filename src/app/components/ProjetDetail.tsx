@@ -78,12 +78,12 @@ function ProjetPage({ projet }: { projet: Projet }) {
                   <p key={index}>{paragraph}</p>
                 ))}
               </div>
+              <DownloadButtons projet={projet} />
               {projet.notice && (
                 <p className="mt-8 text-gray-600 leading-relaxed border-l-2 border-[var(--brand)] pl-4">
                   {projet.notice}
                 </p>
               )}
-              <DownloadButtons projet={projet} />
             </div>
           </div>
         </div>
