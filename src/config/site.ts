@@ -155,7 +155,7 @@ Sélectionnez un répertoire et obtenez des statistiques détaillées : nombre d
 Disponible sur macOS et Windows.`,
       downloads: [
         { label: "macOS", url: assetUrl("/downloads/ImageCount-mac.zip") },
-        { label: "Windows", url: "#" },
+        { label: "Windows", url: assetUrl("/downloads/ImageCount-win.zip") },
       ],
     },
     {
@@ -175,7 +175,7 @@ Les résultats sont regroupés avec vignettes et exportables en rapport HTML. Fo
 Disponible sur macOS et Windows.`,
       downloads: [
         { label: "macOS", url: assetUrl("/downloads/ImageSweep-mac.zip") },
-        { label: "Windows", url: "#" },
+        { label: "Windows", url: assetUrl("/downloads/ImageSweep-win.zip") },
       ],
     },
     {
