@@ -205,10 +205,12 @@ Quatre vues principales :
       description: "Suivi et analyse de performance de portefeuille.",
       image: assetUrl("/projets/portfolioperf-logo.svg"),
       body: "Contenu à compléter — description du projet Performance de Portefeuille.",
+      notice:
+        "Téléchargez l’archive ZIP, décompressez-la, puis lancez PortfolioApp.exe.",
       downloads: [
         {
-          label: "Windows",
-          url: assetUrl("/downloads/PortfolioApp.exe"),
+          label: "Windows (ZIP)",
+          url: assetUrl("/downloads/PortfolioApp.zip"),
         },
       ],
     },
