@@ -22,7 +22,7 @@ function DownloadButtons({ projet }: { projet: Projet }) {
           <a
             key={download.label}
             href={download.url}
-            {...(download.url.endsWith(".zip")
+            {...(/\.(zip|exe)$/i.test(download.url)
               ? { download: true }
               : undefined)}
             className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--brand)] text-white hover:opacity-90 transition-opacity"

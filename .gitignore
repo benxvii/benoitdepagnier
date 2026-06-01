@@ -5,3 +5,6 @@ dist
 .env.local
 .env.*.local
 *.log
+
+# Téléchargements (Infomaniak / build local, limite GitHub 100 Mo)
+public/downloads/

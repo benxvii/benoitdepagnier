@@ -205,6 +205,12 @@ Quatre vues principales :
       description: "Suivi et analyse de performance de portefeuille.",
       image: assetUrl("/projets/portfolioperf-logo.svg"),
       body: "Contenu à compléter — description du projet Performance de Portefeuille.",
+      downloads: [
+        {
+          label: "Windows",
+          url: assetUrl("/downloads/PortfolioApp.exe"),
+        },
+      ],
     },
   ] as readonly Projet[],
 };

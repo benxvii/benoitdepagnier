@@ -1,30 +1,34 @@
 import { Link } from "react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { musique } from "../../config/site";
+import MusiqueTwoColumnLayout from "./MusiqueTwoColumnLayout";
+import { musique, musiquePageImage } from "../../config/site";
 
 export default function MusiqueEnregistrements() {
   const page = musique.pages.find((p) => p.slug === "enregistrements");
 
   return (
     <div>
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             to={musique.indexPath}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] transition-colors"
           >
             <ArrowLeft size={18} />
             Retour à la musique
           </Link>
-          <h1 className="text-5xl mb-4">{page?.title ?? "Enregistrements"}</h1>
-          {page?.intro && (
-            <p className="text-xl text-gray-700 whitespace-pre-line">{page.intro}</p>
-          )}
         </div>
       </section>
 
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <MusiqueTwoColumnLayout
+        title={page?.title ?? "Enregistrements"}
+        image={page ? musiquePageImage(page) : undefined}
+        imageAlt={page?.title ?? "Enregistrements"}
+      >
+        {page?.intro ? (
+          <p className="text-xl text-gray-700 whitespace-pre-line">{page.intro}</p>
+        ) : null}
         <div className="space-y-8">
           {musique.recordings.map((recording) => (
             <Link
@@ -53,7 +57,7 @@ export default function MusiqueEnregistrements() {
             </Link>
           ))}
         </div>
-      </section>
+      </MusiqueTwoColumnLayout>
     </div>
   );
 }

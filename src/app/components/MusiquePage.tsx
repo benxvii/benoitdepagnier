@@ -1,7 +1,7 @@
 import { Link, Navigate, useParams } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import TextPage from "./TextPage";
-import { musique } from "../../config/site";
+import MusiqueTwoColumnLayout from "./MusiqueTwoColumnLayout";
+import { musique, musiquePageImage } from "../../config/site";
 
 export default function MusiquePageRoute() {
   const { slug } = useParams<{ slug: string }>();
@@ -14,7 +14,7 @@ export default function MusiquePageRoute() {
   return (
     <div>
       <section className="py-6 bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             to={musique.indexPath}
             className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] transition-colors"
@@ -24,7 +24,24 @@ export default function MusiquePageRoute() {
           </Link>
         </div>
       </section>
-      <TextPage title={page.title} intro={page.intro} body={page.body} />
+      <MusiqueTwoColumnLayout
+        title={page.title}
+        image={musiquePageImage(page)}
+        imageAlt={page.title}
+      >
+        {page.intro ? (
+          <p className="text-xl text-gray-700 whitespace-pre-line">{page.intro}</p>
+        ) : null}
+        {page.body ? (
+          <div className="space-y-5 text-lg text-gray-700 leading-relaxed">
+            {page.body.split("\n\n").map((paragraph, index) => (
+              <p key={index} className="text-justify whitespace-pre-line">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        ) : null}
+      </MusiqueTwoColumnLayout>
     </div>
   );
 }
