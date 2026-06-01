@@ -130,6 +130,35 @@ function allManifestImages(
   return manifestGalleries.flatMap((gallery) => [...gallery.images]);
 }
 
+/** Parent portfolio slug déduit du chemin (`/portfolio/parent/enfant`). */
+function galleryParentSlugFromPath(path: string): string | undefined {
+  const parts = path.split("/").filter(Boolean);
+  if (parts[0] === "portfolio" && parts.length >= 3) {
+    return parts[parts.length - 2];
+  }
+  return undefined;
+}
+
+function collectScopedManifestGalleries(
+  gallery: Gallery,
+  manifestGalleries: readonly ManifestGallery[],
+): ManifestGallery[] {
+  const scoped: ManifestGallery[] = [];
+
+  if (gallery.subGalleries?.length) {
+    for (const sub of gallery.subGalleries) {
+      const entry = findManifestGallery(manifestGalleries, sub.slug, gallery.slug);
+      if (entry?.images.length) scoped.push(entry);
+    }
+  }
+
+  const parentSlug = galleryParentSlugFromPath(gallery.path);
+  const own = findManifestGallery(manifestGalleries, gallery.slug, parentSlug);
+  if (own?.images.length) scoped.push(own);
+
+  return scoped;
+}
+
 /** Photo paysage aléatoire pour le hero (toutes galeries du manifest). */
 export function randomLandscapeHeroFromManifest(
   manifestGalleries: readonly ManifestGallery[],
@@ -153,14 +182,15 @@ function manifestImageThumbUrl(image: GalleryImage): string | null {
   return galleryThumbUrl(image.publicId) ?? galleryImageUrl(image.publicId, 800);
 }
 
-/** Vignette de repli : paysage aléatoire, sinon n’importe quelle photo du manifest. */
+/** Vignette de repli dans le périmètre de la galerie (sous-galeries incluses). */
 function randomManifestCoverFallback(
-  manifestGalleries: readonly ManifestGallery[],
+  scopedGalleries: readonly ManifestGallery[],
 ): string | null {
-  const landscapes = allManifestImages(manifestGalleries).filter(
+  const scopedImages = scopedGalleries.flatMap((entry) => [...entry.images]);
+  const landscapes = scopedImages.filter(
     (image) => !isPortraitGalleryImage(image.width, image.height),
   );
-  const image = pickRandom(landscapes) ?? pickRandom(allManifestImages(manifestGalleries));
+  const image = pickRandom(landscapes) ?? pickRandom(scopedImages);
   if (!image) return null;
   return manifestImageThumbUrl(image);
 }
@@ -169,10 +199,14 @@ export function randomGalleryCoverFromManifest(
   gallery: Gallery,
   manifestGalleries: readonly ManifestGallery[],
 ): string | null {
+  const scoped = collectScopedManifestGalleries(gallery, manifestGalleries);
+
   if (gallery.subGalleries?.length) {
-    const subsWithImages = gallery.subGalleries
-      .map((sub) => findManifestGallery(manifestGalleries, sub.slug, gallery.slug))
-      .filter((entry): entry is ManifestGallery => Boolean(entry?.images.length));
+    const subsWithImages = scoped.filter((entry) =>
+      gallery.subGalleries!.some(
+        (sub) => portfolioManifestSlug(sub.slug, gallery.slug) === entry.slug,
+      ),
+    );
 
     const sub = pickRandom(subsWithImages);
     if (sub?.images.length) {
@@ -183,7 +217,8 @@ export function randomGalleryCoverFromManifest(
     }
   }
 
-  const own = findManifestGallery(manifestGalleries, gallery.slug);
+  const parentSlug = galleryParentSlugFromPath(gallery.path);
+  const own = findManifestGallery(manifestGalleries, gallery.slug, parentSlug);
   if (own?.images.length) {
     const image = pickRandom(own.images);
     if (image) {
@@ -191,5 +226,5 @@ export function randomGalleryCoverFromManifest(
     }
   }
 
-  return randomManifestCoverFallback(manifestGalleries);
+  return randomManifestCoverFallback(scoped);
 }
