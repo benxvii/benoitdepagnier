@@ -349,7 +349,10 @@ export const about = {
 
 export const homeIntro = {
   quote:
-    "Un site dédié à mes activités et passions : la photographie (depuis mes 6 ans), la musique en tant que saxophoniste (depuis 19 ans), et le développement d'applications (depuis mes 55 ans).",
+    "Un site dédié à mes activités et passions :\n" +
+    "la photographie (depuis mes 6 ans),\n" +
+    "la musique en tant que saxophoniste (depuis 19 ans),\n" +
+    "et le développement d'applications (depuis mes 55 ans).",
 } as const;
 
 export function isGalleryVisible(gallery: Gallery): boolean {

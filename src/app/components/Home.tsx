@@ -16,6 +16,7 @@ import {
   useRandomGalleryHubItems,
   useRandomHeroImage,
 } from "./useRandomGalleryCovers";
+import { cn } from "./ui/utils";
 
 type HomeCard = {
   path: string;
@@ -43,21 +44,43 @@ export default function Home() {
 
   return (
     <div>
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-100 to-gray-50">
+      <section
+        className={cn(
+          "relative min-h-[85vh] flex items-center justify-center overflow-hidden",
+          !heroImage && "bg-gradient-to-b from-gray-100 to-gray-50",
+        )}
+      >
         {heroImage ? (
           <div className="absolute inset-0 z-0">
             <ImageWithFallback
               src={heroImage}
               alt={`${site.name} — photographie`}
-              className="w-full h-full object-cover opacity-40"
+              className="w-full h-full object-cover [filter:brightness(1.3)_saturate(0.5)_contrast(0.75)]"
+            />
+            <div
+              className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(0,0,0,0.25)_45%,rgba(0,0,0,0.25)_65%,rgba(0,0,0,0)_100%)]"
+              aria-hidden
             />
           </div>
         ) : null}
         <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
-          <h1 className="text-5xl md:text-7xl mb-6 tracking-tight">
+          <h1
+            className={cn(
+              "text-5xl md:text-7xl mb-6 tracking-tight",
+              heroImage &&
+                "text-[#FFFFFF] [text-shadow:0_1px_12px_rgba(0,0,0,0.5)]",
+            )}
+          >
             {site.name}
           </h1>
-          <p className="text-xl md:text-2xl text-gray-700 leading-relaxed">
+          <p
+            className={cn(
+              "text-xl md:text-2xl leading-relaxed whitespace-pre-line",
+              heroImage
+                ? "text-[#FFFFFF] [text-shadow:0_1px_12px_rgba(0,0,0,0.5)]"
+                : "text-gray-700",
+            )}
+          >
             {homeIntro.quote}
           </p>
         </div>
