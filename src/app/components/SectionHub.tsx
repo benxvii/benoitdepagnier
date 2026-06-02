@@ -64,14 +64,14 @@ function HubGrid({
   const isCover = imageFit === "cover";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
       {items.map((item) => (
         <Link key={item.path} to={item.path} className="group block">
           <div
             className={
               isIcon
-                ? "relative aspect-square overflow-hidden mb-4 bg-gray-50"
-                : "relative aspect-[4/3] overflow-hidden mb-4 bg-gray-100"
+                  ? "relative aspect-square overflow-hidden mb-4"
+                  : "relative aspect-[4/3] overflow-hidden mb-4"
             }
           >
             {item.image ? (
@@ -81,7 +81,7 @@ function HubGrid({
                 className={
                   isIcon && isCover
                     ? "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    : "w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    : "w-full h-full object-contain p-12 group-hover:scale-105 transition-transform duration-500"
                 }
               />
             ) : null}

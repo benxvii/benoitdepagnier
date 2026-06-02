@@ -334,6 +334,7 @@ Ajouter dans `projets.items` :
   body: `Description longue du projet.`,
   downloads: [
     { label: "macOS", url: assetUrl("/downloads/MonApp-mac.zip") },
+    { label: "Windows", url: assetUrl("/downloads/MonApp-win.zip") },
   ],
 },
 ```
