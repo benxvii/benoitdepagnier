@@ -162,14 +162,14 @@ function HomeCardLink({
 
   return (
     <Link to={card.path} className="group flex flex-col h-full">
-      <div className="relative aspect-square overflow-hidden bg-gray-50 mb-3">
+      <div className="relative aspect-square overflow-hidden mb-4">
         {card.image ? (
           <ImageWithFallback
             src={card.image}
             alt={card.title}
             className={
               isContain
-                ? "w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+                ? "w-full h-full object-contain p-12 group-hover:scale-105 transition-transform duration-500"
                 : "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             }
           />
