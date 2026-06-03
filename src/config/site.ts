@@ -206,12 +206,10 @@ Quatre vues principales :
       image: assetUrl("/projets/portfolioperf-logo.svg"),
       body: "Contenu à compléter — description du projet Performance de Portefeuille.",
       notice:
-        "Téléchargez l'archive ZIP, décompressez-la, puis lancez PortfolioApp.exe.",
+        "Téléchargez l'archive ZIP, décompressez-la, puis lancez l'application (PortfolioApp.exe sur Windows, Portfolio.app sur macOS).",
       downloads: [
-        {
-          label: "Windows (ZIP)",
-          url: assetUrl("/downloads/PortfolioApp.zip"),
-        },
+        { label: "macOS", url: assetUrl("/downloads/Portfolio-mac.zip") },
+        { label: "Windows", url: assetUrl("/downloads/Portfolio-win.zip") },
       ],
     },
   ] as readonly Projet[],

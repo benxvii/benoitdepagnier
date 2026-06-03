@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  RewriteRule ^downloads/PortfolioApp\.zip$ /downloads/Portfolio-win.zip [R=301,L]
   RewriteRule ^index\.html$ - [L]
   # Ne réécrire que les vrais fichiers (images, assets). Les dossiers
   # physiques (ex. galerie photo) doivent aussi retomber sur index.html.
