@@ -395,3 +395,59 @@ export function allPortfolioPaths(): { path: string; label: string }[] {
   }
   return paths;
 }
+
+export const installation = {
+  title: "Installation",
+  apps: [
+    {
+      slug: "imagecount",
+      title: "ImageCount",
+      platforms: ["windows", "macos"],
+      intro: "Aucune dépendance requise. Tout est inclus dans le ZIP.",
+    },
+    {
+      slug: "imagesweep",
+      title: "ImageSweep",
+      platforms: ["windows", "macos"],
+      intro: "Aucune dépendance requise. Tout est inclus dans le ZIP.",
+    },
+    {
+      slug: "imagescribe",
+      title: "ImageScribe",
+      platforms: ["windows", "macos"],
+      intro: "Aucune dépendance requise. Tout est inclus dans le ZIP.",
+      notice:
+        "La configuration de la clé API Gemini sera documentée dans une prochaine mise à jour.",
+    },
+    {
+      slug: "portfolio",
+      title: "Portfolio",
+      platforms: ["windows"],
+      intro: "Version Windows uniquement pour l'instant.",
+    },
+  ],
+  windows: {
+    title: "Windows",
+    steps: [
+      "Clic droit sur le fichier `.zip` téléchargé > **Propriétés**",
+      "En bas de l'onglet Général, cocher **Débloquer**",
+      "Cliquer **OK**",
+      "Extraire le ZIP, puis lancer l'exécutable `.exe`",
+    ],
+    warning:
+      "Débloquer le ZIP avant d'extraire. Si vous extrayez d'abord, le flag de sécurité se propage aux fichiers et la procédure ne fonctionne plus.",
+  },
+  macos: {
+    title: "macOS",
+    steps: [
+      "Extraire le ZIP et tenter de lancer l'application une première fois",
+      "macOS bloque l'app — c'est normal",
+      "Ouvrir Réglages Système > Confidentialité et sécurité",
+      "Faire défiler jusqu'à la section Sécurité",
+      "Cliquer Ouvrir quand même en regard du nom de l'application",
+      "Confirmer dans la fenêtre d'avertissement",
+    ],
+    warning:
+      "Le bouton « Ouvrir quand même » n'apparaît qu'après une première tentative de lancement bloquée.",
+  },
+};
