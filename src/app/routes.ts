@@ -11,6 +11,7 @@ import MusiquePageRoute from "./components/MusiquePage";
 import MusiqueEnregistrements from "./components/MusiqueEnregistrements";
 import MusiqueRecordingDetail from "./components/MusiqueRecordingDetail";
 import NotFound from "./components/NotFound";
+import Installation from "../components/Installation";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
       },
       { path: "musique/enregistrements", Component: MusiqueEnregistrements },
       { path: "musique/:slug", Component: MusiquePageRoute },
+      { path: "installation", Component: Installation },
       { path: "contact", loader: () => redirect("/") },
       { path: "*", Component: NotFound },
     ],

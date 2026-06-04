@@ -79,6 +79,17 @@ function ProjetPage({ projet }: { projet: Projet }) {
                 ))}
               </div>
               <DownloadButtons projet={projet} />
+              {(projet.downloads?.length ?? 0) > 0 || projet.downloadUrl ? (
+                <p className="text-xs text-gray-400 mt-3">
+                  Problème au lancement ?{" "}
+                  <a
+                    href="/installation"
+                    className="underline hover:text-gray-600"
+                  >
+                    Instructions d'installation →
+                  </a>
+                </p>
+              ) : null}
               {projet.notice && (
                 <p className="mt-8 text-gray-600 leading-relaxed border-l-2 border-[var(--brand)] pl-4">
                   {projet.notice}
