@@ -87,18 +87,21 @@ export default function Home() {
       </section>
 
       <HomeSection
+        path={portfolio.indexPath}
         title={portfolio.title}
         cards={portfolioCards}
         imageFit="cover"
       />
 
       <HomeSection
+        path={projets.indexPath}
         title={projets.title}
         cards={projetCards}
         imageFit="contain"
       />
 
       <HomeSection
+        path={musique.indexPath}
         title={musique.title}
         cards={musiqueCards}
         imageFit="cover"
@@ -106,7 +109,12 @@ export default function Home() {
 
       <section className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl mb-12 text-center">{about.title}</h2>
+          <Link
+            to={about.path}
+            className="hover:text-[var(--brand)] transition-colors"
+          >
+            <h2 className="text-4xl mb-12 text-center">{about.title}</h2>
+          </Link>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             <div className="flex flex-col max-w-sm mx-auto lg:max-w-none w-full">
               <AboutPortraits variant="home" />
@@ -131,17 +139,24 @@ export default function Home() {
 }
 
 function HomeSection({
+  path,
   title,
   cards,
   imageFit,
 }: {
+  path: string;
   title: string;
   cards: readonly HomeCard[];
   imageFit: ImageFit;
 }) {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 first:pt-24">
-      <h2 className="text-4xl mb-12 text-center">{title}</h2>
+      <Link
+        to={path}
+        className="hover:text-[var(--brand)] transition-colors"
+      >
+        <h2 className="text-4xl mb-12 text-center">{title}</h2>
+      </Link>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {cards.map((card) => (
           <HomeCardLink key={card.path} card={card} imageFit={imageFit} />

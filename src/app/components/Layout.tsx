@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from "react-router";
+import { Outlet, Link, useLocation, ScrollRestoration } from "react-router";
 import { Facebook, Instagram, Linkedin, Mail, Menu, X } from "lucide-react";
 import { useState, useLayoutEffect, useRef } from "react";
 import {
@@ -18,6 +18,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <ScrollRestoration />
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HeaderRow
