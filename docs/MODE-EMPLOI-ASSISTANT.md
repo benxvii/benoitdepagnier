@@ -8,12 +8,14 @@ Guide pour un assistant débutant qui travaille via **Cursor** sur le repo `benx
 
 ### Comment le site fonctionne
 
-| Élément | Rôle |
-|---------|------|
-| **Code** (`src/`) | Textes, structure des pages, menu, URLs |
-| **Cloudinary** | Photos des galeries portfolio |
-| **GitHub** | Code source + déploiement automatique |
-| **Infomaniak** | Hébergement du site (HTML/JS/CSS compilés) |
+
+| Élément           | Rôle                                       |
+| ----------------- | ------------------------------------------ |
+| **Code** (`src/`) | Textes, structure des pages, menu, URLs    |
+| **Cloudinary**    | Photos des galeries portfolio              |
+| **GitHub**        | Code source + déploiement automatique      |
+| **Infomaniak**    | Hébergement du site (HTML/JS/CSS compilés) |
+
 
 Les **photos de portfolio** ne sont plus dans le code. Elles sont sur **Cloudinary**, dans le dossier racine `benoitdepagnier/portfolio/…`.
 
@@ -21,16 +23,18 @@ Le menu se met à jour **automatiquement** à partir de `src/config/site.ts`. Pa
 
 ### Fichier principal à connaître
 
-**`src/config/site.ts`** — contient presque tout le contenu éditorial :
+`**src/config/site.ts`** — contient presque tout le contenu éditorial :
 
-| Section | Contenu |
-|---------|---------|
-| `site` | Nom, email, réseaux sociaux, logo |
+
+| Section     | Contenu                                    |
+| ----------- | ------------------------------------------ |
+| `site`      | Nom, email, réseaux sociaux, logo          |
 | `portfolio` | Galeries photo (titres, intros, structure) |
-| `projets` | Pages projets informatiques |
-| `musique` | Pages musique + enregistrements |
-| `about` | Page « Qui suis-je ? » |
-| `homeIntro` | Citation sur la page d'accueil |
+| `projets`   | Pages projets informatiques                |
+| `musique`   | Pages musique + enregistrements            |
+| `about`     | Page « Qui suis-je ? »                     |
+| `homeIntro` | Citation sur la page d'accueil             |
+
 
 ### Déploiement
 
@@ -50,7 +54,7 @@ Pour **prévisualiser en local** avant de pousser :
 npm run dev
 ```
 
-Puis ouvrir http://localhost:5173
+Puis ouvrir [http://localhost:5173](http://localhost:5173)
 
 ---
 
@@ -60,20 +64,24 @@ Ouvrir `src/config/site.ts` et repérer la section correspondante.
 
 ### Page d'accueil
 
-| Élément | Où modifier |
-|---------|-------------|
-| Citation sous le hero | `homeIntro.quote` |
-| Nom, tagline, email, réseaux | objet `site` |
+
+| Élément                      | Où modifier       |
+| ---------------------------- | ----------------- |
+| Citation sous le hero        | `homeIntro.quote` |
+| Nom, tagline, email, réseaux | objet `site`      |
+
 
 ### Portfolio (page index + galeries)
 
-| Élément | Où modifier |
-|---------|-------------|
-| Titre « Portfolio » | `portfolio.title` |
-| Intro de la page index | `portfolio.intro` |
-| Titre d'une galerie | `portfolio.galleries[].title` |
-| Texte sous le titre | `portfolio.galleries[].intro` |
+
+| Élément                        | Où modifier                            |
+| ------------------------------ | -------------------------------------- |
+| Titre « Portfolio »            | `portfolio.title`                      |
+| Intro de la page index         | `portfolio.intro`                      |
+| Titre d'une galerie            | `portfolio.galleries[].title`          |
+| Texte sous le titre            | `portfolio.galleries[].intro`          |
 | Galerie nested (sous-rubrique) | `portfolio.galleries[].subGalleries[]` |
+
 
 **Exemple** — changer l'intro de Street photography :
 
@@ -88,32 +96,38 @@ Ouvrir `src/config/site.ts` et repérer la section correspondante.
 
 ### Page About
 
-| Élément | Où modifier |
-|---------|-------------|
-| Titre | `about.title` |
-| Légende du portrait | `about.portraitCaption` |
-| Paragraphes | `about.paragraphs[]` (tableau de strings) |
+
+| Élément             | Où modifier                               |
+| ------------------- | ----------------------------------------- |
+| Titre               | `about.title`                             |
+| Légende du portrait | `about.portraitCaption`                   |
+| Paragraphes         | `about.paragraphs[]` (tableau de strings) |
+
 
 ### Musique
 
-| Page | Où modifier |
-|------|-------------|
-| Intro générale | `musique.intro` |
-| Instruments, compositions… | `musique.pages[]` → champs `title`, `intro`, `body` |
-| Fiche album | `musique.recordings[]` → `title`, `body`, `tracks`, etc. |
+
+| Page                       | Où modifier                                              |
+| -------------------------- | -------------------------------------------------------- |
+| Intro générale             | `musique.intro`                                          |
+| Instruments, compositions… | `musique.pages[]` → champs `title`, `intro`, `body`      |
+| Fiche album                | `musique.recordings[]` → `title`, `body`, `tracks`, etc. |
+
 
 ### Projets
 
-| Élément | Où modifier |
-|---------|-------------|
-| Intro index | `projets.intro` |
+
+| Élément      | Où modifier                                                  |
+| ------------ | ------------------------------------------------------------ |
+| Intro index  | `projets.intro`                                              |
 | Fiche projet | `projets.items[]` → `title`, `description`, `body`, `notice` |
+
 
 ### Checklist
 
-- [ ] Texte modifié dans `site.ts`
-- [ ] `npm run dev` pour vérifier (optionnel)
-- [ ] `git commit` + `git push`
+- Texte modifié dans `site.ts`
+- `npm run dev` pour vérifier (optionnel)
+- `git commit` + `git push`
 
 **Aucune action Cloudinary** pour une simple modification de texte.
 
@@ -127,18 +141,20 @@ Ouvrir `src/config/site.ts` et repérer la section correspondante.
 
 1. Aller sur [console.cloudinary.com](https://console.cloudinary.com) → **Assets**
 2. Naviguer vers le dossier de la galerie, par exemple :
-   ```
+  ```
    benoitdepagnier/portfolio/street-photography/
-   ```
+  ```
 3. **Upload** → glisser les nouveaux JPG dans ce dossier
 
 Le chemin Cloudinary doit correspondre au **slug** de la galerie dans `site.ts` :
 
-| Galerie dans site.ts | Dossier Cloudinary |
-|----------------------|-------------------|
-| `slug: "street-photography"` | `benoitdepagnier/portfolio/street-photography/` |
-| `slug: "flous-urbains"` (sous `flous-de-mouvements`) | `benoitdepagnier/portfolio/flous-de-mouvements/flous-urbains/` |
+
+| Galerie dans site.ts                                       | Dossier Cloudinary                                                   |
+| ---------------------------------------------------------- | -------------------------------------------------------------------- |
+| `slug: "street-photography"`                               | `benoitdepagnier/portfolio/street-photography/`                      |
+| `slug: "flous-urbains"` (sous `flous-de-mouvements`)       | `benoitdepagnier/portfolio/flous-de-mouvements/flous-urbains/`       |
 | `slug: "louis-billette-nuit"` (sous `monde-de-la-musique`) | `benoitdepagnier/portfolio/monde-de-la-musique/louis-billette-nuit/` |
+
 
 ### Étape B — Synchroniser le manifest
 
@@ -154,9 +170,9 @@ Les nouvelles photos viennent de `res.cloudinary.com/duvuxd5kh/…`.
 
 ### Checklist
 
-- [ ] Photos uploadées dans le **bon** dossier Cloudinary
-- [ ] Workflow **Sync galleries** exécuté
-- [ ] Page rechargée dans le navigateur
+- Photos uploadées dans le **bon** dossier Cloudinary
+- Workflow **Sync galleries** exécuté
+- Page rechargée dans le navigateur
 
 **Pas de `git push` nécessaire.**
 
@@ -190,6 +206,7 @@ Ajouter une entrée dans `portfolio.galleries` :
 ```
 
 **Règles pour le slug :**
+
 - minuscules, tirets, pas d'espaces
 - le `path` = `/portfolio/` + slug
 - le dossier Cloudinary = `benoitdepagnier/portfolio/` + slug
@@ -373,24 +390,28 @@ Plus rare. Nécessite :
 
 ## Récap rapide
 
-| Tâche | Fichiers | Cloudinary | Git push | Sync workflow |
-|-------|----------|------------|----------|---------------|
-| Modifier un texte | `site.ts` | — | ✅ | — |
-| Ajouter photos (galerie existante) | — | ✅ upload | — | ✅ |
-| Nouvelle galerie | `site.ts` + `galleries-meta.json` | ✅ upload | ✅ | ✅ |
-| Nouvelle page musique/projet | `site.ts` | — | ✅ | — |
+
+| Tâche                              | Fichiers                          | Cloudinary | Git push | Sync workflow |
+| ---------------------------------- | --------------------------------- | ---------- | -------- | ------------- |
+| Modifier un texte                  | `site.ts`                         | —          | ✅        | —             |
+| Ajouter photos (galerie existante) | —                                 | ✅ upload   | —        | ✅             |
+| Nouvelle galerie                   | `site.ts` + `galleries-meta.json` | ✅ upload   | ✅        | ✅             |
+| Nouvelle page musique/projet       | `site.ts`                         | —          | ✅        | —             |
+
 
 ---
 
 ## Erreurs fréquentes
 
-| Problème | Cause | Solution |
-|----------|-------|----------|
-| Galerie vide | Mauvais dossier Cloudinary | Vérifier le chemin vs slug dans `site.ts` |
-| Galerie absente du menu | Entrée manquante dans `site.ts` | Ajouter + push |
-| Photos pas à jour | Sync pas lancé | Run **Sync galleries from Cloudinary** |
-| Page 404 | `path` ou `slug` incohérent | `path` doit matcher l'URL réelle |
-| Menu nested cassé | `subGalleries` mal placé | Sous-galerie dans le bon parent |
+
+| Problème                | Cause                           | Solution                                  |
+| ----------------------- | ------------------------------- | ----------------------------------------- |
+| Galerie vide            | Mauvais dossier Cloudinary      | Vérifier le chemin vs slug dans `site.ts` |
+| Galerie absente du menu | Entrée manquante dans `site.ts` | Ajouter + push                            |
+| Photos pas à jour       | Sync pas lancé                  | Run **Sync galleries from Cloudinary**    |
+| Page 404                | `path` ou `slug` incohérent     | `path` doit matcher l'URL réelle          |
+| Menu nested cassé       | `subGalleries` mal placé        | Sous-galerie dans le bon parent           |
+
 
 ---
 
@@ -412,10 +433,30 @@ Règle : chemin Cloudinary = `benoitdepagnier/portfolio/` + slugs parents/enfant
 
 L'assistant **ne modifie pas** les secrets GitHub. Benoît les gère.
 
-| Secret | Usage |
-|--------|-------|
-| `CLOUDINARY_CLOUD_NAME` | `duvuxd5kh` |
-| `CLOUDINARY_FOLDER` | `benoitdepagnier` |
+
+| Secret                          | Usage                    |
+| ------------------------------- | ------------------------ |
+| `CLOUDINARY_CLOUD_NAME`         | `duvuxd5kh`              |
+| `CLOUDINARY_FOLDER`             | `benoitdepagnier`        |
 | `CLOUDINARY_API_KEY` / `SECRET` | Sync workflow uniquement |
 
+
 Upload manuel des photos : compte Cloudinary web, pas besoin des secrets.
+
+---
+
+## Statistiques de consultation
+
+Le site utilise **Umami** pour le tracking des visites (script installé dans `index.html`).
+
+Pour consulter les statistiques :
+
+1. Aller sur [cloud.umami.is](https://cloud.umami.is)
+2. Se connecter avec le compte Umami de Benoît
+3. Sélectionner le site `benoitdepagnier.ch`
+
+Les données disponibles : visiteurs, pages vues, pages les plus consultées, pays, sources de trafic.
+
+Les stats Infomaniak natives (Manager > Site Web > benoitdepagnier.ch > Statistiques) sont également disponibles mais incluent les bots — chiffres à prendre avec réserve.
+
+Ne pas modifier le `data-website-id` dans `index.html` sans mettre à jour le compte Umami.
