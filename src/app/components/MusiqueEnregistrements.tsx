@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import BackLink from "./BackLink";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import MusiqueTwoColumnLayout from "./MusiqueTwoColumnLayout";
 import { musique, musiquePageImage } from "../../config/site";
@@ -9,17 +10,7 @@ export default function MusiqueEnregistrements() {
 
   return (
     <div>
-      <section className="py-6 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            to={musique.indexPath}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] transition-colors"
-          >
-            <ArrowLeft size={18} />
-            Retour à la musique
-          </Link>
-        </div>
-      </section>
+      <BackLink to={musique.indexPath} label="Retour à la musique" />
 
       <MusiqueTwoColumnLayout
         title={page?.title ?? "Enregistrements"}
