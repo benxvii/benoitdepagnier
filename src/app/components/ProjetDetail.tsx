@@ -1,5 +1,6 @@
-import { Link, Navigate, useParams } from "react-router";
-import { ArrowLeft, Download } from "lucide-react";
+import { Navigate, useParams } from "react-router";
+import { Download } from "lucide-react";
+import BackLink from "./BackLink";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { projets, type Projet } from "../../config/site";
 
@@ -53,15 +54,9 @@ function DownloadButtons({ projet }: { projet: Projet }) {
 function ProjetPage({ projet }: { projet: Projet }) {
   return (
     <div>
+      <BackLink to={projets.indexPath} label="Retour aux projets" />
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            to={projets.indexPath}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] mb-8 transition-colors"
-          >
-            <ArrowLeft size={18} />
-            Retour aux projets
-          </Link>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             <div className="overflow-hidden aspect-square max-w-sm">
               <ImageWithFallback

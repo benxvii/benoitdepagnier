@@ -1,17 +1,12 @@
 import { assetUrl } from "./assetUrl";
 
-const placeholderImage =
-  "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
-
 export const site = {
   name: "Benoît d'Epagnier",
-  shortName: "Benoît d'Epagnier",
   tagline: "Photo · Musique · Développement",
   email: "bdepagnier@bluewin.ch",
   instagram: "https://www.instagram.com/benxvii/",
   facebook: "https://www.facebook.com/bdepagnier",
   linkedin: "https://www.linkedin.com/in/bdepagnier/",
-  logoSrc: assetUrl("/logo.png"),
   copyrightYear: new Date().getFullYear(),
 } as const;
 
@@ -381,19 +376,6 @@ export function findPortfolioGallery(
   }
   const gallery = portfolio.galleries.find((g) => g.slug === slug);
   return gallery && isGalleryVisible(gallery) ? gallery : undefined;
-}
-
-export function allPortfolioPaths(): { path: string; label: string }[] {
-  const paths: { path: string; label: string }[] = [];
-  for (const gallery of visiblePortfolioGalleries()) {
-    paths.push({ path: gallery.path, label: gallery.title });
-    if (gallery.subGalleries) {
-      for (const sub of gallery.subGalleries) {
-        paths.push({ path: sub.path, label: sub.title });
-      }
-    }
-  }
-  return paths;
 }
 
 export const installation = {
