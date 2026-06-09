@@ -1,12 +1,17 @@
 import { assetUrl } from "./assetUrl";
 
+const placeholderImage =
+  "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
+
 export const site = {
   name: "Benoît d'Epagnier",
+  shortName: "Benoît d'Epagnier",
   tagline: "Photo · Musique · Développement",
   email: "bdepagnier@bluewin.ch",
   instagram: "https://www.instagram.com/benxvii/",
   facebook: "https://www.facebook.com/bdepagnier",
   linkedin: "https://www.linkedin.com/in/bdepagnier/",
+  logoSrc: assetUrl("/logo.png"),
   copyrightYear: new Date().getFullYear(),
 } as const;
 
@@ -350,11 +355,9 @@ export const about = {
 
 export const homeIntro = {
   quote:
-    // "Un site dédié à mes activités et passions :\n" +
-    // "la photographie (depuis mes 6 ans),\n" +
-    // "la musique en tant que saxophoniste (depuis 19 ans),\n" +
-    // "et le développement d'applications (depuis mes 55 ans).",
-    "Un site dédié à mes activités et passions : la photographie depuis mes 6 ans, la pratique de la musique et principalement du saxophone à 19 ans, puis le développement d'applications depuis mes 55 ans."
+    "Un site dédié à mes activités et passions : la photographie depuis\n" +
+    "mes 6 ans, la pratique de la musique et principalement du saxophone\n" +
+    " à 19 ans, puis le développement d'applications depuis mes 55 ans."
 } as const;
 
 export function isGalleryVisible(gallery: Gallery): boolean {
@@ -376,6 +379,19 @@ export function findPortfolioGallery(
   }
   const gallery = portfolio.galleries.find((g) => g.slug === slug);
   return gallery && isGalleryVisible(gallery) ? gallery : undefined;
+}
+
+export function allPortfolioPaths(): { path: string; label: string }[] {
+  const paths: { path: string; label: string }[] = [];
+  for (const gallery of visiblePortfolioGalleries()) {
+    paths.push({ path: gallery.path, label: gallery.title });
+    if (gallery.subGalleries) {
+      for (const sub of gallery.subGalleries) {
+        paths.push({ path: sub.path, label: sub.title });
+      }
+    }
+  }
+  return paths;
 }
 
 export const installation = {

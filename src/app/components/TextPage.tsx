@@ -9,7 +9,7 @@ type TextPageProps = {
 export default function TextPage({ title, intro, body }: TextPageProps) {
   return (
     <div>
-      <PageHero title={title} intro={intro ?? ""} />
+      <PageHero title={title} intro={intro ?? ""} whitespacePre={true} />
 
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="space-y-6 text-lg text-gray-700 leading-relaxed whitespace-pre-line">
