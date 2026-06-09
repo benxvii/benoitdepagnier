@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation, ScrollRestoration } from "react-router";
 import { Facebook, Instagram, Linkedin, Mail, Menu, X } from "lucide-react";
-import { useState, useLayoutEffect, useRef } from "react";
+import { useState } from "react";
 import {
   isNavActive,
   isNavSectionActive,
