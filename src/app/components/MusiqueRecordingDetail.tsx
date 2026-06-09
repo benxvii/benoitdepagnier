@@ -1,5 +1,6 @@
-import { Link, Navigate, useParams } from "react-router";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { Navigate, useParams } from "react-router";
+import { ExternalLink } from "lucide-react";
+import BackLink from "./BackLink";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { findMusiqueRecording, musique } from "../../config/site";
 
@@ -15,16 +16,12 @@ export default function MusiqueRecordingDetail() {
 
   return (
     <div>
+      <BackLink
+        to={musique.enregistrementsPath}
+        label="Retour aux enregistrements"
+      />
       <section className="py-12 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            to={musique.enregistrementsPath}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] mb-8 transition-colors"
-          >
-            <ArrowLeft size={18} />
-            Retour aux enregistrements
-          </Link>
-
           <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-12 items-start">
             <div className="overflow-hidden bg-white">
               <ImageWithFallback

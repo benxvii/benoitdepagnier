@@ -1,5 +1,5 @@
-import { Link, Navigate, useParams } from "react-router";
-import { ArrowLeft } from "lucide-react";
+import { Navigate, useParams } from "react-router";
+import BackLink from "./BackLink";
 import EquipmentGalleryPage from "./EquipmentGalleryPage";
 import GalleryPage from "./GalleryPage";
 import SectionHub from "./SectionHub";
@@ -28,17 +28,7 @@ export default function PortfolioGallery() {
   if (gallery.subGalleries && gallery.subGalleries.length > 0) {
     return (
       <div>
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Link
-              to={portfolio.indexPath}
-              className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] mb-8 transition-colors"
-            >
-              <ArrowLeft size={18} />
-              Retour au portfolio
-            </Link>
-          </div>
-        </section>
+        <BackLink to={portfolio.indexPath} label="Retour au portfolio" />
         <SectionHub
           title={gallery.title}
           intro={gallery.intro}
@@ -65,17 +55,7 @@ export default function PortfolioGallery() {
 
     return (
       <div>
-        <section className="py-6 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Link
-              to={backPath}
-              className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] transition-colors"
-            >
-              <ArrowLeft size={18} />
-              Retour
-            </Link>
-          </div>
-        </section>
+        <BackLink to={backPath} label="Retour" />
         <EquipmentGalleryPage
           title={gallery.title}
           intro={gallery.intro}
@@ -92,17 +72,7 @@ export default function PortfolioGallery() {
 
   return (
     <div>
-      <section className="py-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            to={backPath}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-[var(--brand)] transition-colors"
-          >
-            <ArrowLeft size={18} />
-            Retour
-          </Link>
-        </div>
-      </section>
+      <BackLink to={backPath} label="Retour" />
       <GalleryPage
         title={gallery.title}
         intro={gallery.intro}
