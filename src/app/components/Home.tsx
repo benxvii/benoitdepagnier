@@ -16,7 +16,7 @@ import {
   useRandomGalleryHubItems,
   useRandomHeroImage,
 } from "./useRandomGalleryCovers";
-import { cn } from "./ui/utils";
+import { cn } from "../../lib/cn";
 
 type HomeCard = {
   path: string;
