@@ -1,6 +1,7 @@
 import { Camera } from "lucide-react";
 import type { GalleryEquipmentItem } from "../../config/site";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import PageHero from "./PageHero";
 
 export type EquipmentGalleryItemView = GalleryEquipmentItem & {
   imageUrl: string | null;
@@ -21,12 +22,7 @@ export default function EquipmentGalleryPage({
 }: EquipmentGalleryPageProps) {
   return (
     <div>
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl mb-6">{title}</h1>
-          {intro ? <p className="text-xl text-gray-700">{intro}</p> : null}
-        </div>
-      </section>
+      <PageHero title={title} intro={intro} />
 
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
