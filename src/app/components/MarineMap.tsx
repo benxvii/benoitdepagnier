@@ -54,14 +54,14 @@ export default function MarineMap({ position, shoreLines }: MarineMapProps) {
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
       <MapFollow position={position} />
       {shoreLines.map((line, index) => (
         <Polyline
           key={index}
           positions={line}
-          pathOptions={{ color: "#5eead4", weight: 2, opacity: 0.85 }}
+          pathOptions={{ color: "#0d9488", weight: 3, opacity: 1 }}
         />
       ))}
       {position && (
