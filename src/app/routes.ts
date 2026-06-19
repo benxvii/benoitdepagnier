@@ -13,6 +13,7 @@ import MusiqueRecordingDetail from "./components/MusiqueRecordingDetail";
 import NotFound from "./components/NotFound";
 import Installation from "../components/Installation";
 import Poi from "./components/Poi";
+import Marine from "./components/Marine";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
       { path: "musique/:slug", Component: MusiquePageRoute },
       { path: "installation", Component: Installation },
       { path: "poi", Component: Poi },
+      { path: "marine", Component: Marine },
       { path: "contact", loader: () => redirect("/") },
       { path: "*", Component: NotFound },
     ],
