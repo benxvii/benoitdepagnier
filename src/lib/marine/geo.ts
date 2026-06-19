@@ -141,9 +141,17 @@ export function msToKmh(speedMs: number | null | undefined): number | null {
 
 export type DistanceZone = "safe" | "watch" | "danger";
 
-export function distanceZone(distanceM: number | null): DistanceZone {
+export const DANGER_SPEED_KMH = 10;
+
+export function distanceZone(
+  distanceM: number | null,
+  speedKmh: number | null,
+): DistanceZone {
   if (distanceM == null) return "safe";
-  if (distanceM <= 150) return "danger";
-  if (distanceM <= 500) return "watch";
+  if (distanceM > 500) return "safe";
+  if (distanceM <= 300 && speedKmh != null && speedKmh > DANGER_SPEED_KMH) {
+    return "danger";
+  }
+  if (distanceM > 300) return "watch";
   return "safe";
 }

@@ -15,6 +15,11 @@ import {
   segmentsToPolylines,
   type ShoreCache,
 } from "../../lib/marine/overpass";
+import {
+  clearSimulatedWatch,
+  isSimulationEnabled,
+  startSimulatedWatch,
+} from "../../lib/marine/geoSimulator";
 import { cn } from "../../lib/cn";
 
 const MarineMap = lazy(() => import("./MarineMap"));
@@ -74,10 +79,13 @@ export default function Marine() {
     "loading" | "ready" | "cached" | "error"
   >("loading");
 
-  const zone = useMemo(() => distanceZone(distanceM), [distanceM]);
+  const zone = useMemo(
+    () => distanceZone(distanceM, speedKmh),
+    [distanceM, speedKmh],
+  );
   const styles = zoneStyles[zone];
 
-  const recalcDistance = useCallback((lat: number, lng: number) => {
+  const recalcDistance = useCallback((lat: number, lng: number, speed: number | null) => {
     const shore = shoreRef.current;
     if (!shore || shore.segments.length === 0) {
       setDistanceM(null);
@@ -86,7 +94,7 @@ export default function Marine() {
 
     const dist = distanceToShoreMeters(lat, lng, shore.segments);
     setDistanceM(dist);
-    alarmsRef.current.update(dist);
+    alarmsRef.current.update(dist, speed);
   }, []);
 
   const applyShoreCache = useCallback(
@@ -96,7 +104,7 @@ export default function Marine() {
 
       const pos = positionRef.current;
       if (pos) {
-        recalcDistance(pos[0], pos[1]);
+        recalcDistance(pos[0], pos[1], prevFixRef.current?.speedKmh ?? null);
       }
     },
     [recalcDistance],
@@ -155,7 +163,7 @@ export default function Marine() {
       setSpeedKmh(computedSpeed);
       prevFixRef.current = { lat, lng, time, speedKmh: computedSpeed };
 
-      recalcDistance(lat, lng);
+      recalcDistance(lat, lng, computedSpeed);
 
       void loadShore(lat, lng);
     },
@@ -167,6 +175,19 @@ export default function Marine() {
     if (cached) {
       applyShoreCache(cached);
       setShoreStatus("cached");
+    }
+
+    if (isSimulationEnabled()) {
+      const watchId = startSimulatedWatch((fix) => {
+        handleGeoUpdate(
+          fix.coords.latitude,
+          fix.coords.longitude,
+          fix.coords.speed,
+          fix.timestamp,
+        );
+      });
+
+      return () => clearSimulatedWatch(watchId);
     }
 
     if (!navigator.geolocation) {
@@ -216,7 +237,7 @@ export default function Marine() {
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-1">
               Vitesse
             </p>
-            <p className={cn("text-5xl sm:text-6xl font-light tabular-nums", styles.text)}>
+            <p className={cn("text-5xl sm:text-6xl font-bold tabular-nums", styles.text)}>
               {formatSpeed(speedKmh)}
             </p>
             <p className="text-sm text-slate-400 mt-1">km/h</p>
@@ -226,7 +247,7 @@ export default function Marine() {
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-1">
               Rive
             </p>
-            <p className={cn("text-5xl sm:text-6xl font-light tabular-nums", styles.text)}>
+            <p className={cn("text-5xl sm:text-6xl font-bold tabular-nums", styles.text)}>
               {distanceM != null && distanceM >= 1000
                 ? (distanceM / 1000).toFixed(2)
                 : formatDistance(distanceM).replace(" m", "").replace(" km", "")}
@@ -267,11 +288,11 @@ export default function Marine() {
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-full bg-[#fb923c]" />
-            150–500 m
+            300–500 m
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-full bg-[#f87171]" />
-            &lt; 150 m
+            ≤ 300 m si &gt; 10 km/h
           </span>
         </div>
       </div>

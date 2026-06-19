@@ -1,7 +1,8 @@
-export const ALARM_THRESHOLDS = [500, 300, 150] as const;
+export const ALARM_THRESHOLDS = [500, 300] as const;
 export type AlarmThreshold = (typeof ALARM_THRESHOLDS)[number];
 
 const HYSTERESIS_FACTOR = 1.2;
+const DANGER_SPEED_KMH = 10;
 
 type ThresholdState = {
   armed: boolean;
@@ -12,7 +13,6 @@ export class ShoreAlarms {
   private states: Record<AlarmThreshold, ThresholdState> = {
     500: { armed: true },
     300: { armed: true },
-    150: { armed: true },
   };
 
   ensureAudio(): void {
@@ -33,10 +33,14 @@ export class ShoreAlarms {
     }
   }
 
-  update(distanceM: number | null): void {
+  update(distanceM: number | null, speedKmh: number | null): void {
     if (distanceM == null) return;
 
     for (const threshold of ALARM_THRESHOLDS) {
+      if (threshold === 300 && (speedKmh == null || speedKmh <= DANGER_SPEED_KMH)) {
+        continue;
+      }
+
       const state = this.states[threshold];
       const resetAbove = threshold * HYSTERESIS_FACTOR;
 
@@ -56,11 +60,7 @@ export class ShoreAlarms {
 
     if (typeof navigator !== "undefined" && navigator.vibrate) {
       const pattern =
-        threshold === 500
-          ? [200]
-          : threshold === 300
-            ? [150, 100, 150]
-            : [100, 80, 100, 80, 200];
+        threshold === 500 ? [200] : [150, 100, 150, 100, 200];
       navigator.vibrate(pattern);
     }
   }
@@ -82,16 +82,6 @@ export class ShoreAlarms {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
       osc.start(now);
       osc.stop(now + 0.25);
-    } else if (threshold === 300) {
-      osc.frequency.value = 660;
-      for (let i = 0; i < 2; i += 1) {
-        const t = now + i * 0.35;
-        gain.gain.setValueAtTime(0.001, t);
-        gain.gain.linearRampToValueAtTime(0.35, t + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-      }
-      osc.start(now);
-      osc.stop(now + 0.7);
     } else {
       osc.frequency.value = 880;
       osc.type = "square";
