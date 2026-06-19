@@ -12,19 +12,38 @@ export type ShoreCache = {
 };
 
 type OverpassNode = { lat: number; lon: number };
-type OverpassWay = { geometry?: OverpassNode[] };
+type OverpassWay = {
+  type?: string;
+  geometry?: OverpassNode[];
+};
 
 type OverpassResponse = {
   elements?: OverpassWay[];
 };
 
-function buildOverpassQuery(bbox: Bbox): string {
+const LAKE_NAME_FILTER =
+  '"name"~"Léman|Leman|Lake Geneva|Genfersee|lac léman|lac leman",i';
+
+function buildOverpassQuery(bbox: Bbox, broad = false): string {
   const { south, west, north, east } = bbox;
+
+  if (broad) {
+    return `[out:json][timeout:25];
+(
+  relation["natural"="water"](${south},${west},${north},${east});
+  way["natural"="water"](${south},${west},${north},${east});
+);
+(._;>;);
+out geom;`;
+  }
+
   return `[out:json][timeout:25];
 (
-  way["natural"="water"]["name"~"Léman",i](${south},${west},${north},${east});
-  way["natural"="coastline"]["name"~"Léman",i](${south},${west},${north},${east});
+  relation["natural"="water"][${LAKE_NAME_FILTER}](${south},${west},${north},${east});
+  way["natural"="water"][${LAKE_NAME_FILTER}](${south},${west},${north},${east});
+  way["natural"="coastline"][${LAKE_NAME_FILTER}](${south},${west},${north},${east});
 );
+(._;>;);
 out geom;`;
 }
 
@@ -46,12 +65,34 @@ function waysToSegments(ways: OverpassWay[]): ShoreSegment[] {
   return segments;
 }
 
+function elementsToSegments(elements: OverpassWay[]): ShoreSegment[] {
+  const ways = elements.filter(
+    (el) => el.type === "way" && el.geometry && el.geometry.length >= 2,
+  );
+  return waysToSegments(ways);
+}
+
+async function queryOverpass(query: string): Promise<OverpassResponse> {
+  const response = await fetch(OVERPASS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `data=${encodeURIComponent(query)}`,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Overpass ${response.status}`);
+  }
+
+  return (await response.json()) as OverpassResponse;
+}
+
 export function readShoreCache(): ShoreCache | null {
   try {
     const raw = localStorage.getItem(SHORE_CACHE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as ShoreCache;
     if (!parsed.bbox || !Array.isArray(parsed.segments)) return null;
+    if (parsed.segments.length === 0) return null;
     return parsed;
   } catch {
     return null;
@@ -71,20 +112,25 @@ export async function fetchShoreSegments(
   lng: number,
 ): Promise<ShoreCache> {
   const bbox = bboxAround(lat, lng, BBOX_RADIUS_KM);
-  const query = buildOverpassQuery(bbox);
 
-  const response = await fetch(OVERPASS_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `data=${encodeURIComponent(query)}`,
-  });
+  let segments: ShoreSegment[] = [];
 
-  if (!response.ok) {
-    throw new Error(`Overpass ${response.status}`);
+  try {
+    const named = await queryOverpass(buildOverpassQuery(bbox));
+    segments = elementsToSegments(named.elements ?? []);
+  } catch {
+    // Retry below with broader query or cache fallback.
   }
 
-  const data = (await response.json()) as OverpassResponse;
-  const segments = waysToSegments(data.elements ?? []);
+  if (segments.length === 0) {
+    try {
+      const broad = await queryOverpass(buildOverpassQuery(bbox, true));
+      segments = elementsToSegments(broad.elements ?? []);
+    } catch {
+      // Overpass unavailable — caller falls back to cache.
+    }
+  }
+
   const cache: ShoreCache = {
     bbox,
     segments,
