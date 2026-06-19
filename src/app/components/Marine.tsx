@@ -62,6 +62,7 @@ export default function Marine() {
   const alarmsRef = useRef(new ShoreAlarms());
   const prevFixRef = useRef<GeoFix | null>(null);
   const shoreRef = useRef<ShoreCache | null>(null);
+  const positionRef = useRef<LatLng | null>(null);
   const fetchInFlightRef = useRef(false);
 
   const [position, setPosition] = useState<LatLng | null>(null);
@@ -76,10 +77,30 @@ export default function Marine() {
   const zone = useMemo(() => distanceZone(distanceM), [distanceM]);
   const styles = zoneStyles[zone];
 
-  const applyShoreCache = useCallback((cache: ShoreCache) => {
-    shoreRef.current = cache;
-    setShoreLines(segmentsToPolylines(cache.segments));
+  const recalcDistance = useCallback((lat: number, lng: number) => {
+    const shore = shoreRef.current;
+    if (!shore || shore.segments.length === 0) {
+      setDistanceM(null);
+      return;
+    }
+
+    const dist = distanceToShoreMeters(lat, lng, shore.segments);
+    setDistanceM(dist);
+    alarmsRef.current.update(dist);
   }, []);
+
+  const applyShoreCache = useCallback(
+    (cache: ShoreCache) => {
+      shoreRef.current = cache;
+      setShoreLines(segmentsToPolylines(cache.segments));
+
+      const pos = positionRef.current;
+      if (pos) {
+        recalcDistance(pos[0], pos[1]);
+      }
+    },
+    [recalcDistance],
+  );
 
   const loadShore = useCallback(
     async (lat: number, lng: number, force = false) => {
@@ -118,6 +139,7 @@ export default function Marine() {
 
   const handleGeoUpdate = useCallback(
     (lat: number, lng: number, speedMs: number | null, time: number) => {
+      positionRef.current = [lat, lng];
       setPosition([lat, lng]);
       setGeoError(null);
       alarmsRef.current.ensureAudio();
@@ -133,16 +155,11 @@ export default function Marine() {
       setSpeedKmh(computedSpeed);
       prevFixRef.current = { lat, lng, time, speedKmh: computedSpeed };
 
-      const shore = shoreRef.current;
-      const dist = shore
-        ? distanceToShoreMeters(lat, lng, shore.segments)
-        : null;
-      setDistanceM(dist);
-      alarmsRef.current.update(dist);
+      recalcDistance(lat, lng);
 
       void loadShore(lat, lng);
     },
-    [loadShore],
+    [loadShore, recalcDistance],
   );
 
   useEffect(() => {
