@@ -231,7 +231,7 @@ export default function Marine() {
           <p className="text-center text-sm text-[#f87171]">{geoError}</p>
         )}
 
-        <div className="h-[45vh] sm:h-[50vh] rounded-2xl overflow-hidden border border-slate-700/60">
+        <div className="h-[45vh] sm:h-[50vh] rounded-2xl overflow-hidden border border-slate-500/50 ring-1 ring-white/10">
           <Suspense
             fallback={
               <div className="h-full flex items-center justify-center text-slate-500 text-sm">
