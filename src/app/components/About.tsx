@@ -10,7 +10,8 @@ export default function About() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl">{about.title}</h1>
           <p className="mt-4 text-lg text-gray-500">
-            35 ans de banque, 29 ans de big band, et 50 ans avec un appareil photo dans les mains.
+           41 ans de banque, 38 ans de musique, 2 ans de coding, et un appareil photo depuis toujours.
+
           </p>
         </div>
       </section>
@@ -57,12 +58,12 @@ export default function About() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
           <div className="space-y-5 pt-2 md:order-1 order-2">
-            <h2 className="text-3xl">Applications no-code</h2>
+          <h2 className="text-3xl">Développement assisté par IA</h2>
+          <p className="text-lg text-gray-700 leading-relaxed text-justify">
+            À 55 ans, j'ai découvert la programmation grâce à l'IA et je me suis lancé dans la création d'applications en Python.
+          </p>
             <p className="text-lg text-gray-700 leading-relaxed text-justify">
-              À 55 ans, mon poste a été supprimé après 35 ans dans la même maison. J'ai choisi d'en faire une opportunité.
-            </p>
-            <p className="text-lg text-gray-700 leading-relaxed text-justify">
-              La rigueur accumulée en informatique décisionnelle, je la mets aujourd'hui au service du développement d'applications no-code. Des outils concrets, pensés pour des besoins réels.
+              La rigueur accumulée en informatique décisionnelle, je la mets aujourd'hui au service du développement d'outils concrets, pensés pour des besoins réels.
             </p>
           </div>
           <div className="flex flex-col items-center md:order-2 order-1">
