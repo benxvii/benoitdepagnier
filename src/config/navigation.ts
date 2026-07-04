@@ -1,5 +1,6 @@
 import {
   isGalleryVisible,
+  isMusiqueVisible,
   musique,
   portfolio,
   projets,
@@ -88,14 +89,18 @@ export const mainNavigation: NavItem[] = [
       })),
     ],
   },
-  {
-    label: musique.title,
-    path: musique.indexPath,
-    subLinks: [
-      { path: musique.indexPath, label: "Présentation" },
-      ...musiqueNavLinks(),
-    ],
-  },
+  ...(isMusiqueVisible()
+    ? [
+        {
+          label: musique.title,
+          path: musique.indexPath,
+          subLinks: [
+            { path: musique.indexPath, label: "Présentation" },
+            ...musiqueNavLinks(),
+          ],
+        } satisfies NavItem,
+      ]
+    : []),
   { path: "/about", label: "Qui suis-je ?" },
 ];
 

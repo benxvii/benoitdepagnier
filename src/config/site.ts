@@ -244,6 +244,8 @@ export type MusiquePage = {
 };
 
 export const musique = {
+  /** Masque la section (nav, accueil, URLs) sans retirer la config. */
+  hidden: true,
   indexPath: "/musique",
   enregistrementsPath: "/musique/enregistrements",
   title: "Musique",
@@ -308,6 +310,10 @@ J'ai eu la chance de découvrir la marque Advences par un de mes professeurs, et
     },
   ] as readonly MusiquePage[],
 };
+
+export function isMusiqueVisible(): boolean {
+  return !musique.hidden;
+}
 
 export function findMusiqueRecording(slug: string): MusiqueRecording | undefined {
   return musique.recordings.find((r) => r.slug === slug);

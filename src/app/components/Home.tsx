@@ -5,6 +5,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import {
   about,
   homeIntro,
+  isMusiqueVisible,
   musique,
   musiquePageImage,
   portfolio,
@@ -100,12 +101,14 @@ export default function Home() {
         imageFit="contain"
       />
 
-      <HomeSection
-        path={musique.indexPath}
-        title={musique.title}
-        cards={musiqueCards}
-        imageFit="cover"
-      />
+      {isMusiqueVisible() ? (
+        <HomeSection
+          path={musique.indexPath}
+          title={musique.title}
+          cards={musiqueCards}
+          imageFit="cover"
+        />
+      ) : null}
 
       <section className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

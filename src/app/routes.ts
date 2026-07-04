@@ -1,4 +1,5 @@
 import { createBrowserRouter, redirect } from "react-router";
+import { isMusiqueVisible } from "../config/site";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
 import About from "./components/About";
@@ -15,6 +16,13 @@ import Installation from "../components/Installation";
 import Poi from "./components/Poi";
 import Marine from "./components/Marine";
 
+function musiqueSectionLoader() {
+  if (!isMusiqueVisible()) {
+    return redirect("/");
+  }
+  return null;
+}
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -27,13 +35,22 @@ export const router = createBrowserRouter([
       { path: "portfolio/:parentSlug/:slug", Component: PortfolioGallery },
       { path: "projets", Component: ProjetsIndex },
       { path: "projets/:slug", Component: ProjetDetail },
-      { path: "musique", Component: MusiqueIndex },
+      { path: "musique", loader: musiqueSectionLoader, Component: MusiqueIndex },
       {
         path: "musique/enregistrements/:recordingSlug",
+        loader: musiqueSectionLoader,
         Component: MusiqueRecordingDetail,
       },
-      { path: "musique/enregistrements", Component: MusiqueEnregistrements },
-      { path: "musique/:slug", Component: MusiquePageRoute },
+      {
+        path: "musique/enregistrements",
+        loader: musiqueSectionLoader,
+        Component: MusiqueEnregistrements,
+      },
+      {
+        path: "musique/:slug",
+        loader: musiqueSectionLoader,
+        Component: MusiquePageRoute,
+      },
       { path: "installation", Component: Installation },
       { path: "poi", Component: Poi },
       { path: "marine", Component: Marine },
