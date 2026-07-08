@@ -245,7 +245,7 @@ export type MusiquePage = {
 
 export const musique = {
   /** Masque la section (nav, accueil, URLs) sans retirer la config. */
-  hidden: true,
+  hidden: false,
   indexPath: "/musique",
   enregistrementsPath: "/musique/enregistrements",
   title: "Musique",
