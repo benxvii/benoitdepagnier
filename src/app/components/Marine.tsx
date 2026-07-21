@@ -4,7 +4,7 @@ import {
   distanceZone,
   headingFromPositions,
   msToKmh,
-  nearestShorePoint,
+  nearestShorePoint as computeNearestShorePoint,
   shouldRefetchShore,
   speedFromPositions,
   type DistanceZone,
@@ -103,7 +103,7 @@ export default function Marine() {
       return;
     }
 
-    const nearest = nearestShorePoint(lat, lng, shore.segments);
+    const nearest = computeNearestShorePoint(lat, lng, shore.segments);
     setDistanceM(nearest?.distanceM ?? null);
     setShoreBearingDeg(nearest?.bearingDeg ?? null);
     setNearestShorePoint(nearest?.point ?? null);
