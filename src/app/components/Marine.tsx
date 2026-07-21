@@ -1,9 +1,10 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ShoreAlarms } from "../../lib/marine/alarms";
 import {
-  distanceToShoreMeters,
   distanceZone,
+  headingFromPositions,
   msToKmh,
+  nearestShorePoint,
   shouldRefetchShore,
   speedFromPositions,
   type DistanceZone,
@@ -57,6 +58,11 @@ function formatSpeed(speedKmh: number | null): string {
   return `${speedKmh.toFixed(1)}`;
 }
 
+function formatBearing(deg: number | null): string {
+  if (deg == null) return "—";
+  return `${Math.round(deg).toString().padStart(3, "0")}°`;
+}
+
 function formatDistance(distanceM: number | null): string {
   if (distanceM == null) return "—";
   if (distanceM >= 1000) return `${(distanceM / 1000).toFixed(2)} km`;
@@ -72,7 +78,10 @@ export default function Marine() {
 
   const [position, setPosition] = useState<LatLng | null>(null);
   const [speedKmh, setSpeedKmh] = useState<number | null>(null);
+  const [headingDeg, setHeadingDeg] = useState<number | null>(null);
   const [distanceM, setDistanceM] = useState<number | null>(null);
+  const [shoreBearingDeg, setShoreBearingDeg] = useState<number | null>(null);
+  const [nearestShorePoint, setNearestShorePoint] = useState<LatLng | null>(null);
   const [shoreLines, setShoreLines] = useState<LatLng[][]>([]);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [shoreStatus, setShoreStatus] = useState<
@@ -89,12 +98,16 @@ export default function Marine() {
     const shore = shoreRef.current;
     if (!shore || shore.segments.length === 0) {
       setDistanceM(null);
+      setShoreBearingDeg(null);
+      setNearestShorePoint(null);
       return;
     }
 
-    const dist = distanceToShoreMeters(lat, lng, shore.segments);
-    setDistanceM(dist);
-    alarmsRef.current.update(dist, speed);
+    const nearest = nearestShorePoint(lat, lng, shore.segments);
+    setDistanceM(nearest?.distanceM ?? null);
+    setShoreBearingDeg(nearest?.bearingDeg ?? null);
+    setNearestShorePoint(nearest?.point ?? null);
+    alarmsRef.current.update(nearest?.distanceM ?? null, speed);
   }, []);
 
   const applyShoreCache = useCallback(
@@ -146,7 +159,13 @@ export default function Marine() {
   );
 
   const handleGeoUpdate = useCallback(
-    (lat: number, lng: number, speedMs: number | null, time: number) => {
+    (
+      lat: number,
+      lng: number,
+      speedMs: number | null,
+      heading: number | null,
+      time: number,
+    ) => {
       positionRef.current = [lat, lng];
       setPosition([lat, lng]);
       setGeoError(null);
@@ -160,7 +179,13 @@ export default function Marine() {
         computedSpeed = speedFromPositions(prev, { lat, lng, time });
       }
 
+      let computedHeading = heading;
+      if (computedHeading == null && prev) {
+        computedHeading = headingFromPositions(prev, { lat, lng });
+      }
+
       setSpeedKmh(computedSpeed);
+      setHeadingDeg(computedHeading);
       prevFixRef.current = { lat, lng, time, speedKmh: computedSpeed };
 
       recalcDistance(lat, lng, computedSpeed);
@@ -183,6 +208,7 @@ export default function Marine() {
           fix.coords.latitude,
           fix.coords.longitude,
           fix.coords.speed,
+          fix.coords.heading,
           fix.timestamp,
         );
       });
@@ -201,6 +227,7 @@ export default function Marine() {
           fix.coords.latitude,
           fix.coords.longitude,
           fix.coords.speed,
+          fix.coords.heading,
           fix.timestamp,
         );
       },
@@ -240,7 +267,9 @@ export default function Marine() {
             <p className={cn("text-5xl sm:text-6xl font-bold tabular-nums", styles.text)}>
               {formatSpeed(speedKmh)}
             </p>
-            <p className="text-sm text-slate-400 mt-1">km/h</p>
+            <p className="text-sm text-slate-400 mt-1">
+              km/h · cap {formatBearing(headingDeg)}
+            </p>
           </div>
 
           <div className="text-right">
@@ -254,6 +283,8 @@ export default function Marine() {
             </p>
             <p className="text-sm text-slate-400 mt-1">
               {distanceM != null && distanceM >= 1000 ? "km" : "m"}
+              {" · rel. "}
+              {formatBearing(shoreBearingDeg)}
             </p>
           </div>
 
@@ -277,7 +308,11 @@ export default function Marine() {
               </div>
             }
           >
-            <MarineMap position={position} shoreLines={shoreLines} />
+            <MarineMap
+              position={position}
+              shoreLines={shoreLines}
+              nearestShorePoint={nearestShorePoint}
+            />
           </Suspense>
         </div>
 

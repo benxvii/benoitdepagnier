@@ -55,26 +55,62 @@ function latLngToLocalMeters(
   return { x, y };
 }
 
-function pointToSegmentMeters(
+function pointToSegment(
   px: number,
   py: number,
   ax: number,
   ay: number,
   bx: number,
   by: number,
-): number {
+): { distance: number; cx: number; cy: number } {
   const dx = bx - ax;
   const dy = by - ay;
   const lenSq = dx * dx + dy * dy;
 
   if (lenSq === 0) {
-    return Math.hypot(px - ax, py - ay);
+    return { distance: Math.hypot(px - ax, py - ay), cx: ax, cy: ay };
   }
 
   const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
   const cx = ax + t * dx;
   const cy = ay + t * dy;
-  return Math.hypot(px - cx, py - cy);
+  return { distance: Math.hypot(px - cx, py - cy), cx, cy };
+}
+
+function localMetersToLatLng(
+  x: number,
+  y: number,
+  refLat: number,
+  refLng: number,
+): LatLng {
+  const refLatRad = (refLat * Math.PI) / 180;
+  const lat = refLat + (y / EARTH_RADIUS_M) * (180 / Math.PI);
+  const lng =
+    refLng + (x / (EARTH_RADIUS_M * Math.cos(refLatRad))) * (180 / Math.PI);
+  return [lat, lng];
+}
+
+export type NearestShore = {
+  distanceM: number;
+  point: LatLng;
+  bearingDeg: number;
+};
+
+/** Bearing from point A to B, degrees clockwise from north (0–360). */
+export function bearingDegrees(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+): number {
+  const φ1 = (lat1 * Math.PI) / 180;
+  const φ2 = (lat2 * Math.PI) / 180;
+  const Δλ = ((lng2 - lng1) * Math.PI) / 180;
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x =
+    Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+
+  return (Math.atan2(y, x) * (180 / Math.PI) + 360) % 360;
 }
 
 /** Shortest distance from a point to any shoreline segment, in metres. */
@@ -83,15 +119,25 @@ export function distanceToShoreMeters(
   lng: number,
   segments: ShoreSegment[],
 ): number | null {
+  return nearestShorePoint(lat, lng, segments)?.distanceM ?? null;
+}
+
+/** Nearest point on the shoreline and bearing to reach it. */
+export function nearestShorePoint(
+  lat: number,
+  lng: number,
+  segments: ShoreSegment[],
+): NearestShore | null {
   if (segments.length === 0) return null;
 
   const { x: px, y: py } = latLngToLocalMeters(lat, lng, lat, lng);
-  let min = Infinity;
+  let minDist = Infinity;
+  let closest: LatLng | null = null;
 
   for (const { a, b } of segments) {
     const pointA = latLngToLocalMeters(a[0], a[1], lat, lng);
     const pointB = latLngToLocalMeters(b[0], b[1], lat, lng);
-    const dist = pointToSegmentMeters(
+    const { distance, cx, cy } = pointToSegment(
       px,
       py,
       pointA.x,
@@ -99,10 +145,20 @@ export function distanceToShoreMeters(
       pointB.x,
       pointB.y,
     );
-    if (dist < min) min = dist;
+
+    if (distance < minDist) {
+      minDist = distance;
+      closest = localMetersToLatLng(cx, cy, lat, lng);
+    }
   }
 
-  return min === Infinity ? null : min;
+  if (closest == null || minDist === Infinity) return null;
+
+  return {
+    distanceM: minDist,
+    point: closest,
+    bearingDeg: bearingDegrees(lat, lng, closest[0], closest[1]),
+  };
 }
 
 export function haversineMeters(
@@ -120,6 +176,16 @@ export function haversineMeters(
       Math.sin(dLng / 2) ** 2;
 
   return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(a));
+}
+
+/** Course over ground from two successive GPS fixes, degrees (0–360). */
+export function headingFromPositions(
+  prev: { lat: number; lng: number },
+  next: { lat: number; lng: number },
+): number | null {
+  const meters = haversineMeters(prev.lat, prev.lng, next.lat, next.lng);
+  if (meters < 0.5) return null;
+  return bearingDegrees(prev.lat, prev.lng, next.lat, next.lng);
 }
 
 /** Speed in km/h from two successive GPS fixes. */
