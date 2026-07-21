@@ -1,3 +1,5 @@
+import { bearingDegrees } from "./geo";
+
 const UPDATE_INTERVAL_MS = 1000;
 
 type SimPoint = { lat: number; lng: number };
@@ -50,6 +52,8 @@ export function startSimulatedWatch(
     const lat = from.lat + (to.lat - from.lat) * progress;
     const lng = from.lng + (to.lng - from.lng) * progress;
 
+    const heading = bearingDegrees(from.lat, from.lng, to.lat, to.lng);
+
     success({
       coords: {
         latitude: lat,
@@ -58,7 +62,7 @@ export function startSimulatedWatch(
         speed: speedMs,
         altitude: null,
         altitudeAccuracy: null,
-        heading: null,
+        heading,
       },
       timestamp: Date.now(),
     });

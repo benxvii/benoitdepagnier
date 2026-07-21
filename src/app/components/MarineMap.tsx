@@ -39,9 +39,14 @@ function MapFollow({
 export interface MarineMapProps {
   position: LatLng | null;
   shoreLines: LatLng[][];
+  nearestShorePoint: LatLng | null;
 }
 
-export default function MarineMap({ position, shoreLines }: MarineMapProps) {
+export default function MarineMap({
+  position,
+  shoreLines,
+  nearestShorePoint,
+}: MarineMapProps) {
   const center = position ?? LEMAN_CENTER;
 
   return (
@@ -64,6 +69,12 @@ export default function MarineMap({ position, shoreLines }: MarineMapProps) {
           pathOptions={{ color: "#0d9488", weight: 3, opacity: 1 }}
         />
       ))}
+      {position && nearestShorePoint && (
+        <Polyline
+          positions={[position, nearestShorePoint]}
+          pathOptions={{ color: "#ef4444", weight: 3, opacity: 0.95 }}
+        />
+      )}
       {position && (
         <Marker position={position} icon={boatIcon} />
       )}
