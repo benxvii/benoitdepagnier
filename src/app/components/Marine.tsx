@@ -87,10 +87,17 @@ export default function Marine() {
   const [shoreStatus, setShoreStatus] = useState<
     "loading" | "ready" | "cached" | "error"
   >("loading");
+  const [audioUnlocked, setAudioUnlocked] = useState(false);
+  const [testMode, setTestMode] = useState(false);
+  const [testDistanceM, setTestDistanceM] = useState(700);
+  const [testSpeedKmh, setTestSpeedKmh] = useState(15);
+
+  const displayDistanceM = testMode ? testDistanceM : distanceM;
+  const displaySpeedKmh = testMode ? testSpeedKmh : speedKmh;
 
   const zone = useMemo(
-    () => distanceZone(distanceM, speedKmh),
-    [distanceM, speedKmh],
+    () => distanceZone(displayDistanceM, displaySpeedKmh),
+    [displayDistanceM, displaySpeedKmh],
   );
   const styles = zoneStyles[zone];
 
@@ -158,6 +165,12 @@ export default function Marine() {
     [applyShoreCache],
   );
 
+  const enableAudio = useCallback(() => {
+    void alarmsRef.current.ensureAudio().then(() => {
+      setAudioUnlocked(alarmsRef.current.isAudioRunning());
+    });
+  }, []);
+
   const handleGeoUpdate = useCallback(
     (
       lat: number,
@@ -169,7 +182,7 @@ export default function Marine() {
       positionRef.current = [lat, lng];
       setPosition([lat, lng]);
       setGeoError(null);
-      alarmsRef.current.ensureAudio();
+      enableAudio();
 
       const gpsSpeed = msToKmh(speedMs);
       const prev = prevFixRef.current;
@@ -192,7 +205,7 @@ export default function Marine() {
 
       void loadShore(lat, lng);
     },
-    [loadShore, recalcDistance],
+    [enableAudio, loadShore, recalcDistance],
   );
 
   useEffect(() => {
@@ -244,9 +257,44 @@ export default function Marine() {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [applyShoreCache, handleGeoUpdate]);
 
-  const enableAudio = useCallback(() => {
-    alarmsRef.current.ensureAudio();
-  }, []);
+  useEffect(() => {
+    if (!testMode) return;
+    alarmsRef.current.update(testDistanceM, testSpeedKmh);
+  }, [testMode, testDistanceM, testSpeedKmh]);
+
+  const toggleTestMode = useCallback(() => {
+    enableAudio();
+    alarmsRef.current.reset();
+    setTestMode((prev) => {
+      const next = !prev;
+      if (next) {
+        setTestDistanceM(700);
+        setTestSpeedKmh(15);
+      }
+      return next;
+    });
+  }, [enableAudio]);
+
+  useEffect(() => {
+    if (audioUnlocked) return;
+
+    // Capture phase so a tap on the map (which may stop propagation) still unlocks audio.
+    const events: Array<keyof DocumentEventMap> = [
+      "pointerdown",
+      "touchstart",
+      "click",
+      "keydown",
+    ];
+    events.forEach((event) =>
+      document.addEventListener(event, enableAudio, { capture: true }),
+    );
+
+    return () => {
+      events.forEach((event) =>
+        document.removeEventListener(event, enableAudio, { capture: true }),
+      );
+    };
+  }, [audioUnlocked, enableAudio]);
 
   return (
     <div
@@ -272,7 +320,7 @@ export default function Marine() {
                     styles.text,
                   )}
                 >
-                  {formatSpeed(speedKmh)}
+                  {formatSpeed(displaySpeedKmh)}
                 </span>
                 <span className="text-sm text-slate-400">km/h</span>
               </div>
@@ -283,7 +331,7 @@ export default function Marine() {
                     styles.text,
                   )}
                 >
-                  {formatBearing(headingDeg)}
+                  {formatBearing(testMode ? null : headingDeg)}
                 </span>
                 <span className="text-sm text-slate-400">cap</span>
               </div>
@@ -302,12 +350,12 @@ export default function Marine() {
                     styles.text,
                   )}
                 >
-                  {distanceM != null && distanceM >= 1000
-                    ? (distanceM / 1000).toFixed(2)
-                    : formatDistance(distanceM).replace(" m", "").replace(" km", "")}
+                  {displayDistanceM != null && displayDistanceM >= 1000
+                    ? (displayDistanceM / 1000).toFixed(2)
+                    : formatDistance(displayDistanceM).replace(" m", "").replace(" km", "")}
                 </span>
                 <span className="text-sm text-slate-400">
-                  {distanceM != null && distanceM >= 1000 ? "km" : "m"}
+                  {displayDistanceM != null && displayDistanceM >= 1000 ? "km" : "m"}
                 </span>
               </div>
               <div className="flex items-baseline gap-x-1.5">
@@ -317,7 +365,7 @@ export default function Marine() {
                     styles.text,
                   )}
                 >
-                  {formatBearing(shoreBearingDeg)}
+                  {formatBearing(testMode ? null : shoreBearingDeg)}
                 </span>
                 <span className="text-sm text-slate-400">rel.</span>
               </div>
@@ -326,14 +374,86 @@ export default function Marine() {
 
           <p className={cn("col-span-2 text-center text-sm font-medium", styles.text)}>
             {styles.label}
-            {shoreStatus === "loading" && " · tracé en cours…"}
-            {shoreStatus === "cached" && " · tracé en cache"}
-            {shoreStatus === "error" && " · tracé indisponible"}
+            {testMode && " · mode test"}
+            {!testMode && shoreStatus === "loading" && " · tracé en cours…"}
+            {!testMode && shoreStatus === "cached" && " · tracé en cache"}
+            {!testMode && shoreStatus === "error" && " · tracé indisponible"}
           </p>
         </div>
 
         {geoError && (
           <p className="text-center text-sm text-[#f87171]">{geoError}</p>
+        )}
+
+        {!audioUnlocked && (
+          <button
+            type="button"
+            onClick={enableAudio}
+            className="w-full rounded-xl border border-[#fb923c]/40 bg-[#fb923c]/15 px-4 py-2.5 text-sm font-medium text-[#fb923c] active:scale-[0.99] transition-transform"
+          >
+            🔇 Son désactivé — touchez pour activer l&apos;alarme
+          </button>
+        )}
+
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={toggleTestMode}
+            className={cn(
+              "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+              testMode
+                ? "border-[#5eead4]/50 bg-[#5eead4]/15 text-[#5eead4]"
+                : "border-slate-600 text-slate-400",
+            )}
+          >
+            🧪 {testMode ? "Quitter le mode test" : "Mode test (sans GPS)"}
+          </button>
+        </div>
+
+        {testMode && (
+          <div className="rounded-2xl border border-slate-600/60 bg-slate-800/40 p-4 space-y-4">
+            <p className="text-xs text-slate-400">
+              Déplace les curseurs pour simuler l&apos;approche de la côte et
+              vérifier que le son et les vibrations se déclenchent bien sur
+              cet appareil.
+            </p>
+
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-300">Distance simulée</span>
+                <span className={cn("font-semibold tabular-nums", styles.text)}>
+                  {formatDistance(testDistanceM)}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={800}
+                step={5}
+                value={testDistanceM}
+                onChange={(e) => setTestDistanceM(Number(e.target.value))}
+                className="w-full accent-[#5eead4]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-300">Vitesse simulée</span>
+                <span className={cn("font-semibold tabular-nums", styles.text)}>
+                  {testSpeedKmh} km/h
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={40}
+                step={1}
+                value={testSpeedKmh}
+                onChange={(e) => setTestSpeedKmh(Number(e.target.value))}
+                className="w-full accent-[#5eead4]"
+              />
+            </div>
+          </div>
         )}
 
         <div className="h-[45vh] sm:h-[50vh] rounded-2xl overflow-hidden border border-slate-500/50 ring-1 ring-white/10">
