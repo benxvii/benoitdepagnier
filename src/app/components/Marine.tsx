@@ -264,28 +264,64 @@ export default function Marine() {
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-1">
               Vitesse
             </p>
-            <p className={cn("text-5xl sm:text-6xl font-bold tabular-nums", styles.text)}>
-              {formatSpeed(speedKmh)}
-            </p>
-            <p className="text-sm text-slate-400 mt-1">
-              km/h · cap {formatBearing(headingDeg)}
-            </p>
+            <div className="flex flex-col gap-y-1">
+              <div className="flex items-baseline gap-x-1.5">
+                <span
+                  className={cn(
+                    "text-5xl sm:text-6xl font-bold tabular-nums",
+                    styles.text,
+                  )}
+                >
+                  {formatSpeed(speedKmh)}
+                </span>
+                <span className="text-sm text-slate-400">km/h</span>
+              </div>
+              <div className="flex items-baseline gap-x-1.5">
+                <span
+                  className={cn(
+                    "text-[2.25rem] sm:text-[2.8125rem] font-bold tabular-nums",
+                    styles.text,
+                  )}
+                >
+                  {formatBearing(headingDeg)}
+                </span>
+                <span className="text-sm text-slate-400">cap</span>
+              </div>
+            </div>
           </div>
 
           <div className="text-right">
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-1">
               Rive
             </p>
-            <p className={cn("text-5xl sm:text-6xl font-bold tabular-nums", styles.text)}>
-              {distanceM != null && distanceM >= 1000
-                ? (distanceM / 1000).toFixed(2)
-                : formatDistance(distanceM).replace(" m", "").replace(" km", "")}
-            </p>
-            <p className="text-sm text-slate-400 mt-1">
-              {distanceM != null && distanceM >= 1000 ? "km" : "m"}
-              {" · rel. "}
-              {formatBearing(shoreBearingDeg)}
-            </p>
+            <div className="ml-auto flex flex-col items-end gap-y-1">
+              <div className="flex items-baseline gap-x-1.5">
+                <span
+                  className={cn(
+                    "text-5xl sm:text-6xl font-bold tabular-nums",
+                    styles.text,
+                  )}
+                >
+                  {distanceM != null && distanceM >= 1000
+                    ? (distanceM / 1000).toFixed(2)
+                    : formatDistance(distanceM).replace(" m", "").replace(" km", "")}
+                </span>
+                <span className="text-sm text-slate-400">
+                  {distanceM != null && distanceM >= 1000 ? "km" : "m"}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-x-1.5">
+                <span
+                  className={cn(
+                    "text-[2.25rem] sm:text-[2.8125rem] font-bold tabular-nums",
+                    styles.text,
+                  )}
+                >
+                  {formatBearing(shoreBearingDeg)}
+                </span>
+                <span className="text-sm text-slate-400">rel.</span>
+              </div>
+            </div>
           </div>
 
           <p className={cn("col-span-2 text-center text-sm font-medium", styles.text)}>
