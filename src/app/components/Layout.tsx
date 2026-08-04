@@ -10,10 +10,12 @@ import {
   type NavSubLink,
 } from "../../config/navigation";
 import { projets, site } from "../../config/site";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  usePageMeta();
 
   const isActive = (path: string) => isNavActive(location.pathname, path);
   const isAppsContext =
