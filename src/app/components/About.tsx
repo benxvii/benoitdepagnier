@@ -63,7 +63,7 @@ export default function About() {
             À 55 ans, j'ai découvert la programmation grâce à l'IA et je me suis lancé dans la création d'applications en Python.
           </p>
             <p className="text-lg text-gray-700 leading-relaxed text-justify">
-              La rigueur accumulée en informatique décisionnelle, je la mets aujourd'hui au service du développement d'outils concrets, pensés pour des besoins réels.
+              La rigueur accumulée en banque privée et en informatique décisionnelle, je la mets aujourd'hui au service du développement d'outils concrets, pensés pour des besoins réels.
             </p>
           </div>
           <div className="flex flex-col items-center md:order-2 order-1">

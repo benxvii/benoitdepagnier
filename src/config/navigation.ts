@@ -98,7 +98,7 @@ export const mainNavigation: NavItem[] = [
 /** Navigation de la page d'arrivée (racine "/"), avant d'entrer dans le site. */
 export const landingNavigation: NavItem[] = [
   { path: projets.indexPath, label: projets.title },
-  { path: SITE_PREFIX, label: "Site" },
+  { path: SITE_PREFIX, label: "Passions" },
 ];
 
 export function isNavActive(pathname: string, path: string): boolean {
