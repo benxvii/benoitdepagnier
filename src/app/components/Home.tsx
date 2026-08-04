@@ -10,7 +10,6 @@ import {
   musiquePageImage,
   portfolio,
   visiblePortfolioGalleries,
-  projets,
   site,
 } from "../../config/site";
 import {
@@ -30,12 +29,6 @@ type ImageFit = "cover" | "contain";
 export default function Home() {
   const heroImage = useRandomHeroImage();
   const portfolioCards = useRandomGalleryHubItems(visiblePortfolioGalleries());
-
-  const projetCards: HomeCard[] = projets.items.map((p) => ({
-    path: p.path,
-    title: p.title,
-    image: p.image,
-  }));
 
   const musiqueCards: HomeCard[] = musique.pages.map((page) => ({
     path: page.path,
@@ -92,13 +85,6 @@ export default function Home() {
         title={portfolio.title}
         cards={portfolioCards}
         imageFit="cover"
-      />
-
-      <HomeSection
-        path={projets.indexPath}
-        title={projets.title}
-        cards={projetCards}
-        imageFit="contain"
       />
 
       {isMusiqueVisible() ? (

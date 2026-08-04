@@ -1,9 +1,11 @@
 import {
+  about,
   isGalleryVisible,
   isMusiqueVisible,
   musique,
   portfolio,
   projets,
+  SITE_PREFIX,
   visiblePortfolioGalleries,
 } from "./site";
 
@@ -78,17 +80,6 @@ export const mainNavigation: NavItem[] = [
       ...galleryNavLinks(),
     ],
   },
-  {
-    label: projets.title,
-    path: projets.indexPath,
-    subLinks: [
-      { path: projets.indexPath, label: "Tous les projets" },
-      ...projets.items.map((p) => ({
-        path: p.path,
-        label: p.title,
-      })),
-    ],
-  },
   ...(isMusiqueVisible()
     ? [
         {
@@ -101,7 +92,13 @@ export const mainNavigation: NavItem[] = [
         } satisfies NavItem,
       ]
     : []),
-  { path: "/about", label: "Qui suis-je ?" },
+  { path: about.path, label: "Qui suis-je ?" },
+];
+
+/** Navigation de la page d'arrivée (racine "/"), avant d'entrer dans le site. */
+export const landingNavigation: NavItem[] = [
+  { path: projets.indexPath, label: projets.title },
+  { path: SITE_PREFIX, label: "Site" },
 ];
 
 export function isNavActive(pathname: string, path: string): boolean {

@@ -54,18 +54,20 @@ export function startSimulatedWatch(
 
     const heading = bearingDegrees(from.lat, from.lng, to.lat, to.lng);
 
-    success({
-      coords: {
-        latitude: lat,
-        longitude: lng,
-        accuracy: 5,
-        speed: speedMs,
-        altitude: null,
-        altitudeAccuracy: null,
-        heading,
+    const coords: GeolocationCoordinates = {
+      latitude: lat,
+      longitude: lng,
+      accuracy: 5,
+      speed: speedMs,
+      altitude: null,
+      altitudeAccuracy: null,
+      heading,
+      toJSON() {
+        return { ...this };
       },
-      timestamp: Date.now(),
-    });
+    };
+
+    success({ coords, timestamp: Date.now() } as GeolocationPosition);
   };
 
   emit();

@@ -1,5 +1,8 @@
 import { assetUrl } from "./assetUrl";
 
+/** Préfixe des pages du site actuel (portfolio, projets, musique...), désormais le côté "privé". */
+export const SITE_PREFIX = "/site";
+
 const placeholderImage =
   "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
 
@@ -7,6 +10,8 @@ export const site = {
   name: "Benoît d'Epagnier",
   shortName: "Benoît d'Epagnier",
   tagline: "Photo · Musique · Développement",
+  /** Sous-titre affiché dans le header sur la page d'arrivée et la section Projets informatiques. */
+  appsTagline: "Applications et automatisations sur mesure",
   email: "bdepagnier@bluewin.ch",
   instagram: "https://www.instagram.com/benxvii/",
   facebook: "https://www.facebook.com/bdepagnier",
@@ -37,14 +42,14 @@ export type Gallery = {
 };
 
 export const portfolio = {
-  indexPath: "/portfolio",
+  indexPath: `${SITE_PREFIX}/portfolio`,
   title: "Portfolio",
   intro:
     "Une bonne photographie doit se comprendre sans explications et transmettre une émotion.",
   galleries: [
     {
       slug: "mes-appareils",
-      path: "/portfolio/mes-appareils",
+      path: `${SITE_PREFIX}/portfolio/mes-appareils`,
       title: "Mes appareils",
       intro:
         "Voici les appareils que j'ai possédés ou eu l'occasion d'utiliser au fil de ma carrière photographique.",
@@ -76,13 +81,13 @@ export const portfolio = {
     },
     {
       slug: "flous-de-mouvements",
-      path: "/portfolio/flous-de-mouvements",
+      path: `${SITE_PREFIX}/portfolio/flous-de-mouvements`,
       title: "Les flous de mouvements",
       intro: "Explorations du mouvement et du temps long en photographie.",
       subGalleries: [
         {
           slug: "flous-urbains",
-          path: "/portfolio/flous-de-mouvements/flous-urbains",
+          path: `${SITE_PREFIX}/portfolio/flous-de-mouvements/flous-urbains`,
           title: "Flous urbains",
           intro: "",
         },
@@ -90,20 +95,20 @@ export const portfolio = {
     },
     {
       slug: "monde-de-la-musique",
-      path: "/portfolio/monde-de-la-musique",
+      path: `${SITE_PREFIX}/portfolio/monde-de-la-musique`,
       title: "Le monde de la musique",
       intro: "Scènes, musiciens et ambiance autour de la musique.",
       subGalleries: [
         {
           slug: "ema-hommage-cannonball-adderley-soral",
-          path: "/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral",
+          path: `${SITE_PREFIX}/portfolio/monde-de-la-musique/ema-hommage-cannonball-adderley-soral`,
           title: "EMA Hommage Cannonball Adderley",
           intro:
             "Hommage à Cannonball Adderley par les professeurs de l'EMA, Soral (22 août 2025)",
         },
         {
           slug: "louis-billette-nuit",
-          path: "/portfolio/monde-de-la-musique/louis-billette-nuit",
+          path: `${SITE_PREFIX}/portfolio/monde-de-la-musique/louis-billette-nuit`,
           title: "Louis Billette - NUiT",
           intro: "Louis Billette — NUiT. Concert à la cave de l'AMR (22 septembre 2025).",
         },
@@ -111,7 +116,7 @@ export const portfolio = {
     },
     {
       slug: "street-photography",
-      path: "/portfolio/street-photography",
+      path: `${SITE_PREFIX}/portfolio/street-photography`,
       title: "Street photography",
       intro: "Regards sur la ville et ses passants.",
     },
@@ -246,8 +251,8 @@ export type MusiquePage = {
 export const musique = {
   /** Masque la section (nav, accueil, URLs) sans retirer la config. */
   hidden: false,
-  indexPath: "/musique",
-  enregistrementsPath: "/musique/enregistrements",
+  indexPath: `${SITE_PREFIX}/musique`,
+  enregistrementsPath: `${SITE_PREFIX}/musique/enregistrements`,
   title: "Musique",
   intro: [
     "Après deux ans de piano vers 14 ans, je me suis mis au saxophone à 19 ans - alto d'abord, puis baryton. 29 ans en big band avant de me tourner vers de plus petites formations.",
@@ -255,7 +260,7 @@ export const musique = {
   recordings: [
     {
       slug: "agua-viva-y-ardiente",
-      path: "/musique/enregistrements/agua-viva-y-ardiente",
+      path: `${SITE_PREFIX}/musique/enregistrements/agua-viva-y-ardiente`,
       title: "Agua Viva Y Ardiente",
       subtitle: "Un hommage à Tito Puente",
       coverImage: assetUrl("/musique/agua-viva-y-ardiente-cover.jpg"),
@@ -287,7 +292,7 @@ J'ai le plaisir d'avoir joué au baryton dans la section des saxophones. Le disq
   pages: [
     {
       slug: "instruments",
-      path: "/musique/instruments",
+      path: `${SITE_PREFIX}/musique/instruments`,
       title: "Mes instruments de musique",
       image: assetUrl("/musique/instruments.jpg"),
       body: `J'ai débuté sur un saxophone alto Weltlang acheté d'occasion, puis j'ai joué le saxophone baryton du Big Band (dont j'ai oublié la marque) avant d'acquérir mon premier baryton, un Buescher Aristocrate. Par la suite, j'ai joué sur un Yanagisawa B901, avant de découvrir les saxophones Advences.
@@ -296,14 +301,14 @@ J'ai eu la chance de découvrir la marque Advences par un de mes professeurs, et
     },
     {
       slug: "compositions",
-      path: "/musique/compositions",
+      path: `${SITE_PREFIX}/musique/compositions`,
       title: "Compositions personnelles & arrangements",
       image: assetUrl("/musique/compositions.jpg"),
       body: "Contenu à compléter — compositions et arrangements personnels.",
     },
     {
       slug: "enregistrements",
-      path: "/musique/enregistrements",
+      path: `${SITE_PREFIX}/musique/enregistrements`,
       title: "Enregistrements",
       intro: "Participations sur disques et enregistrements audio.",
       body: "",
@@ -333,7 +338,7 @@ export type AboutPortrait = {
 };
 
 export const about = {
-  path: "/about",
+  path: `${SITE_PREFIX}/about`,
   title: "Qui suis-je ?",
   portraits: [
     {
@@ -401,6 +406,7 @@ export function allPortfolioPaths(): { path: string; label: string }[] {
 }
 
 export const installation = {
+  path: `${SITE_PREFIX}/installation`,
   title: "Installation",
   apps: [
     {

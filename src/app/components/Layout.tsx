@@ -4,17 +4,21 @@ import { useState } from "react";
 import {
   isNavActive,
   isNavSectionActive,
+  landingNavigation,
   mainNavigation,
   type NavItem,
   type NavSubLink,
 } from "../../config/navigation";
-import { site } from "../../config/site";
+import { projets, site } from "../../config/site";
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) => isNavActive(location.pathname, path);
+  const isAppsContext =
+    location.pathname === "/" || isActive(projets.indexPath);
+  const navLinks = isAppsContext ? landingNavigation : mainNavigation;
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -22,13 +26,15 @@ export default function Layout() {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HeaderRow
+            navLinks={navLinks}
+            isAppsContext={isAppsContext}
             mobileMenuOpen={mobileMenuOpen}
             setMobileMenuOpen={setMobileMenuOpen}
             isActive={isActive}
           />
           {mobileMenuOpen && (
             <MobileNav
-              navLinks={mainNavigation}
+              navLinks={navLinks}
               isActive={isActive}
               onNavigate={() => setMobileMenuOpen(false)}
             />
@@ -89,7 +95,7 @@ export default function Layout() {
   );
 }
 
-function SiteLogo() {
+function SiteLogo({ isAppsContext }: { isAppsContext: boolean }) {
   return (
     <Link
       to="/"
@@ -99,26 +105,30 @@ function SiteLogo() {
         {site.name}
       </span>
       <span className="site-tagline text-gray-600 whitespace-nowrap">
-        {site.tagline}
+        {isAppsContext ? site.appsTagline : site.tagline}
       </span>
     </Link>
   );
 }
 
 function HeaderRow({
+  navLinks,
+  isAppsContext,
   mobileMenuOpen,
   setMobileMenuOpen,
   isActive,
 }: {
+  navLinks: NavItem[];
+  isAppsContext: boolean;
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (open: boolean) => void;
   isActive: (path: string) => boolean;
 }) {
   return (
     <div className="flex justify-between items-center h-20">
-      <SiteLogo />
+      <SiteLogo isAppsContext={isAppsContext} />
 
-      <DesktopNav navLinks={mainNavigation} isActive={isActive} />
+      <DesktopNav navLinks={navLinks} isActive={isActive} />
 
       <button
         type="button"

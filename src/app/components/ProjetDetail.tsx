@@ -2,7 +2,7 @@ import { Navigate, useParams } from "react-router";
 import { Download } from "lucide-react";
 import BackLink from "./BackLink";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { projets, type Projet } from "../../config/site";
+import { installation, projets, type Projet } from "../../config/site";
 
 export default function ProjetDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -78,7 +78,7 @@ function ProjetPage({ projet }: { projet: Projet }) {
                 <p className="text-xs text-gray-400 mt-3">
                   Problème au lancement ?{" "}
                   <a
-                    href="/installation"
+                    href={installation.path}
                     className="underline hover:text-gray-600"
                   >
                     Instructions d'installation →
