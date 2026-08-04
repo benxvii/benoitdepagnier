@@ -9,7 +9,7 @@ const placeholderImage =
 export const site = {
   name: "Benoît d'Epagnier",
   shortName: "Benoît d'Epagnier",
-  tagline: "Photo · Musique · Développement",
+  tagline: "Photo · Musique",
   /** Sous-titre affiché dans le header sur la page d'arrivée et la section Projets informatiques. */
   appsTagline: "Applications et automatisations sur mesure",
   email: "bdepagnier@bluewin.ch",
