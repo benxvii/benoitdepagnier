@@ -72,6 +72,7 @@ function musiqueNavLinks(): NavSubLink[] {
 }
 
 export const mainNavigation: NavItem[] = [
+  { path: projets.indexPath, label: "Projets informatiques" },
   {
     label: portfolio.title,
     path: portfolio.indexPath,

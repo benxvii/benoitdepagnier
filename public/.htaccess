@@ -22,6 +22,9 @@
   RewriteCond %{HTTPS} off
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+  RewriteRule ^site$ /passions [R=301,L]
+  RewriteRule ^site/(.*)$ /passions/$1 [R=301,L]
+
   RewriteRule ^downloads/PortfolioApp\.zip$ /downloads/Portfolio-win.zip [R=301,L]
   RewriteRule ^index\.html$ - [L]
   # Ne réécrire que les vrais fichiers (images, assets). Les dossiers

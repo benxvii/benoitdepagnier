@@ -1,7 +1,7 @@
 import { assetUrl } from "./assetUrl";
 
 /** Préfixe des pages du site actuel (portfolio, projets, musique...), désormais le côté "privé". */
-export const SITE_PREFIX = "/site";
+export const SITE_PREFIX = "/passions";
 
 const placeholderImage =
   "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop";
