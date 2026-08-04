@@ -366,9 +366,10 @@ export const about = {
 
 export const homeIntro = {
   quote:
-    "Un site dédié à mes activités et passions : la photographie depuis\n" +
-    "mes 6 ans, la pratique de la musique et principalement du saxophone\n" +
-    " à 19 ans, puis le développement d'applications depuis mes 55 ans."
+    "Un site dédié à mes activités et passions ! \n" +
+    "La photographie depuis mes 6 ans, la pratique de la\n" +
+    "musique et principalement du saxophone à 19 ans, puis\n" +
+    " le développement d'applications depuis mes 55 ans."
 } as const;
 
 export function isGalleryVisible(gallery: Gallery): boolean {
