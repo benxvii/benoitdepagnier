@@ -9,6 +9,20 @@ export default function Landing() {
           Des applications sur mesure pour indépendants et PME
         </h1>
         <div className="w-12 h-[3px] bg-[var(--brand)] mt-6 mb-8" />
+        <div className="flex flex-col sm:flex-row gap-4 mb-10">
+          <Link
+            to={projets.indexPath}
+            className="inline-flex items-center justify-center px-6 py-3 bg-[var(--brand)] text-white hover:opacity-90 transition-opacity"
+          >
+            Voir mes projets
+          </Link>
+          <a
+            href={`mailto:${site.email}`}
+            className="inline-flex items-center justify-center px-6 py-3 border border-[var(--brand)] bg-transparent text-[var(--brand)] hover:bg-[var(--brand)]/5 transition-colors"
+          >
+            Me contacter
+          </a>
+        </div>
         <p className="text-xl text-muted-foreground leading-relaxed">
           35 ans d'IT en banque privée, mis au service de projets à taille
           humaine.
@@ -34,20 +48,6 @@ export default function Landing() {
           d'automatisations. Des solutions pragmatiques, fiables, adaptées
           à leur contexte. Pas de blabla, du travail solide.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 pt-4">
-          <Link
-            to={projets.indexPath}
-            className="inline-flex items-center justify-center px-6 py-3 bg-[var(--brand)] text-white hover:opacity-90 transition-opacity"
-          >
-            Voir mes applications
-          </Link>
-          <a
-            href={`mailto:${site.email}`}
-            className="inline-flex items-center justify-center px-6 py-3 border border-[var(--brand)] bg-transparent text-[var(--brand)] hover:bg-[var(--brand)]/5 transition-colors"
-          >
-            Me contacter
-          </a>
-        </div>
       </section>
     </div>
   );
