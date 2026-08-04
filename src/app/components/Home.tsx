@@ -57,7 +57,7 @@ export default function Home() {
             />
           </div>
         ) : null}
-        <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h1
             className={cn(
               "text-5xl md:text-7xl mb-6 tracking-tight",
