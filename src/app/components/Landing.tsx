@@ -46,7 +46,14 @@ export default function Landing() {
           Depuis 2026, je travaille en freelance avec les indépendants ou
           PME qui ont besoin d'applicatifs, de sites web,
           d'automatisations. Des solutions pragmatiques, fiables, adaptées
-          à leur contexte. Pas de blabla, du travail solide.
+          à leur contexte.
+        </p>
+        <p className="text-lg text-foreground leading-relaxed">
+          Pas de blabla, du travail solide.
+        </p>
+        <p className="text-lg text-foreground leading-relaxed">
+          J'offre aussi des services complémentaires: audit et optimisation
+          Excel (VBA, macros), formations utilisateurs.
         </p>
       </section>
     </div>
