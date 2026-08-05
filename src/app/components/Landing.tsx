@@ -53,7 +53,7 @@ export default function Landing() {
         </p>
         <p className="text-lg text-foreground leading-relaxed">
           J'offre aussi des services complémentaires: audit et optimisation
-          Excel (VBA, macros), formations utilisateurs.
+          Excel (fichiers complexes, macros VBA), formations utilisateurs.
         </p>
       </section>
     </div>
