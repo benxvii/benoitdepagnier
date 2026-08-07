@@ -34,7 +34,7 @@ export default function Landing() {
           d'automatisation.
         </p>
         <p className="text-lg text-foreground leading-relaxed">
-          Mon truc, c'était de comprendre ce que mes collègues avaient vraiment
+          Mon approche, c'était de comprendre ce que mes collègues avaient vraiment
           besoin, et de leur construire des solutions qui fonctionnent. J'ai accompagné
           400 utilisateurs à travers 8 sites mondiaux, piloté des projets BI, géré des
           migrations complexes.
