@@ -2,8 +2,9 @@ name: Sync galleries from Cloudinary
 
 on:
   schedule:
-    # Toutes les 6 heures (UTC)
-    - cron: "0 */6 * * *"
+    # Une fois par jour à 5h UTC. Déclenchement manuel possible à tout
+    # moment via workflow_dispatch (bouton "Run workflow" sur GitHub).
+    - cron: "0 5 * * *"
   workflow_dispatch:
     inputs:
       cloudinary_folder:
