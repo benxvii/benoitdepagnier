@@ -3,11 +3,10 @@
  * Synchronise les galeries portfolio depuis Cloudinary vers benoitdepagnier/_galleries.json.
  *
  * Usage local :
- *   CLOUDINARY_CLOUD_NAME=xxx \
- *   CLOUDINARY_API_KEY=xxx \
- *   CLOUDINARY_API_SECRET=xxx \
- *   CLOUDINARY_FOLDER=benoitdepagnier \
  *   node scripts/sync-galleries.mjs
+ *
+ * Lit `.env` (CLOUDINARY_URL ou CLOUDINARY_CLOUD_NAME / API_KEY / API_SECRET).
+ * Dossier Media Library : CLOUDINARY_FOLDER, sinon VITE_CLOUDINARY_FOLDER.
  *
  * Titres des galeries : scripts/galleries-meta.json (slug relatif à portfolio/)
  */
@@ -19,10 +18,49 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+loadDotenv(path.join(__dirname, "..", ".env"));
+applyCloudinaryUrl(process.env.CLOUDINARY_URL);
+
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const apiKey = process.env.CLOUDINARY_API_KEY;
 const apiSecret = process.env.CLOUDINARY_API_SECRET;
-const cloudFolder = process.env.CLOUDINARY_FOLDER;
+const cloudFolder =
+  process.env.CLOUDINARY_FOLDER?.trim() ||
+  process.env.VITE_CLOUDINARY_FOLDER?.trim();
+
+function loadDotenv(envPath) {
+  if (!fs.existsSync(envPath)) return;
+  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    let value = trimmed.slice(eq + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  }
+}
+
+function applyCloudinaryUrl(url) {
+  if (!url?.trim()) return;
+  const match = url.trim().match(/^cloudinary:\/\/([^:]+):([^@]+)@(.+)$/);
+  if (!match) {
+    console.error("CLOUDINARY_URL invalide (attendu cloudinary://KEY:SECRET@CLOUD)");
+    process.exit(1);
+  }
+  const [, key, secret, name] = match;
+  process.env.CLOUDINARY_API_KEY ??= key;
+  process.env.CLOUDINARY_API_SECRET ??= secret;
+  process.env.CLOUDINARY_CLOUD_NAME ??= name;
+}
 
 function requireEnv(name, value) {
   if (!value?.trim()) {
