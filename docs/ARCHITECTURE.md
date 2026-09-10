@@ -22,6 +22,7 @@ Le routeur déclare un layout racine (`Layout`), commun à toutes les pages, ave
 /poi                    → Poi
 /marine                 → Marine
 /contact                → redirige vers /
+/archive-landing        → Landing (non lié dans la navigation)
 ```
 
 Toutes les sections (`portfolio`, `projets`, `musique`, `about`, `installation`) déclarent directement leurs chemins dans `src/config/site.ts` (`/portfolio`, `/musique`, etc.), sans préfixe partagé.
@@ -206,6 +207,17 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
 - Comportement : redirection vers `/`
 - Composant : aucun
 - Layout : `src/app/components/Layout.tsx` (le temps de la redirection)
+
+### `/archive-landing`
+
+- URL : `/archive-landing`
+- Composant : `src/app/components/Landing.tsx`
+- Layout : `src/app/components/Layout.tsx`
+- Données consommées :
+  - `src/config/site.ts` : `projets`, `site`
+- Remarques :
+  - Ancienne page d'arrivée professionnelle, conservée après l'annulation de la séparation pro/perso.
+  - Pas de lien dans `mainNavigation` (page accessible seulement par URL directe), comme `/poi` et `/marine`.
 
 ### `*` (fallback 404)
 
