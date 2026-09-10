@@ -2,6 +2,7 @@ import { createBrowserRouter, redirect } from "react-router";
 import { isMusiqueVisible } from "../config/site";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
+import Landing from "./components/Landing";
 import About from "./components/About";
 import PortfolioIndex from "./components/PortfolioIndex";
 import PortfolioGallery from "./components/PortfolioGallery";
@@ -55,6 +56,9 @@ export const router = createBrowserRouter([
       { path: "poi", Component: Poi },
       { path: "marine", Component: Marine },
       { path: "contact", loader: () => redirect("/") },
+      // Ancienne page d'arrivée pro, non liée dans la navigation. Conservée
+      // pour référence après l'annulation de la séparation pro/perso.
+      { path: "archive-landing", Component: Landing },
       { path: "*", Component: NotFound },
     ],
   },
