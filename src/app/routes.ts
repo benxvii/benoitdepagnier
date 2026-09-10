@@ -1,7 +1,6 @@
 import { createBrowserRouter, redirect } from "react-router";
-import { isMusiqueVisible, SITE_PREFIX } from "../config/site";
+import { isMusiqueVisible } from "../config/site";
 import Layout from "./components/Layout";
-import Landing from "./components/Landing";
 import Home from "./components/Home";
 import About from "./components/About";
 import PortfolioIndex from "./components/PortfolioIndex";
@@ -19,7 +18,7 @@ import Marine from "./components/Marine";
 
 function musiqueSectionLoader() {
   if (!isMusiqueVisible()) {
-    return redirect(SITE_PREFIX);
+    return redirect("/");
   }
   return null;
 }
@@ -29,40 +28,33 @@ export const router = createBrowserRouter([
     path: "/",
     Component: Layout,
     children: [
-      { index: true, Component: Landing },
+      { index: true, Component: Home },
+      { path: "about", Component: About },
+      { path: "portfolio", Component: PortfolioIndex },
+      { path: "portfolio/:slug", Component: PortfolioGallery },
+      { path: "portfolio/:parentSlug/:slug", Component: PortfolioGallery },
       { path: "projets", Component: ProjetsIndex },
       { path: "projets/:slug", Component: ProjetDetail },
+      { path: "musique", loader: musiqueSectionLoader, Component: MusiqueIndex },
       {
-        path: "passions",
-        children: [
-          { index: true, Component: Home },
-          { path: "about", Component: About },
-          { path: "portfolio", Component: PortfolioIndex },
-          { path: "portfolio/:slug", Component: PortfolioGallery },
-          { path: "portfolio/:parentSlug/:slug", Component: PortfolioGallery },
-          { path: "musique", loader: musiqueSectionLoader, Component: MusiqueIndex },
-          {
-            path: "musique/enregistrements/:recordingSlug",
-            loader: musiqueSectionLoader,
-            Component: MusiqueRecordingDetail,
-          },
-          {
-            path: "musique/enregistrements",
-            loader: musiqueSectionLoader,
-            Component: MusiqueEnregistrements,
-          },
-          {
-            path: "musique/:slug",
-            loader: musiqueSectionLoader,
-            Component: MusiquePageRoute,
-          },
-          { path: "installation", Component: Installation },
-          { path: "poi", Component: Poi },
-          { path: "marine", Component: Marine },
-          { path: "contact", loader: () => redirect(SITE_PREFIX) },
-          { path: "*", Component: NotFound },
-        ],
+        path: "musique/enregistrements/:recordingSlug",
+        loader: musiqueSectionLoader,
+        Component: MusiqueRecordingDetail,
       },
+      {
+        path: "musique/enregistrements",
+        loader: musiqueSectionLoader,
+        Component: MusiqueEnregistrements,
+      },
+      {
+        path: "musique/:slug",
+        loader: musiqueSectionLoader,
+        Component: MusiquePageRoute,
+      },
+      { path: "installation", Component: Installation },
+      { path: "poi", Component: Poi },
+      { path: "marine", Component: Marine },
+      { path: "contact", loader: () => redirect("/") },
       { path: "*", Component: NotFound },
     ],
   },

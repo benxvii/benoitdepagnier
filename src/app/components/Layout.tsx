@@ -4,12 +4,11 @@ import { useState } from "react";
 import {
   isNavActive,
   isNavSectionActive,
-  landingNavigation,
   mainNavigation,
   type NavItem,
   type NavSubLink,
 } from "../../config/navigation";
-import { projets, site } from "../../config/site";
+import { site } from "../../config/site";
 import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function Layout() {
@@ -18,9 +17,7 @@ export default function Layout() {
   usePageMeta();
 
   const isActive = (path: string) => isNavActive(location.pathname, path);
-  const isAppsContext =
-    location.pathname === "/" || isActive(projets.indexPath);
-  const navLinks = isAppsContext ? landingNavigation : mainNavigation;
+  const navLinks = mainNavigation;
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -29,7 +26,6 @@ export default function Layout() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HeaderRow
             navLinks={navLinks}
-            isAppsContext={isAppsContext}
             mobileMenuOpen={mobileMenuOpen}
             setMobileMenuOpen={setMobileMenuOpen}
             isActive={isActive}
@@ -97,7 +93,7 @@ export default function Layout() {
   );
 }
 
-function SiteLogo({ isAppsContext }: { isAppsContext: boolean }) {
+function SiteLogo() {
   return (
     <Link
       to="/"
@@ -107,7 +103,7 @@ function SiteLogo({ isAppsContext }: { isAppsContext: boolean }) {
         {site.name}
       </span>
       <span className="site-tagline text-gray-600 whitespace-nowrap">
-        {isAppsContext ? site.appsTagline : site.tagline}
+        {site.tagline}
       </span>
     </Link>
   );
@@ -115,20 +111,18 @@ function SiteLogo({ isAppsContext }: { isAppsContext: boolean }) {
 
 function HeaderRow({
   navLinks,
-  isAppsContext,
   mobileMenuOpen,
   setMobileMenuOpen,
   isActive,
 }: {
   navLinks: NavItem[];
-  isAppsContext: boolean;
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (open: boolean) => void;
   isActive: (path: string) => boolean;
 }) {
   return (
     <div className="flex justify-between items-center h-20">
-      <SiteLogo isAppsContext={isAppsContext} />
+      <SiteLogo />
 
       <DesktopNav navLinks={navLinks} isActive={isActive} />
 

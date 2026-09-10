@@ -8,42 +8,36 @@ Ce document décrit l’ossature technique du site (routage, pages, layouts, sou
 - App root : `src/app/App.tsx` (fournit le router React Router).
 - Routage : `src/app/routes.ts` via `createBrowserRouter`.
 
-Le routeur déclare un layout racine (`Layout`), commun à toutes les pages, avec deux branches :
-
-- la **page d’arrivée** (`/`), publique, minimale ;
-- le **site** (`/site/...`), qui regroupe l’ancien site (portfolio, musique, à propos…) — conceptuellement le côté « privé ».
-
-La section **Projets informatiques** (`/projets`) fait exception : elle est déclarée au même niveau que la page d’arrivée, hors de `/site`.
+Le routeur déclare un layout racine (`Layout`), commun à toutes les pages, avec un seul niveau de routes (pas de préfixe de section) :
 
 ```
-/                       → Landing (page d’arrivée)
+/                       → Home (accueil)
+/about                  → About
+/portfolio              → PortfolioIndex
+/portfolio/:slug…       → PortfolioGallery
 /projets                → ProjetsIndex
 /projets/:slug          → ProjetDetail
-/site                   → Home (ancien accueil)
-/site/about             → About
-/site/portfolio         → PortfolioIndex
-/site/portfolio/:slug…  → PortfolioGallery
-/site/musique…          → Musique*
-/site/installation      → Installation
-/site/poi               → Poi
-/site/marine            → Marine
-/site/contact           → redirige vers /site
+/musique…               → Musique*
+/installation           → Installation
+/poi                    → Poi
+/marine                 → Marine
+/contact                → redirige vers /
 ```
 
-Le préfixe `/site` est défini une seule fois via `SITE_PREFIX` dans `src/config/site.ts`, et tous les chemins des sections concernées (`portfolio`, `musique`, `about`, `installation`) sont construits à partir de cette constante. `projets` n’utilise pas ce préfixe : ses chemins sont `/projets` et `/projets/:slug`.
+Toutes les sections (`portfolio`, `projets`, `musique`, `about`, `installation`) déclarent directement leurs chemins dans `src/config/site.ts` (`/portfolio`, `/musique`, etc.), sans préfixe partagé.
+
+> Historique : le site a eu, un temps, une page d’arrivée séparée sous `/` avec le reste du contenu sous `/site` puis `/passions`. Cette séparation a été abandonnée ; `/site/...` et `/passions/...` redirigent (301) vers les URLs équivalentes à la racine (voir `public/.htaccess`).
 
 ## Layouts et wrappers partagés
 
 ### Layout global (header + footer + `<Outlet />`)
 
 - Composant : `src/app/components/Layout.tsx`
-- Utilisé par : toutes les pages (route racine `path: "/"`), y compris la page d’arrivée.
+- Utilisé par : toutes les pages (route racine `path: "/"`).
 - Données consommées :
-  - `src/config/navigation.ts` : `mainNavigation`, `landingNavigation`, `isNavActive`, `isNavSectionActive`
-  - `src/config/site.ts` : `site` (nom, email, réseaux, copyrightYear)
-- Comportement du menu :
-  - Sur `/` (page d’arrivée) : le header affiche `landingNavigation` (2 liens : « Projets informatiques » → `/projets`, « Site » → `/site`).
-  - Sur toute autre URL (`/projets`, `/site/...`) : le header affiche `mainNavigation` (Portfolio, Projets informatiques, Musique, Qui suis-je ?).
+  - `src/config/navigation.ts` : `mainNavigation`, `isNavActive`, `isNavSectionActive`
+  - `src/config/site.ts` : `site` (nom, tagline, email, réseaux, copyrightYear)
+- Comportement du menu : un seul menu (`mainNavigation`) sur toutes les pages — Projets informatiques, Portfolio, Musique, Qui suis-je ?
 
 ### Layout 2 colonnes (pages Musique)
 
@@ -66,15 +60,18 @@ Le préfixe `/site` est défini une seule fois via `SITE_PREFIX` dans `src/confi
 
 Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/routes.ts`.
 
-### `/` (page d’arrivée)
+### `/` (accueil)
 
 - URL : `/`
-- Composant : `src/app/components/Landing.tsx`
-- Layout : `src/app/components/Layout.tsx` (menu `landingNavigation`)
-- Données consommées : aucune.
+- Composant : `src/app/components/Home.tsx`
+- Layout : `src/app/components/Layout.tsx`
+- Données consommées :
+  - `src/config/site.ts` : `site`, `homeIntro`, `portfolio`, `projets`, `musique`, `about`
+  - `src/config/site.ts` : `visiblePortfolioGalleries()`, `musiquePageImage()`
+  - `src/app/components/useRandomGalleryCovers.ts` : `useRandomHeroImage()`, `useRandomGalleryHubItems()`
 - Remarques :
-  - Page volontairement vide entre le header et le footer, à compléter plus tard.
-  - Sert de point d’entrée public avant d’aller vers `/projets` ou `/site`.
+  - La section “À propos” réutilise `src/app/components/AboutPortraits.tsx`.
+  - Affiche un aperçu de chaque section : Portfolio, Projets informatiques, Musique, Qui suis-je ?
 
 ### `/projets`
 
@@ -93,32 +90,19 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
 - Données consommées :
   - `src/config/site.ts` : `projets` (recherche `items.find((p) => p.slug === slug)`), `installation` (lien vers les instructions)
 - Remarques :
-  - Lien vers `/site/installation` affiché si des téléchargements sont disponibles.
+  - Lien vers `/installation` affiché si des téléchargements sont disponibles.
 
-### `/site` (accueil du site)
+### `/about`
 
-- URL : `/site`
-- Composant : `src/app/components/Home.tsx`
-- Layout : `src/app/components/Layout.tsx`
-- Données consommées :
-  - `src/config/site.ts` : `site`, `homeIntro`, `portfolio`, `projets`, `musique`, `about`
-  - `src/config/site.ts` : `visiblePortfolioGalleries()`, `musiquePageImage()`
-  - `src/app/components/useRandomGalleryCovers.ts` : `useRandomHeroImage()`, `useRandomGalleryHubItems()`
-- Remarques :
-  - La section “À propos” réutilise `src/app/components/AboutPortraits.tsx`.
-  - Affiche aussi un aperçu de la section Projets (`/projets`), bien qu’elle soit hors de `/site`.
-
-### `/site/about`
-
-- URL : `/site/about`
+- URL : `/about`
 - Composant : `src/app/components/About.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Données consommées :
   - `src/config/site.ts` : `about`, `site`
 
-### `/site/portfolio`
+### `/portfolio`
 
-- URL : `/site/portfolio`
+- URL : `/portfolio`
 - Composant : `src/app/components/PortfolioIndex.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Données consommées :
@@ -126,9 +110,9 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
   - `src/app/components/useRandomGalleryCovers.ts` : `useRandomGalleryHubItems()`
 - Wrapper UI principal : `src/app/components/SectionHub.tsx`
 
-### `/site/portfolio/:slug`
+### `/portfolio/:slug`
 
-- URL : `/site/portfolio/:slug`
+- URL : `/portfolio/:slug`
 - Composant : `src/app/components/PortfolioGallery.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Données consommées :
@@ -141,26 +125,26 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
   - Galerie “equipment” : `src/app/components/EquipmentGalleryPage.tsx`
   - Galerie d’images : `src/app/components/GalleryPage.tsx`
 
-### `/site/portfolio/:parentSlug/:slug`
+### `/portfolio/:parentSlug/:slug`
 
-- URL : `/site/portfolio/:parentSlug/:slug`
+- URL : `/portfolio/:parentSlug/:slug`
 - Composant : `src/app/components/PortfolioGallery.tsx`
 - Layout : `src/app/components/Layout.tsx`
-- Données consommées : identiques à `/site/portfolio/:slug` (avec résolution parent/enfant via `findPortfolioGallery(slug, parentSlug)` + manifest key `parentSlug/slug`).
+- Données consommées : identiques à `/portfolio/:slug` (avec résolution parent/enfant via `findPortfolioGallery(slug, parentSlug)` + manifest key `parentSlug/slug`).
 
-### `/site/musique`
+### `/musique`
 
-- URL : `/site/musique`
+- URL : `/musique`
 - Composant : `src/app/components/MusiqueIndex.tsx`
 - Layout : `src/app/components/Layout.tsx`
-- Loader : `musiqueSectionLoader` (redirige vers `/site` si `isMusiqueVisible()` est faux)
+- Loader : `musiqueSectionLoader` (redirige vers `/` si `isMusiqueVisible()` est faux)
 - Données consommées :
   - `src/config/site.ts` : `musique`, `musiquePageImage()`
 - Wrapper UI principal : `src/app/components/SectionHub.tsx`
 
-### `/site/musique/:slug`
+### `/musique/:slug`
 
-- URL : `/site/musique/:slug`
+- URL : `/musique/:slug`
 - Composant : `src/app/components/MusiquePage.tsx` (export `MusiquePageRoute`)
 - Layout : `src/app/components/Layout.tsx`
 - Layout interne : `src/app/components/MusiqueTwoColumnLayout.tsx`
@@ -168,9 +152,9 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
 - Données consommées :
   - `src/config/site.ts` : `musique` (recherche page par `slug`), `musiquePageImage()`
 
-### `/site/musique/enregistrements`
+### `/musique/enregistrements`
 
-- URL : `/site/musique/enregistrements`
+- URL : `/musique/enregistrements`
 - Composant : `src/app/components/MusiqueEnregistrements.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Layout interne : `src/app/components/MusiqueTwoColumnLayout.tsx`
@@ -178,26 +162,26 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
 - Données consommées :
   - `src/config/site.ts` : `musique.pages` (page `slug === "enregistrements"`), `musique.recordings`, `musiquePageImage()`
 
-### `/site/musique/enregistrements/:recordingSlug`
+### `/musique/enregistrements/:recordingSlug`
 
-- URL : `/site/musique/enregistrements/:recordingSlug`
+- URL : `/musique/enregistrements/:recordingSlug`
 - Composant : `src/app/components/MusiqueRecordingDetail.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Loader : `musiqueSectionLoader`
 - Données consommées :
   - `src/config/site.ts` : `findMusiqueRecording()`, `musique.enregistrementsPath`
 
-### `/site/installation`
+### `/installation`
 
-- URL : `/site/installation`
+- URL : `/installation`
 - Composant : `src/components/Installation.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Données consommées :
   - `src/config/site.ts` : `installation` (apps + procédures Windows/macOS)
 
-### `/site/poi`
+### `/poi`
 
-- URL : `/site/poi`
+- URL : `/poi`
 - Composant : `src/app/components/Poi.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Données consommées :
@@ -205,9 +189,9 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
 - Remarques :
   - Pas de lien dans `mainNavigation` (page accessible seulement par URL directe).
 
-### `/site/marine`
+### `/marine`
 
-- URL : `/site/marine`
+- URL : `/marine`
 - Composant : `src/app/components/Marine.tsx`
 - Layout : `src/app/components/Layout.tsx`
 - Données consommées :
@@ -215,21 +199,20 @@ Chaque entrée ci-dessous correspond à une route déclarée dans `src/app/route
 - Remarques :
   - Pas de lien dans `mainNavigation` (page accessible seulement par URL directe).
 
-### `/site/contact`
+### `/contact`
 
-- URL : `/site/contact`
+- URL : `/contact`
 - Implémentation : route avec `loader` dans `src/app/routes.ts`
-- Comportement : redirection vers `/site`
+- Comportement : redirection vers `/`
 - Composant : aucun
 - Layout : `src/app/components/Layout.tsx` (le temps de la redirection)
 
 ### `*` (fallback 404)
 
-- URL : toute URL non matchée sous `/site/...`, ou toute URL non matchée à la racine
+- URL : toute URL non matchée
 - Composant : `src/app/components/NotFound.tsx`
 - Layout : `src/app/components/Layout.tsx`
-- Données consommées :
-  - `src/config/site.ts` : `SITE_PREFIX` (pour choisir le lien « Retour à l’accueil » : `/site` si l’URL non trouvée commençait par `/site/`, sinon `/`)
+- Données consommées : aucune (le lien « Retour à l’accueil » pointe toujours vers `/`).
 
 ## Autres composants partagés (UI et utilitaires)
 
