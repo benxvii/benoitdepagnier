@@ -25,13 +25,10 @@ export function cloudinaryUrl(
 
   const transformSegment =
     transforms.length > 0 ? `${transforms.join(",")}/` : "";
-  const folder = import.meta.env.VITE_CLOUDINARY_FOLDER;
-  const path =
-    folder && !publicId.startsWith(`${folder}/`)
-      ? `${folder}/${publicId}`
-      : publicId;
 
-  return `https://res.cloudinary.com/${cloudName}/image/upload/${transformSegment}${path}`;
+  // Public ID Cloudinary tel quel. VITE_CLOUDINARY_FOLDER est la racine Media
+  // Library (manifeste + sync), pas un préfixe d’URL.
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${transformSegment}${publicId}`;
 }
 
 /** URL Cloudinary ou image de repli (placeholder local / Unsplash). */

@@ -1,3 +1,8 @@
+/**
+ * Ancienne page d'arrivée publique (pitch professionnel), utilisée avant
+ * l'annulation de la séparation pro/perso. Conservée ici sans lien dans la
+ * navigation, au cas où ce contenu serait réutilisé plus tard.
+ */
 import { Link } from "react-router";
 import { projets, site } from "../../config/site";
 

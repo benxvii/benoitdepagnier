@@ -7,7 +7,6 @@ import {
   portfolio,
   projets,
   site,
-  SITE_PREFIX,
 } from "../config/site";
 
 const SEPARATOR = "—";
@@ -27,10 +26,6 @@ export function resolvePageTitle(pathname: string): string {
   const path = normalizePathname(pathname);
   const fallback = site.name;
 
-  if (path === "/") {
-    return `${site.name} ${SEPARATOR} ${site.appsTagline}`;
-  }
-
   if (path === projets.indexPath) {
     return withName(projets.title);
   }
@@ -39,10 +34,6 @@ export function resolvePageTitle(pathname: string): string {
     const slug = path.slice(`${projets.indexPath}/`.length);
     const projet = projets.items.find((p) => p.slug === slug);
     return projet ? withName(projet.title) : fallback;
-  }
-
-  if (path === SITE_PREFIX) {
-    return `Photo & Musique ${SEPARATOR} ${site.name}`;
   }
 
   if (path === portfolio.indexPath) {

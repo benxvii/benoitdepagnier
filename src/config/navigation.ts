@@ -5,7 +5,6 @@ import {
   musique,
   portfolio,
   projets,
-  SITE_PREFIX,
   visiblePortfolioGalleries,
 } from "./site";
 
@@ -94,12 +93,6 @@ export const mainNavigation: NavItem[] = [
       ]
     : []),
   { path: about.path, label: "Qui suis-je ?" },
-];
-
-/** Navigation de la page d'arrivée (racine "/"), avant d'entrer dans le site. */
-export const landingNavigation: NavItem[] = [
-  { path: projets.indexPath, label: projets.title },
-  { path: SITE_PREFIX, label: "Passions" },
 ];
 
 export function isNavActive(pathname: string, path: string): boolean {
