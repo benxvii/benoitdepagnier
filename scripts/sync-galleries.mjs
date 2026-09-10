@@ -218,6 +218,32 @@ function writeLocalManifest(manifest) {
   console.log(`  local     : public/_galleries.json`);
 }
 
+function readLocalManifest() {
+  const outputPath = path.join(__dirname, "..", "public", "_galleries.json");
+  if (!fs.existsSync(outputPath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(outputPath, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Réutilise `generatedAt` du manifest existant si le contenu (hors horodatage)
+ * n'a pas changé. Évite un commit Git à chaque run du cron quand les galeries
+ * Cloudinary n'ont pas bougé.
+ */
+function resolveGeneratedAt(previous, cloudFolder, galleries) {
+  const now = new Date().toISOString();
+  if (!previous) return now;
+
+  const unchanged =
+    previous.cloudFolder === cloudFolder &&
+    JSON.stringify(previous.galleries) === JSON.stringify(galleries);
+
+  return unchanged ? previous.generatedAt : now;
+}
+
 async function main() {
   const meta = loadGalleriesMeta();
   const portfolioRoot = `${cloudFolder}/portfolio`;
@@ -236,8 +262,11 @@ async function main() {
     })
     .sort((a, b) => a.slug.localeCompare(b.slug));
 
+  const previousManifest = readLocalManifest();
+  const generatedAt = resolveGeneratedAt(previousManifest, cloudFolder, galleries);
+
   const manifest = {
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     cloudFolder,
     galleries,
   };
