@@ -47,7 +47,13 @@ function HubGrid({
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
       {items.map((item) => (
         <Link key={item.path} to={item.path} className="group block">
-          <div className="relative aspect-square overflow-hidden mb-4">
+          <div
+            className={
+              isCover
+                ? "relative aspect-square overflow-hidden mb-4"
+                : "relative mx-auto aspect-square w-full max-w-[13.5rem] overflow-hidden"
+            }
+          >
             {item.image ? (
               <ImageWithFallback
                 src={item.image}
@@ -55,12 +61,18 @@ function HubGrid({
                 className={
                   isCover
                     ? "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    : "w-full h-full object-contain object-bottom px-12 pt-12 pb-0 group-hover:scale-105 transition-transform duration-500"
+                    : "w-full h-full object-contain object-top group-hover:scale-105 transition-transform duration-500"
                 }
               />
             ) : null}
           </div>
-          <h2 className="text-2xl mb-2 group-hover:text-[var(--brand)] transition-colors">
+          <h2
+            className={
+              isCover
+                ? "text-2xl mb-2 group-hover:text-[var(--brand)] transition-colors"
+                : "text-2xl mb-2 mt-1 text-center group-hover:text-[var(--brand)] transition-colors"
+            }
+          >
             {item.title}
           </h2>
           {item.description ? (
