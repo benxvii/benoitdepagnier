@@ -175,7 +175,7 @@ function HomeCardLink({
       <div
         className={
           isContain
-            ? "relative aspect-square overflow-hidden"
+            ? "relative mx-auto aspect-square w-full max-w-[13.5rem] overflow-hidden"
             : "relative aspect-square overflow-hidden mb-4"
         }
       >
@@ -185,7 +185,7 @@ function HomeCardLink({
             alt={card.title}
             className={
               isContain
-                ? "w-full h-full object-contain object-bottom px-12 pt-12 pb-0 group-hover:scale-105 transition-transform duration-500"
+                ? "w-full h-full object-contain object-top group-hover:scale-105 transition-transform duration-500"
                 : "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             }
           />
@@ -194,7 +194,7 @@ function HomeCardLink({
       <h3
         className={cn(
           "text-center text-lg leading-snug min-h-[3.25rem] flex items-start justify-center group-hover:text-[var(--brand)] transition-colors",
-          isContain && "-mt-2",
+          isContain && "mt-1",
         )}
       >
         {card.title}
