@@ -292,7 +292,7 @@ J'ai le plaisir d'avoir joué au baryton dans la section des saxophones. Le disq
       image: assetUrl("/musique/instruments.jpg"),
       body: `J'ai débuté sur un saxophone alto Weltlang acheté d'occasion, puis j'ai joué le saxophone baryton du Big Band (dont j'ai oublié la marque) avant d'acquérir mon premier baryton, un Buescher Aristocrate. Par la suite, j'ai joué sur un Yanagisawa B901, avant de découvrir les saxophones Advences.
 
-J'ai eu la chance de découvrir la marque Advences par un de mes professeurs, et j'ai craqué pour un alto et un baryton en Bb, les deux provenant de leur collection Vintage. Pour répéter en silence, je joue aussi sur un Yamaha YDS-150.`,
+J'ai eu la chance de découvrir la marque Advences par un de mes professeurs, et j'ai craqué pour un alto et un baryton en Eb, les deux provenant de leur collection Vintage. Pour répéter en silence, je joue aussi sur un Yamaha YDS-150.`,
     },
     {
       slug: "compositions",

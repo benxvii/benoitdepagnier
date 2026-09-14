@@ -10,7 +10,7 @@ export default function PortfolioIndex() {
       title={portfolio.title}
       intro={portfolio.intro}
       items={items}
-      linkLabel="Voir la galerie"
+      imageFit="cover"
     />
   );
 }

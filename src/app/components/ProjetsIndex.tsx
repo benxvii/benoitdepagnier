@@ -6,7 +6,6 @@ export default function ProjetsIndex() {
     <SectionHub
       title={projets.title}
       intro={projets.intro}
-      imageLayout="icon"
       items={projets.items.map((p) => ({
         path: p.path,
         title: p.title,
