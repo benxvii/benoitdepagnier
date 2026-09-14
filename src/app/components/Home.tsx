@@ -172,7 +172,13 @@ function HomeCardLink({
 
   return (
     <Link to={card.path} className="group flex flex-col h-full">
-      <div className="relative aspect-square overflow-hidden mb-4">
+      <div
+        className={
+          isContain
+            ? "relative aspect-square overflow-hidden"
+            : "relative aspect-square overflow-hidden mb-4"
+        }
+      >
         {card.image ? (
           <ImageWithFallback
             src={card.image}
@@ -185,7 +191,12 @@ function HomeCardLink({
           />
         ) : null}
       </div>
-      <h3 className="text-center text-lg leading-snug min-h-[3.25rem] flex items-start justify-center group-hover:text-[var(--brand)] transition-colors">
+      <h3
+        className={cn(
+          "text-center text-lg leading-snug min-h-[3.25rem] flex items-start justify-center group-hover:text-[var(--brand)] transition-colors",
+          isContain && "-mt-2",
+        )}
+      >
         {card.title}
       </h3>
     </Link>
