@@ -33,7 +33,7 @@ export default function PortfolioGallery() {
           title={gallery.title}
           intro={gallery.intro}
           items={subItems}
-          linkLabel="Voir la galerie"
+          imageFit="cover"
         />
       </div>
     );

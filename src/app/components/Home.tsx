@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { ArrowRight } from "lucide-react";
 import { AboutPortraits } from "./AboutPortraits";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import {
@@ -123,16 +122,9 @@ export default function Home() {
               <AboutPortraits variant="home" />
             </div>
             <div className="lg:col-span-3 flex flex-col justify-center text-center lg:text-left">
-              <p className="text-xl text-gray-700 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-700 leading-relaxed">
                 {about.paragraphs[0]}
               </p>
-              <Link
-                to={about.path}
-                className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[var(--brand)] text-[var(--brand)] hover:bg-[var(--brand)] hover:text-white transition-colors self-center lg:self-start"
-              >
-                En savoir plus
-                <ArrowRight size={18} />
-              </Link>
             </div>
           </div>
         </div>
@@ -187,7 +179,7 @@ function HomeCardLink({
             alt={card.title}
             className={
               isContain
-                ? "w-full h-full object-contain p-12 group-hover:scale-105 transition-transform duration-500"
+                ? "w-full h-full object-contain object-bottom px-12 pt-12 pb-0 group-hover:scale-105 transition-transform duration-500"
                 : "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             }
           />
