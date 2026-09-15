@@ -54,6 +54,24 @@ function getCategoryLabel(category: string): string {
   return categoryLabels[category] ?? category;
 }
 
+function haversineDistance(
+  [lat1, lng1]: [number, number],
+  [lat2, lng2]: [number, number],
+): number {
+  const R = 6371; // rayon terrestre en km
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function formatDistance(km: number): string {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+}
+
 const amenityLabels: Record<string, string> = {
   wifi: "Wifi",
   prises_electriques: "Prises électriques",
@@ -133,6 +151,8 @@ function MapClickHandler({
 export default function Poi() {
   const { user, signOut } = useAuth();
   const markerRefs = useRef<Record<string, L.Marker>>({});
+  const hoverCloseTimers = useRef<Record<string, number>>({});
+  const formSectionRef = useRef<HTMLDivElement>(null);
 
   const [pois, setPois] = useState<PoiItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -164,6 +184,12 @@ export default function Poi() {
   >("all");
   const [amenityFilter, setAmenityFilter] = useState<string[]>([]);
   const [nicknameFilter, setNicknameFilter] = useState<string>("all");
+  const [tierFilter, setTierFilter] = useState<
+    "all" | "gratuit" | "payant" | "abonne"
+  >("all");
+  const [sortMode, setSortMode] = useState<"default" | "alpha" | "distance">(
+    "distance",
+  );
 
   const nicknames = useMemo(
     () =>
@@ -185,28 +211,49 @@ export default function Poi() {
     );
   };
 
-  const filteredPois = useMemo(
-    () =>
-      pois.filter((poi) => {
-        const matchesCategory =
-          categoryFilter === "all" || poi.category.includes(categoryFilter);
-        const matchesVisibility =
-          visibilityFilter === "all" || poi.visibility === visibilityFilter;
-        const matchesAmenities = amenityFilter.every((a) =>
-          poi.amenities.includes(a),
-        );
-        const matchesNickname =
-          nicknameFilter === "all" ||
-          poi.profiles?.nickname === nicknameFilter;
-        return (
-          matchesCategory &&
-          matchesVisibility &&
-          matchesAmenities &&
-          matchesNickname
-        );
-      }),
-    [pois, categoryFilter, visibilityFilter, amenityFilter, nicknameFilter],
-  );
+  const filteredPois = useMemo(() => {
+    const filtered = pois.filter((poi) => {
+      const matchesCategory =
+        categoryFilter === "all" || poi.category.includes(categoryFilter);
+      const matchesVisibility =
+        visibilityFilter === "all" || poi.visibility === visibilityFilter;
+      const matchesAmenities = amenityFilter.every((a) =>
+        poi.amenities.includes(a),
+      );
+      const matchesNickname =
+        nicknameFilter === "all" ||
+        poi.profiles?.nickname === nicknameFilter;
+      const matchesTier = tierFilter === "all" || poi.tier === tierFilter;
+      return (
+        matchesCategory &&
+        matchesVisibility &&
+        matchesAmenities &&
+        matchesNickname &&
+        matchesTier
+      );
+    });
+
+    if (sortMode === "alpha") {
+      return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (sortMode === "distance" && userPosition) {
+      return [...filtered].sort(
+        (a, b) =>
+          haversineDistance(userPosition, [a.lat, a.lng]) -
+          haversineDistance(userPosition, [b.lat, b.lng]),
+      );
+    }
+    return filtered;
+  }, [
+    pois,
+    categoryFilter,
+    visibilityFilter,
+    amenityFilter,
+    nicknameFilter,
+    tierFilter,
+    sortMode,
+    userPosition,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -258,6 +305,18 @@ export default function Poi() {
     if (!selectedId) return;
     markerRefs.current[selectedId]?.openPopup();
   }, [selectedId, flyTo]);
+
+  useEffect(() => {
+    if (editingId && formSectionRef.current) {
+      formSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [editingId]);
+
+  useEffect(() => {
+    if (isAdding && formSectionRef.current) {
+      formSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [isAdding]);
 
   const handlePoiSelect = useCallback((poi: PoiItem) => {
     setSelectedId(poi.id);
@@ -338,44 +397,70 @@ export default function Poi() {
         <PoiLogin />
       )}
 
-      {user &&
-        (editingPoi ? (
-          <PoiForm
-            position={editingPosition}
-            onPositionChange={setEditingPosition}
-            initialData={editingPoi}
-            submitLabel="Enregistrer les modifications"
-            onCancel={() => {
-              setEditingId(null);
-              setEditingPosition(null);
-            }}
-            onSubmit={handleEditPoi}
-          />
-        ) : isAdding ? (
-          <PoiForm
-            position={newPosition}
-            onPositionChange={setNewPosition}
-            onCancel={() => {
-              setIsAdding(false);
-              setNewPosition(null);
-            }}
-            onSubmit={handleAddPoi}
-          />
-        ) : (
-          <button
-            type="button"
-            onClick={() => setIsAdding(true)}
-            className="mb-8 px-4 py-2 text-sm rounded-md bg-[var(--brand)] text-white hover:opacity-90 transition-opacity"
-          >
-            + Ajouter un point
-          </button>
-        ))}
+      {user && (
+        <div
+          ref={formSectionRef}
+          className="flex items-start justify-between gap-4 mb-4 lg:mr-[21.5rem]"
+        >
+          <div className="flex-1">
+            {editingPoi ? (
+              <PoiForm
+                position={editingPosition}
+                onPositionChange={setEditingPosition}
+                initialData={editingPoi}
+                submitLabel="Enregistrer les modifications"
+                onCancel={() => {
+                  setEditingId(null);
+                  setEditingPosition(null);
+                }}
+                onSubmit={handleEditPoi}
+              />
+            ) : isAdding ? (
+              <PoiForm
+                position={newPosition}
+                onPositionChange={setNewPosition}
+                onCancel={() => {
+                  setIsAdding(false);
+                  setNewPosition(null);
+                }}
+                onSubmit={handleAddPoi}
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsAdding(true)}
+                className="px-4 py-2 text-sm rounded-md bg-[var(--brand)] text-white hover:opacity-90 transition-opacity"
+              >
+                + Ajouter un point
+              </button>
+            )}
+          </div>
+          <div className="shrink-0 flex flex-row gap-1">
+            {(["all", "gratuit", "payant", "abonne"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTierFilter(t)}
+                className={cn(
+                  "px-3 py-1 text-xs rounded-full border transition-colors text-left",
+                  tierFilter === t
+                    ? "bg-[var(--brand)] text-white border-[var(--brand)]"
+                    : "border-gray-200 text-gray-600 hover:border-gray-300",
+                )}
+              >
+                {t === "all" ? "Tous" : tierLabels[t]}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <p className="text-sm text-gray-500">Chargement des points...</p>
       ) : loadError ? (
         <p className="text-sm text-red-600">{loadError}</p>
       ) : (
+        <>
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="lg:flex-1 h-[400px] lg:h-[600px] rounded-lg overflow-hidden border border-gray-100 z-0">
             <MapContainer
@@ -422,8 +507,33 @@ export default function Poi() {
                   }}
                   eventHandlers={{
                     click: () => setSelectedId(poi.id),
-                    mouseover: (e) => e.target.openPopup(),
-                    mouseout: (e) => e.target.closePopup(),
+                    mouseover: (e) => {
+                      if (hoverCloseTimers.current[poi.id]) {
+                        window.clearTimeout(hoverCloseTimers.current[poi.id]);
+                        delete hoverCloseTimers.current[poi.id];
+                      }
+                      e.target.openPopup();
+                    },
+                    mouseout: (e) => {
+                      hoverCloseTimers.current[poi.id] = window.setTimeout(() => {
+                        e.target.closePopup();
+                      }, 250);
+                    },
+                    popupopen: (e) => {
+                      const el = e.popup.getElement();
+                      if (!el) return;
+                      el.addEventListener("mouseenter", () => {
+                        if (hoverCloseTimers.current[poi.id]) {
+                          window.clearTimeout(hoverCloseTimers.current[poi.id]);
+                          delete hoverCloseTimers.current[poi.id];
+                        }
+                      });
+                      el.addEventListener("mouseleave", () => {
+                        hoverCloseTimers.current[poi.id] = window.setTimeout(() => {
+                          e.target.closePopup();
+                        }, 250);
+                      });
+                    },
                   }}
                 >
                   <Popup>
@@ -604,36 +714,78 @@ export default function Poi() {
                 ))}
               </select>
             </div>
-
-            <ul className="space-y-2">
-              {filteredPois.map((poi) => (
-                <li key={poi.id}>
-                  <button
-                    type="button"
-                    onClick={() => handlePoiSelect(poi)}
-                    className={cn(
-                      "w-full text-left px-4 py-3 rounded-lg border transition-colors",
-                      selectedId === poi.id
-                        ? "border-[var(--brand)] bg-gray-50"
-                        : "border-gray-100 hover:border-gray-200 hover:bg-gray-50",
-                    )}
-                  >
-                    <p className="font-medium text-sm">{poi.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {poi.address}
-                    </p>
-                  </button>
-                </li>
-              ))}
-            </ul>
-
-            {filteredPois.length === 0 && (
-              <p className="text-sm text-gray-500 px-1">
-                Aucun point dans cette catégorie.
-              </p>
-            )}
           </aside>
         </div>
+
+        <div className="mt-8">
+          <div className="flex gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() =>
+                setSortMode(sortMode === "alpha" ? "default" : "alpha")
+              }
+              className={cn(
+                "px-3 py-1.5 text-sm rounded-full border transition-colors",
+                sortMode === "alpha"
+                  ? "bg-[var(--brand)] text-white border-[var(--brand)]"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300",
+              )}
+            >
+              Alphabétique
+            </button>
+            <button
+              type="button"
+              disabled={!userPosition}
+              onClick={() =>
+                setSortMode(sortMode === "distance" ? "default" : "distance")
+              }
+              className={cn(
+                "px-3 py-1.5 text-sm rounded-full border transition-colors",
+                sortMode === "distance"
+                  ? "bg-[var(--brand)] text-white border-[var(--brand)]"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300",
+                !userPosition && "opacity-40 cursor-not-allowed",
+              )}
+            >
+              Distance
+            </button>
+          </div>
+
+          {filteredPois.length === 0 ? (
+            <p className="text-sm text-gray-500 px-1">
+              Aucun point dans cette catégorie.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredPois.map((poi) => (
+                <button
+                  key={poi.id}
+                  type="button"
+                  onClick={() => handlePoiSelect(poi)}
+                  className={cn(
+                    "text-left px-4 py-3 rounded-lg border transition-colors",
+                    selectedId === poi.id
+                      ? "border-[var(--brand)] bg-gray-50"
+                      : "border-gray-100 hover:border-gray-200 hover:bg-gray-50",
+                  )}
+                >
+                  <p className="font-medium text-sm">{poi.name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {poi.address}
+                  </p>
+                  {userPosition && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {formatDistance(
+                        haversineDistance(userPosition, [poi.lat, poi.lng]),
+                      )}
+                    </p>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        </>
       )}
     </div>
   );
