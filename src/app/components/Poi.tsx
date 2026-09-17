@@ -54,6 +54,26 @@ function getCategoryLabel(category: string): string {
   return categoryLabels[category] ?? category;
 }
 
+const categoryColors: Record<string, string> = {
+  coworking: "#2563eb",
+  cafe_sympa: "#d97706",
+  bibliotheque: "#7c3aed",
+  terrasse_exterieur: "#16a34a",
+  hotel_coworking: "#db2777",
+  salle_reunion: "#475569",
+};
+
+const DEFAULT_CATEGORY_COLOR = "#6b7280";
+
+const categoryPriority: string[] = [
+  "coworking",
+  "cafe_sympa",
+  "bibliotheque",
+  "terrasse_exterieur",
+  "hotel_coworking",
+  "salle_reunion",
+];
+
 function haversineDistance(
   [lat1, lng1]: [number, number],
   [lat2, lng2]: [number, number],
@@ -114,6 +134,19 @@ const newPoiIcon = L.divIcon({
   iconSize: [16, 16],
   iconAnchor: [8, 8],
 });
+
+function getCategoryIcon(category: string[]): L.DivIcon {
+  const primaryCategory =
+    categoryPriority.find((cat) => category.includes(cat)) ?? category[0];
+  const color = categoryColors[primaryCategory] ?? DEFAULT_CATEGORY_COLOR;
+  return L.divIcon({
+    className: "",
+    html: `<div style="width:20px;height:20px;background:${color};border:2px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 1px 4px rgba(0,0,0,0.4);"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 20],
+    popupAnchor: [0, -20],
+  });
+}
 
 function MapFlyTo({
   position,
@@ -502,6 +535,7 @@ export default function Poi() {
                 <Marker
                   key={poi.id}
                   position={[poi.lat, poi.lng]}
+                  icon={getCategoryIcon(poi.category)}
                   ref={(ref) => {
                     if (ref) markerRefs.current[poi.id] = ref;
                   }}
@@ -633,21 +667,25 @@ export default function Poi() {
                 >
                   Toutes
                 </button>
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setCategoryFilter(category)}
-                    className={cn(
-                      "px-3 py-1.5 text-sm rounded-full border transition-colors",
-                      categoryFilter === category
-                        ? "bg-[var(--brand)] text-white border-[var(--brand)]"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300",
-                    )}
-                  >
-                    {getCategoryLabel(category)}
-                  </button>
-                ))}
+                {categories.map((category) => {
+                  const color = categoryColors[category] ?? DEFAULT_CATEGORY_COLOR;
+                  const isActive = categoryFilter === category;
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => setCategoryFilter(category)}
+                      style={
+                        isActive
+                          ? { backgroundColor: color, borderColor: color, color: "white" }
+                          : { borderColor: color, color }
+                      }
+                      className="px-3 py-1.5 text-sm rounded-full border bg-white transition-colors"
+                    >
+                      {getCategoryLabel(category)}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
