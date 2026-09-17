@@ -74,6 +74,15 @@ const categoryPriority: string[] = [
   "salle_reunion",
 ];
 
+const amenityPriority: string[] = [
+  "wifi",
+  "prises_electriques",
+  "calme",
+  "parking",
+  "accessible_pmr",
+  "ouvert_weekend",
+];
+
 function haversineDistance(
   [lat1, lng1]: [number, number],
   [lat2, lng2]: [number, number],
@@ -192,7 +201,10 @@ export default function Poi() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const categories = useMemo(
-    () => [...new Set(pois.flatMap((poi) => poi.category))].sort(),
+    () =>
+      [...new Set(pois.flatMap((poi) => poi.category))].sort((a, b) =>
+        getCategoryLabel(a).localeCompare(getCategoryLabel(b)),
+      ),
     [pois],
   );
 
@@ -288,35 +300,38 @@ export default function Poi() {
     userPosition,
   ]);
 
+  const loadPois = useCallback(async () => {
+    setLoadError(null);
+
+    const { data, error } = await supabase
+      .from("poi")
+      .select("*, profiles(nickname)")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      setLoadError(error.message);
+      return;
+    }
+
+    setPois((data ?? []) as PoiItem[]);
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
 
-    async function loadPois() {
+    (async () => {
       setLoading(true);
-      setLoadError(null);
-
-      const { data, error } = await supabase
-        .from("poi")
-        .select("*, profiles(nickname)")
-        .order("created_at", { ascending: false });
-
-      if (cancelled) return;
-
-      if (error) {
-        setLoadError(error.message);
-      } else {
-        setPois((data ?? []) as PoiItem[]);
-      }
-
-      setLoading(false);
-    }
-
-    loadPois();
+      await loadPois();
+      if (!cancelled) setLoading(false);
+    })();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+    // Recharger aussi au login/logout : la RLS Supabase renvoie les points
+    // privés seulement une fois authentifié, donc un simple changement de
+    // `user` (sans remount du composant) doit redéclencher le fetch.
+  }, [loadPois, user?.id]);
 
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -360,16 +375,18 @@ export default function Poi() {
     data: Omit<PoiItem, "id" | "owner_id" | "created_at">,
   ) => {
     if (!user) return;
-    const { data: inserted, error } = await supabase
+    const { error } = await supabase
       .from("poi")
-      .insert({ ...data, owner_id: user.id })
-      .select()
-      .single();
+      .insert({ ...data, owner_id: user.id });
     if (error) {
       console.error(error);
       return;
     }
-    setPois((prev) => [inserted as PoiItem, ...prev]);
+    // Re-fetch depuis Supabase plutôt qu'une mise à jour locale optimiste :
+    // l'insert seul ne renvoie pas la jointure profiles(nickname), ce qui
+    // faussait le filtre "Ajouté par" et masquait le point tant que la
+    // page n'était pas rechargée.
+    await loadPois();
     setIsAdding(false);
     setNewPosition(null);
   };
@@ -378,19 +395,15 @@ export default function Poi() {
     data: Omit<PoiItem, "id" | "owner_id" | "created_at">,
   ) => {
     if (!editingId) return;
-    const { data: updated, error } = await supabase
+    const { error } = await supabase
       .from("poi")
       .update(data)
-      .eq("id", editingId)
-      .select()
-      .single();
+      .eq("id", editingId);
     if (error) {
       console.error(error);
       return;
     }
-    setPois((prev) =>
-      prev.map((poi) => (poi.id === editingId ? (updated as PoiItem) : poi)),
-    );
+    await loadPois();
     setEditingId(null);
     setEditingPosition(null);
   };
@@ -588,11 +601,15 @@ export default function Poi() {
                       <div className="font-medium">{poi.name}</div>
                       <div className="text-gray-600">{poi.address}</div>
                       <div className="text-gray-500 text-xs">
-                        {poi.category.map(getCategoryLabel).join(", ")}
+                        {categoryPriority
+                          .filter((cat) => poi.category.includes(cat))
+                          .map(getCategoryLabel)
+                          .join(", ")}
                       </div>
                       {poi.amenities.length > 0 && (
                         <div className="text-gray-600 text-xs">
-                          {poi.amenities
+                          {amenityPriority
+                            .filter((a) => poi.amenities.includes(a))
                             .map((a) => amenityLabels[a])
                             .join(", ")}
                         </div>
