@@ -36,6 +36,7 @@ const categoryOptions: { value: string; label: string }[] = [
   { value: "coworking", label: "Coworking" },
   { value: "cafe_sympa", label: "Café sympa" },
   { value: "bibliotheque", label: "Bibliothèque" },
+  { value: "universite", label: "Université" },
   { value: "terrasse_exterieur", label: "Terrasse / extérieur" },
   { value: "hotel_coworking", label: "Hôtel avec coworking" },
   { value: "salle_reunion", label: "Salle de réunion" },
