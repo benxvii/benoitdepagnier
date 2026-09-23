@@ -60,12 +60,22 @@ export function monthLabel(year: number, month: number): string {
 }
 
 // Comparateur de texte unique pour tous les tris alphabétiques /timesheet
-// (filtres, colonnes triables, onglet "Total par projet"...). Locale "fr"
-// + sensitivity "base" : insensible à la casse et aux accents, pour que
-// "Alpha", "alpha" et "Àlpha" soient triés ensemble au même endroit plutôt
-// que de casser l'ordre alphabétique global.
+// (filtres, colonnes triables, onglet "Total par projet"...).
+//
+// ignorePunctuation: true est essentiel ici : des noms de projet réels
+// mélangent tiret simple "-" et tiret cadratin "–" (ex. "benoitdepagnier.ch
+// - TIMESHEET" vs "benoitdepagnier.ch – MARINE"). Sans cette option, la
+// différence de ponctuation est jugée significative par le collator et
+// prime sur la comparaison des mots qui suivent, ce qui casse l'ordre
+// alphabétique attendu sur l'ensemble de la liste. sensitivity: "base"
+// reste utile pour ignorer casse et accents ("Alpha"/"alpha"/"Àlpha").
+const textCollator = new Intl.Collator("fr", {
+  sensitivity: "base",
+  ignorePunctuation: true,
+});
+
 export function compareText(a: string, b: string): number {
-  return a.localeCompare(b, "fr", { sensitivity: "base" });
+  return textCollator.compare(a, b);
 }
 
 // Convertit "HH:MM" en minutes depuis minuit.
