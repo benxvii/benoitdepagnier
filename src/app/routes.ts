@@ -16,6 +16,8 @@ import NotFound from "./components/NotFound";
 import Installation from "../components/Installation";
 import Poi from "./components/Poi";
 import Marine from "./components/Marine";
+import Timesheet from "./components/Timesheet";
+import TimesheetLogin from "./components/TimesheetLogin";
 
 function musiqueSectionLoader() {
   if (!isMusiqueVisible()) {
@@ -55,6 +57,8 @@ export const router = createBrowserRouter([
       { path: "installation", Component: Installation },
       { path: "poi", Component: Poi },
       { path: "marine", Component: Marine },
+      { path: "timesheet", Component: Timesheet },
+      { path: "timesheet/login", Component: TimesheetLogin },
       { path: "contact", loader: () => redirect("/") },
       // Ancienne page d'arrivée pro, non liée dans la navigation. Conservée
       // pour référence après l'annulation de la séparation pro/perso.
