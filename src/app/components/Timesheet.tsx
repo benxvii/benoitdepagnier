@@ -467,7 +467,7 @@ export default function Timesheet() {
   const distinctProjects = useMemo(
     () =>
       [...new Set(entries.map((e) => e.project))].sort((a, b) =>
-        a.localeCompare(b),
+        a.localeCompare(b, "fr", { sensitivity: "base" }),
       ),
     [entries],
   );
@@ -482,7 +482,7 @@ export default function Timesheet() {
             .map((e) => e.project_type)
             .filter((t): t is string => Boolean(t)),
         ),
-      ].sort((a, b) => a.localeCompare(b)),
+      ].sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" })),
     [entries],
   );
 
@@ -700,7 +700,7 @@ export default function Timesheet() {
             htmlFor="timesheet-project-filter"
             className="block text-xs text-gray-500 mb-1"
           >
-            Projet
+            Nom du projet
           </label>
           <select
             id="timesheet-project-filter"
