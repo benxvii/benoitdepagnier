@@ -4,6 +4,7 @@ import { timesheetSupabase } from "../../lib/supabase-timesheet";
 import { cn } from "../../lib/cn";
 import { useTimesheetAuth } from "../../hooks/useTimesheetAuth";
 import {
+  compareText,
   formatDateFR,
   formatDateFRFromISO,
   formatHHMM,
@@ -99,11 +100,11 @@ function compareDetailColumn(
 ): number {
   switch (column) {
     case "project":
-      return a.project.localeCompare(b.project);
+      return compareText(a.project, b.project);
     case "project_type":
-      return (a.project_type ?? "").localeCompare(b.project_type ?? "");
+      return compareText(a.project_type ?? "", b.project_type ?? "");
     case "task":
-      return a.task.localeCompare(b.task);
+      return compareText(a.task, b.task);
     case "entry_date":
       return a.entry_date.localeCompare(b.entry_date);
     case "start_time":
@@ -113,7 +114,7 @@ function compareDetailColumn(
     case "duration_minutes":
       return a.duration_minutes - b.duration_minutes;
     case "comment":
-      return (a.comment ?? "").localeCompare(b.comment ?? "");
+      return compareText(a.comment ?? "", b.comment ?? "");
   }
 }
 
@@ -465,10 +466,7 @@ export default function Timesheet() {
   // sur les lignes déjà filtrées), pour garder la liste déroulante stable
   // quel que soit le filtre de dates en cours.
   const distinctProjects = useMemo(
-    () =>
-      [...new Set(entries.map((e) => e.project))].sort((a, b) =>
-        a.localeCompare(b, "fr", { sensitivity: "base" }),
-      ),
+    () => [...new Set(entries.map((e) => e.project))].sort(compareText),
     [entries],
   );
 
@@ -482,7 +480,7 @@ export default function Timesheet() {
             .map((e) => e.project_type)
             .filter((t): t is string => Boolean(t)),
         ),
-      ].sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" })),
+      ].sort(compareText),
     [entries],
   );
 
@@ -509,7 +507,7 @@ export default function Timesheet() {
     }
     return [...map.entries()]
       .map(([project, minutes]) => ({ project, minutes }))
-      .sort((a, b) => a.project.localeCompare(b.project));
+      .sort((a, b) => compareText(a.project, b.project));
   }, [filteredEntries]);
 
   const projectOrder = useMemo(

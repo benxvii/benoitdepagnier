@@ -59,6 +59,15 @@ export function monthLabel(year: number, month: number): string {
   return `${MOIS_FR[month - 1]} ${year}`;
 }
 
+// Comparateur de texte unique pour tous les tris alphabétiques /timesheet
+// (filtres, colonnes triables, onglet "Total par projet"...). Locale "fr"
+// + sensitivity "base" : insensible à la casse et aux accents, pour que
+// "Alpha", "alpha" et "Àlpha" soient triés ensemble au même endroit plutôt
+// que de casser l'ordre alphabétique global.
+export function compareText(a: string, b: string): number {
+  return a.localeCompare(b, "fr", { sensitivity: "base" });
+}
+
 // Convertit "HH:MM" en minutes depuis minuit.
 export function timeToMinutes(time: string): number {
   const [h, m] = time.split(":").map(Number);
