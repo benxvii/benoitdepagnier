@@ -1,0 +1,31 @@
+{
+  "name": "poi-desktop",
+  "version": "0.1.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "ch.depagnier.poi",
+    "productName": "POI Genève",
+    "files": ["main.js"],
+    "mac": {
+      "icon": "build/icon.icns",
+      "target": ["dmg", "zip"],
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": ["nsis", "zip"]
+    },
+    "directories": {
+      "output": "release"
+    }
+  }
+}
