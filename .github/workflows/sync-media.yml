@@ -17,8 +17,10 @@ jobs:
 
       - name: Vérifier la présence des médias
         run: |
+          # Note : public/portfolio n'est plus versionné (photos hébergées sur
+          # Cloudinary, cf. sync-galleries.yml), donc volontairement absent ici.
           missing=0
-          for dir in portfolio downloads about musique projets; do
+          for dir in downloads about musique projets; do
             if [ ! -d "public/$dir" ] || [ -z "$(ls -A "public/$dir" 2>/dev/null)" ]; then
               echo "::error::public/$dir est absent ou vide sur ce commit."
               missing=1
@@ -28,7 +30,7 @@ jobs:
             echo ""
             echo "Les dossiers sont gitignorés : GitHub ne les reçoit pas au push habituel."
             echo "Une fois, sur ton Mac :"
-            echo "  git add -f public/portfolio public/downloads public/about public/musique public/projets"
+            echo "  git add -f public/downloads public/about public/musique public/projets"
             echo "  git commit -m \"chore: sync media vers Infomaniak\""
             echo "  git push"
             echo "Puis relance ce workflow. Ensuite tu pourras les retirer du suivi Git (voir docs/MEDIA.md)."
