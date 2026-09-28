@@ -11,6 +11,7 @@ export default function PortfolioIndex() {
       intro={portfolio.intro}
       items={items}
       imageFit="cover"
+      columns={4}
     />
   );
 }

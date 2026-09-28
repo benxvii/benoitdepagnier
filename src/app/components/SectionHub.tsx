@@ -15,6 +15,13 @@ type SectionHubProps = {
   items: readonly HubItem[];
   /** `contain` pour logos, `cover` pour photos. */
   imageFit?: "cover" | "contain";
+  /**
+   * Nombre de colonnes sur grand écran (3 par défaut, comme les galeries
+   * Portfolio/Musique). 4 aligne la grille sur celle de la page d'accueil
+   * (mêmes breakpoints et le même gap), utilisé pour /projets afin que les
+   * icônes gardent la même taille apparente qu'en page d'accueil.
+   */
+  columns?: 3 | 4;
 };
 
 export default function SectionHub({
@@ -22,13 +29,14 @@ export default function SectionHub({
   intro,
   items,
   imageFit = "contain",
+  columns = 3,
 }: SectionHubProps) {
   return (
     <div>
       <PageHero title={title} intro={intro} />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <HubGrid items={items} imageFit={imageFit} />
+        <HubGrid items={items} imageFit={imageFit} columns={columns} />
       </section>
     </div>
   );
@@ -37,14 +45,22 @@ export default function SectionHub({
 function HubGrid({
   items,
   imageFit,
+  columns,
 }: {
   items: readonly HubItem[];
   imageFit: "cover" | "contain";
+  columns: 3 | 4;
 }) {
   const isCover = imageFit === "cover";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+    <div
+      className={
+        columns === 4
+          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
+      }
+    >
       {items.map((item) => (
         <Link key={item.path} to={item.path} className="group block">
           <div

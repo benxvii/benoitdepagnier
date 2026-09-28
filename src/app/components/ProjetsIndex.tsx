@@ -12,6 +12,7 @@ export default function ProjetsIndex() {
         description: p.description,
         image: p.image,
       }))}
+      columns={4}
     />
   );
 }
