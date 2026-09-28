@@ -1,5 +1,10 @@
 import { useState, type FormEvent } from "react";
-import { formatHHMM, parseHHMM, timeToMinutes } from "../../lib/timesheet-format";
+import {
+  formatHHMM,
+  parseHHMM,
+  timeToMinutes,
+  todayISODate,
+} from "../../lib/timesheet-format";
 
 export interface NewTimesheetEntryInput {
   project: string;
@@ -49,7 +54,12 @@ export default function TimesheetEntryForm({
   );
   const [newProjectTypeName, setNewProjectTypeName] = useState("");
   const [task, setTask] = useState(() => initialEntry?.task ?? "");
-  const [entryDate, setEntryDate] = useState(() => initialEntry?.entry_date ?? "");
+  // Nouvelle entrée : date du jour pré-remplie par défaut (l'utilisateur
+  // saisit le plus souvent le temps passé le jour même). En mode édition,
+  // on garde la date de l'entrée corrigée.
+  const [entryDate, setEntryDate] = useState(
+    () => initialEntry?.entry_date ?? todayISODate(),
+  );
   const [startTime, setStartTime] = useState(
     () => initialEntry?.start_time?.slice(0, 5) ?? "",
   );
@@ -152,7 +162,7 @@ export default function TimesheetEntryForm({
       setSelectedProjectType(NO_PROJECT_TYPE_VALUE);
       setNewProjectTypeName("");
       setTask("");
-      setEntryDate("");
+      setEntryDate(todayISODate());
       setStartTime("");
       setEndTime("");
       setManualDuration("");

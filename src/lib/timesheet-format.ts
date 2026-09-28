@@ -35,6 +35,18 @@ export function formatTime(time: string | null): string {
   return time.slice(0, 5);
 }
 
+// Date du jour au format "YYYY-MM-DD", en heure locale (et non UTC : sinon
+// on risquerait d'afficher la date de la veille/du lendemain selon le
+// fuseau horaire de l'utilisateur). Utilisé pour pré-remplir le champ Date
+// d'une nouvelle entrée de timesheet.
+export function todayISODate(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 export function parseDateUTC(dateStr: string): Date {
   const [y, m, d] = dateStr.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d));

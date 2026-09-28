@@ -106,7 +106,12 @@ function compareDetailColumn(
     case "task":
       return compareText(a.task, b.task);
     case "entry_date":
-      return a.entry_date.localeCompare(b.entry_date);
+      // Tri secondaire par heure de début à date égale, pour un tri par
+      // défaut cohérent "du plus récent" (date puis heure de début).
+      return (
+        a.entry_date.localeCompare(b.entry_date) ||
+        (a.start_time ?? "").localeCompare(b.start_time ?? "")
+      );
     case "start_time":
       return (a.start_time ?? "").localeCompare(b.start_time ?? "");
     case "end_time":
@@ -164,8 +169,10 @@ function DetailTable({
   selectedEntryId?: string | null;
   onSelectEntry: (entry: TimesheetEntry) => void;
 }) {
+  // Tri par défaut : entrée la plus récente en premier (date puis heure
+  // de début, cf. compareDetailColumn).
   const [sortColumn, setSortColumn] = useState<DetailSortColumn>("entry_date");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const handleSort = (column: DetailSortColumn) => {
     if (column === sortColumn) {
