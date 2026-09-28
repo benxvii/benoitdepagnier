@@ -34,6 +34,7 @@ export default function PortfolioGallery() {
           intro={gallery.intro}
           items={subItems}
           imageFit="cover"
+          columns={4}
         />
       </div>
     );

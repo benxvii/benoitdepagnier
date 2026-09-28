@@ -7,6 +7,7 @@ export default function MusiqueIndex() {
       title={musique.title}
       intro={musique.intro.join(" ")}
       imageFit="cover"
+      columns={4}
       items={musique.pages.map((page) => ({
         path: page.path,
         title: page.title,
