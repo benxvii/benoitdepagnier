@@ -155,7 +155,15 @@ function SortableHeader({
   );
 }
 
-function DetailTable({ entries }: { entries: TimesheetEntry[] }) {
+function DetailTable({
+  entries,
+  selectedEntryId,
+  onSelectEntry,
+}: {
+  entries: TimesheetEntry[];
+  selectedEntryId?: string | null;
+  onSelectEntry: (entry: TimesheetEntry) => void;
+}) {
   const [sortColumn, setSortColumn] = useState<DetailSortColumn>("entry_date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
@@ -204,7 +212,15 @@ function DetailTable({ entries }: { entries: TimesheetEntry[] }) {
       </thead>
       <tbody>
         {sortedEntries.map((entry) => (
-          <tr key={entry.id} className="border-b border-gray-100">
+          <tr
+            key={entry.id}
+            onClick={() => onSelectEntry(entry)}
+            className={cn(
+              "border-b border-gray-100 cursor-pointer hover:bg-gray-50",
+              selectedEntryId === entry.id && "bg-[var(--brand)]/5",
+            )}
+            title="Cliquer pour corriger cette entrée"
+          >
             <td className={cn(tdClass, "align-top")}>{entry.project}</td>
             <td className={cn(tdClass, "align-top")}>
               {formatProjectType(entry.project_type)}
@@ -411,6 +427,7 @@ export default function Timesheet() {
   const [projectFilter, setProjectFilter] = useState("all");
   const [projectTypeFilter, setProjectTypeFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<TimesheetEntry | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const loadEntries = useCallback(async () => {
@@ -461,6 +478,41 @@ export default function Timesheet() {
     },
     [user, loadEntries],
   );
+
+  const handleUpdateEntry = useCallback(
+    async (
+      entryId: string,
+      data: NewTimesheetEntryInput,
+    ): Promise<{ error: string | null }> => {
+      if (!user) return { error: "Non connecté." };
+
+      const { error } = await timesheetSupabase
+        .from("timesheet_entries")
+        .update(data)
+        .eq("id", entryId);
+
+      if (error) return { error: error.message };
+
+      await loadEntries();
+      setEditingEntry(null);
+      setToastMessage("Entrée mise à jour.");
+      return { error: null };
+    },
+    [user, loadEntries],
+  );
+
+  const editingEntryInput: NewTimesheetEntryInput | null = editingEntry
+    ? {
+        project: editingEntry.project,
+        project_type: editingEntry.project_type,
+        task: editingEntry.task,
+        entry_date: editingEntry.entry_date,
+        start_time: editingEntry.start_time,
+        end_time: editingEntry.end_time,
+        duration_minutes: editingEntry.duration_minutes,
+        comment: editingEntry.comment,
+      }
+    : null;
 
   // Liste des projets distincts calculée sur l'ensemble des données (pas
   // sur les lignes déjà filtrées), pour garder la liste déroulante stable
@@ -640,7 +692,7 @@ export default function Timesheet() {
       </div>
 
       <div className="mb-6">
-        {!showForm && (
+        {!showForm && !editingEntry && (
           <button
             type="button"
             onClick={() => setShowForm(true)}
@@ -651,13 +703,23 @@ export default function Timesheet() {
         )}
       </div>
 
-      {showForm && (
+      {editingEntry ? (
         <TimesheetEntryForm
           projects={distinctProjects}
           projectTypes={distinctProjectTypes}
-          onSubmit={handleAddEntry}
-          onCancel={() => setShowForm(false)}
+          initialEntry={editingEntryInput}
+          onSubmit={(data) => handleUpdateEntry(editingEntry.id, data)}
+          onCancel={() => setEditingEntry(null)}
         />
+      ) : (
+        showForm && (
+          <TimesheetEntryForm
+            projects={distinctProjects}
+            projectTypes={distinctProjectTypes}
+            onSubmit={handleAddEntry}
+            onCancel={() => setShowForm(false)}
+          />
+        )
       )}
 
       <div className="flex flex-wrap items-end gap-4 mb-6">
@@ -780,7 +842,16 @@ export default function Timesheet() {
         <p className="text-sm text-red-600">{entriesError}</p>
       ) : (
         <>
-          {activeTab === "detail" && <DetailTable entries={filteredEntries} />}
+          {activeTab === "detail" && (
+            <DetailTable
+              entries={filteredEntries}
+              selectedEntryId={editingEntry?.id ?? null}
+              onSelectEntry={(entry) => {
+                setShowForm(false);
+                setEditingEntry(entry);
+              }}
+            />
+          )}
           {activeTab === "project" && (
             <ProjectTotalsTable totals={projectTotals} />
           )}

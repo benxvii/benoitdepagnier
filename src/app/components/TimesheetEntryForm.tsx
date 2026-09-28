@@ -17,6 +17,10 @@ interface TimesheetEntryFormProps {
   projectTypes: string[];
   onSubmit: (data: NewTimesheetEntryInput) => Promise<{ error: string | null }>;
   onCancel: () => void;
+  // Renseigné en mode édition (correction d'une entrée existante depuis la
+  // vue Détail) : pré-remplit le formulaire avec les valeurs de l'entrée
+  // sélectionnée au lieu des valeurs par défaut d'une nouvelle entrée.
+  initialEntry?: NewTimesheetEntryInput | null;
 }
 
 const NEW_PROJECT_VALUE = "__new__";
@@ -28,21 +32,36 @@ export default function TimesheetEntryForm({
   projectTypes,
   onSubmit,
   onCancel,
+  initialEntry = null,
 }: TimesheetEntryFormProps) {
-  const [selectedProject, setSelectedProject] = useState(
-    projects.length > 0 ? projects[0] : NEW_PROJECT_VALUE,
+  const isEditMode = initialEntry !== null;
+
+  const [selectedProject, setSelectedProject] = useState(() =>
+    initialEntry
+      ? initialEntry.project
+      : projects.length > 0
+        ? projects[0]
+        : NEW_PROJECT_VALUE,
   );
   const [newProjectName, setNewProjectName] = useState("");
-  const [selectedProjectType, setSelectedProjectType] = useState(
-    NO_PROJECT_TYPE_VALUE,
+  const [selectedProjectType, setSelectedProjectType] = useState(() =>
+    initialEntry ? initialEntry.project_type ?? NO_PROJECT_TYPE_VALUE : NO_PROJECT_TYPE_VALUE,
   );
   const [newProjectTypeName, setNewProjectTypeName] = useState("");
-  const [task, setTask] = useState("");
-  const [entryDate, setEntryDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [manualDuration, setManualDuration] = useState("");
-  const [comment, setComment] = useState("");
+  const [task, setTask] = useState(() => initialEntry?.task ?? "");
+  const [entryDate, setEntryDate] = useState(() => initialEntry?.entry_date ?? "");
+  const [startTime, setStartTime] = useState(
+    () => initialEntry?.start_time?.slice(0, 5) ?? "",
+  );
+  const [endTime, setEndTime] = useState(
+    () => initialEntry?.end_time?.slice(0, 5) ?? "",
+  );
+  const [manualDuration, setManualDuration] = useState(() =>
+    initialEntry && !(initialEntry.start_time && initialEntry.end_time)
+      ? formatHHMM(initialEntry.duration_minutes)
+      : "",
+  );
+  const [comment, setComment] = useState(() => initialEntry?.comment ?? "");
 
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -124,21 +143,28 @@ export default function TimesheetEntryForm({
     }
 
     // Réinitialisation après succès (le panneau est fermé par le parent).
-    setSelectedProject(projects.length > 0 ? projects[0] : NEW_PROJECT_VALUE);
-    setNewProjectName("");
-    setSelectedProjectType(NO_PROJECT_TYPE_VALUE);
-    setNewProjectTypeName("");
-    setTask("");
-    setEntryDate("");
-    setStartTime("");
-    setEndTime("");
-    setManualDuration("");
-    setComment("");
+    // En mode édition, le parent démonte ce formulaire juste après le
+    // succès : pas besoin (et pas souhaitable) de repasser par les valeurs
+    // par défaut d'une nouvelle entrée.
+    if (!isEditMode) {
+      setSelectedProject(projects.length > 0 ? projects[0] : NEW_PROJECT_VALUE);
+      setNewProjectName("");
+      setSelectedProjectType(NO_PROJECT_TYPE_VALUE);
+      setNewProjectTypeName("");
+      setTask("");
+      setEntryDate("");
+      setStartTime("");
+      setEndTime("");
+      setManualDuration("");
+      setComment("");
+    }
   };
 
   return (
     <div className="border border-gray-100 rounded-lg p-6 mb-8">
-      <h2 className="text-lg font-medium mb-4">Nouvelle entrée</h2>
+      <h2 className="text-lg font-medium mb-4">
+        {isEditMode ? "Modifier l'entrée" : "Nouvelle entrée"}
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
@@ -335,7 +361,13 @@ export default function TimesheetEntryForm({
             disabled={submitting}
             className="px-4 py-2 text-sm rounded-md bg-[var(--brand)] text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            {submitting ? "Ajout..." : "Ajouter l'entrée"}
+            {isEditMode
+              ? submitting
+                ? "Enregistrement..."
+                : "Enregistrer les modifications"
+              : submitting
+                ? "Ajout..."
+                : "Ajouter l'entrée"}
           </button>
           <button
             type="button"
