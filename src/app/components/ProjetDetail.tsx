@@ -1,5 +1,5 @@
 import { Navigate, useParams } from "react-router";
-import { Download } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import BackLink from "./BackLink";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { installation, projets, type Projet } from "../../config/site";
@@ -51,6 +51,22 @@ function DownloadButtons({ projet }: { projet: Projet }) {
   return null;
 }
 
+function ExternalLinkButton({ projet }: { projet: Projet }) {
+  if (!projet.externalUrl) return null;
+
+  return (
+    <a
+      href={projet.externalUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 mt-6 px-8 py-4 bg-[var(--brand)] text-white hover:opacity-90 transition-opacity"
+    >
+      <ExternalLink size={18} />
+      {projet.externalLabel ?? "Ouvrir"}
+    </a>
+  );
+}
+
 function ProjetPage({ projet }: { projet: Projet }) {
   return (
     <div>
@@ -74,6 +90,7 @@ function ProjetPage({ projet }: { projet: Projet }) {
                 ))}
               </div>
               <DownloadButtons projet={projet} />
+              <ExternalLinkButton projet={projet} />
               {(projet.downloads?.length ?? 0) > 0 || projet.downloadUrl ? (
                 <p className="text-xs text-gray-400 mt-3">
                   Problème au lancement ?{" "}

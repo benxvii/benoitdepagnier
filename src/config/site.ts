@@ -134,6 +134,9 @@ export type Projet = {
   downloads?: readonly ProjetDownload[];
   downloadUrl?: string;
   downloadLabel?: string;
+  /** Lien vers une application web externe (ex. carte en ligne). */
+  externalUrl?: string;
+  externalLabel?: string;
 };
 
 export const projets = {
@@ -211,6 +214,23 @@ Quatre vues principales :
         { label: "macOS", url: assetUrl("/downloads/Portfolio-mac.zip") },
         { label: "Windows", url: assetUrl("/downloads/Portfolio-win.zip") },
       ],
+    },
+    {
+      slug: "point-of-interest",
+      path: "/projets/point-of-interest",
+      title: "Point of Interest",
+      description:
+        "Carte de points d'intérêts pour travailleurs nomades",
+      image: assetUrl("/projets/poi-logo.png"),
+      body: `Carte interactive pour repérer les meilleurs endroits où travailler : coworkings, cafés sympas, bibliothèques, terrasses avec wifi...
+
+Chacun peut ajouter ses propres points, avec équipements (wifi, prises, calme...) et niveau d'accès (gratuit, payant, abonné).
+
+L'application demande un login pour distinguer les points publics des points privés.`,
+      notice:
+        "Sur smartphone, pensez à ajouter le lien à votre écran d'accueil : il se comportera comme une application.",
+      externalUrl: "https://benoitdepagnier.ch/poi",
+      externalLabel: "Ouvrir la carte",
     },
   ] as readonly Projet[],
 };
