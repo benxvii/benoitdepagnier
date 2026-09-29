@@ -12,7 +12,7 @@ Les photos, ZIP de téléchargement et autres gros fichiers ne sont **pas** vers
 
 | Dossier local (optionnel) | URL sur le site |
 |---------------------------|-----------------|
-| `public/portfolio/` | `/portfolio/...` |
+| — (Cloudinary, voir `sync-galleries.yml`) | `/portfolio/...` |
 | `public/downloads/` | `/downloads/...` |
 | `public/projets/` | `/projets/*.png` |
 | `public/musique/` | `/musique/...` |
@@ -38,7 +38,7 @@ VITE_MEDIA_BASE_URL=https://benoitdepagnier.ch
 
 Ne pas réactiver `dangerous-clean-slate` sur le déploiement FTP.
 
-Le workflow exclut `portfolio/`, `downloads/`, etc. du sync FTP pour ne **pas les supprimer** sur le serveur quand ils ne sont plus dans `dist/`.
+Le déploiement (`deploy.yml`) exclut `downloads/`, `about/`, `musique/`, `projets/` du sync FTP pour ne **pas les supprimer** sur le serveur quand ils ne sont plus dans `dist/`. À l'inverse, `sync-media.yml` envoie un dossier média à la fois (jamais toute la racine du site) pour ne pas écraser `index.html`/`assets/`.
 
 ### Photos cassées (icône / emoji) après un déploiement
 
@@ -56,21 +56,23 @@ Workflow **Sync media to Infomaniak** (`.github/workflows/sync-media.yml`) :
 1. **Une fois**, sur ton Mac (les fichiers sont déjà dans `public/`) :
 
 ```bash
-git add -f public/portfolio public/downloads public/about public/musique public/projets
+git add -f public/downloads public/about public/musique public/projets
 git commit -m "chore: sync media vers Infomaniak"
 git push
 ```
 
 2. GitHub → **Actions** → **Sync media to Infomaniak** → **Run workflow**.
 
-3. Attendre la fin (~10–20 min selon la connexion).
+3. Attendre la fin (quelques minutes, un step FTP par dossier média).
 
-4. Vérifier : `curl -sI https://benoitdepagnier.ch/portfolio/.../L1000870.jpg` → `image/jpeg`.
+4. Vérifier :
+   - `curl -sI https://benoitdepagnier.ch/ | head -1` → toujours `200` (le workflow ne touche jamais à `index.html`/`assets/`).
+   - `curl -sI https://benoitdepagnier.ch/projets/poi-logo.png` → `image/png`.
 
 5. **Optionnel** — retirer les binaires du suivi Git (ils restent sur Infomaniak) :
 
 ```bash
-git rm -r --cached public/portfolio public/downloads public/about public/musique public/projets
+git rm -r --cached public/downloads public/about public/musique public/projets
 git commit -m "chore: médias hors Git (déjà sur le serveur)"
 git push
 ```
