@@ -26,6 +26,9 @@ interface TimesheetEntryFormProps {
   // vue Détail) : pré-remplit le formulaire avec les valeurs de l'entrée
   // sélectionnée au lieu des valeurs par défaut d'une nouvelle entrée.
   initialEntry?: NewTimesheetEntryInput | null;
+  // Renseigné en mode édition uniquement : affiche le bouton "Supprimer"
+  // (avec confirmation) pour l'entrée en cours de correction.
+  onDelete?: () => Promise<{ error: string | null }>;
 }
 
 const NEW_PROJECT_VALUE = "__new__";
@@ -38,8 +41,10 @@ export default function TimesheetEntryForm({
   onSubmit,
   onCancel,
   initialEntry = null,
+  onDelete,
 }: TimesheetEntryFormProps) {
   const isEditMode = initialEntry !== null;
+  const [deleting, setDeleting] = useState(false);
 
   const [selectedProject, setSelectedProject] = useState(() =>
     initialEntry
@@ -167,6 +172,25 @@ export default function TimesheetEntryForm({
       setEndTime("");
       setManualDuration("");
       setComment("");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    if (
+      !window.confirm(
+        "Supprimer définitivement cette entrée ? Cette action est irréversible.",
+      )
+    ) {
+      return;
+    }
+
+    setDeleting(true);
+    const { error: deleteError } = await onDelete();
+    setDeleting(false);
+
+    if (deleteError) {
+      setError(deleteError);
     }
   };
 
@@ -386,6 +410,16 @@ export default function TimesheetEntryForm({
           >
             Annuler
           </button>
+          {isEditMode && onDelete && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={deleting || submitting}
+              className="ml-auto px-4 py-2 text-sm rounded-md border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50"
+            >
+              {deleting ? "Suppression..." : "Supprimer"}
+            </button>
+          )}
         </div>
       </form>
     </div>
