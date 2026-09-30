@@ -508,6 +508,25 @@ export default function Timesheet() {
     [user, loadEntries],
   );
 
+  const handleDeleteEntry = useCallback(
+    async (entryId: string): Promise<{ error: string | null }> => {
+      if (!user) return { error: "Non connecté." };
+
+      const { error } = await timesheetSupabase
+        .from("timesheet_entries")
+        .delete()
+        .eq("id", entryId);
+
+      if (error) return { error: error.message };
+
+      await loadEntries();
+      setEditingEntry(null);
+      setToastMessage("Entrée supprimée.");
+      return { error: null };
+    },
+    [user, loadEntries],
+  );
+
   const editingEntryInput: NewTimesheetEntryInput | null = editingEntry
     ? {
         project: editingEntry.project,
@@ -717,6 +736,7 @@ export default function Timesheet() {
           initialEntry={editingEntryInput}
           onSubmit={(data) => handleUpdateEntry(editingEntry.id, data)}
           onCancel={() => setEditingEntry(null)}
+          onDelete={() => handleDeleteEntry(editingEntry.id)}
         />
       ) : (
         showForm && (
