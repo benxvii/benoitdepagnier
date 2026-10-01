@@ -51,6 +51,10 @@ function collectSubLinkPaths(links: readonly NavSubLink[]): string[] {
   });
 }
 
+function projetsNavLinks(): NavSubLink[] {
+  return projets.items.map((p) => ({ path: p.path, label: p.title }));
+}
+
 function musiqueNavLinks(): NavSubLink[] {
   return musique.pages.map((page) => {
     if (page.slug === "enregistrements" && musique.recordings.length > 0) {
@@ -71,7 +75,14 @@ function musiqueNavLinks(): NavSubLink[] {
 }
 
 export const mainNavigation: NavItem[] = [
-  { path: projets.indexPath, label: "Projets informatiques" },
+  {
+    label: projets.title,
+    path: projets.indexPath,
+    subLinks: [
+      { path: projets.indexPath, label: "Tous les projets" },
+      ...projetsNavLinks(),
+    ],
+  },
   {
     label: portfolio.title,
     path: portfolio.indexPath,
