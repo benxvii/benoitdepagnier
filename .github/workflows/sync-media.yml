@@ -17,8 +17,10 @@ jobs:
 
       - name: Vérifier la présence des médias
         run: |
+          # Note : public/portfolio n'est plus versionné (photos hébergées sur
+          # Cloudinary, cf. sync-galleries.yml), donc volontairement absent ici.
           missing=0
-          for dir in portfolio downloads about musique projets; do
+          for dir in downloads about musique projets; do
             if [ ! -d "public/$dir" ] || [ -z "$(ls -A "public/$dir" 2>/dev/null)" ]; then
               echo "::error::public/$dir est absent ou vide sur ce commit."
               missing=1
@@ -28,30 +30,74 @@ jobs:
             echo ""
             echo "Les dossiers sont gitignorés : GitHub ne les reçoit pas au push habituel."
             echo "Une fois, sur ton Mac :"
-            echo "  git add -f public/portfolio public/downloads public/about public/musique public/projets"
+            echo "  git add -f public/downloads public/about public/musique public/projets"
             echo "  git commit -m \"chore: sync media vers Infomaniak\""
             echo "  git push"
             echo "Puis relance ce workflow. Ensuite tu pourras les retirer du suivi Git (voir docs/MEDIA.md)."
             exit 1
           fi
 
-      - name: Upload médias via FTP
+      # Un step par dossier média (et non local-dir: ./public/) : la racine
+      # ./sites/benoitdepagnier.ch/ contient aussi index.html et assets/,
+      # générés par le workflow "Deploy to Infomaniak". Un sync en mode
+      # miroir sur toute la racine les supprimerait puisqu'ils sont absents
+      # de public/ (vécu le 28/09/2026 → site en 403 jusqu'au redéploiement).
+      - name: Upload downloads via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./public/
-          server-dir: ./sites/benoitdepagnier.ch/
+          local-dir: ./public/downloads/
+          server-dir: ./sites/benoitdepagnier.ch/downloads/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            logo.png
-            .htaccess
+
+      - name: Upload about via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public/about/
+          server-dir: ./sites/benoitdepagnier.ch/about/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Upload musique via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public/musique/
+          server-dir: ./sites/benoitdepagnier.ch/musique/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Upload projets via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public/projets/
+          server-dir: ./sites/benoitdepagnier.ch/projets/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
 
       - name: Rappel vérification
         run: |
           echo "Quand c'est fini, vérifie :"
-          echo "  curl -sI https://benoitdepagnier.ch/portfolio/flous-de-mouvements/flous-urbains/L1000870.jpg | grep -i content-type"
-          echo "  → doit afficher image/jpeg"
+          echo "  curl -sI https://benoitdepagnier.ch/ | head -1"
+          echo "  → doit afficher 200 (ce workflow ne touche pas à index.html/assets)"
+          echo "  curl -sI https://benoitdepagnier.ch/projets/poi-logo.png | grep -i content-type"
+          echo "  → doit afficher image/png"
